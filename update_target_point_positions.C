@@ -1,5 +1,6 @@
 #include "update_target_point_positions.h"
 #include <ibamr/IBTargetPointForceSpec.h>
+#include <ibtk/LData.h>
 
 void
 update_target_point_positions(

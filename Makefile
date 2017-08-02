@@ -1,8 +1,8 @@
 ######################################################################
 ## Here specify the location of the IBAMR source and the location
 ## where IBAMR has been built.
-IBAMR_SRC_DIR = /nas02/apps/ibamr-3803/OFED-1.5.2/IBAMR2
-IBAMR_BUILD_DIR = /nas02/apps/ibamr-3803/ibamr-objs-opt
+IBAMR_SRC_DIR = /Users/Bosque/sfw/ibamr/IBAMR
+IBAMR_BUILD_DIR = /Users/Bosque/sfw/ibamr/killdevil-opt
 
 ######################################################################
 ## Include variables specific to the particular IBAMR build.

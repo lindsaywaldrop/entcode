@@ -22,6 +22,7 @@
 #include <ibtk/AppInitializer.h>
 #include <ibtk/muParserCartGridFunction.h>
 #include <ibtk/muParserRobinBcCoefs.h>
+#include <ibtk/LData.h>
 
 // Headers for application specific operations.
 #include "update_target_point_positions.h"

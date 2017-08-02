@@ -1,10 +1,10 @@
 // physical parameters
 //
-L = 0.1                                   // length of the computational (fluid) domain (m)
+L = 0.5                                   // length of the computational (fluid) domain (m)
 RHO = 1000  				  //fluid mass density (kg/m^3)
 FS = 0.06				  // Flow speed of tank (m/s)
-RE = 0.10				  // Reynolds number of real aesthetasc
-DD = 1.5e-3				  // diameter of model aesthetasc in simulation (m)
+RE = 1.0				  // Reynolds number of real aesthetasc
+DD = 0.01				  // diameter of model aesthetasc in simulation (m)
 MU = DD*RHO*FS/RE                           // fluid dynamic viscosity (N s / m^2)
 //
 //
@@ -95,56 +95,17 @@ IBMethod {                //
                 //
 IBStandardInitializer {                //
    max_levels = MAX_LEVELS                //
-   structure_names = "hair1_2d_512", "hair2_2d_512", "hair3_2d_512", "hair4_2d_512", "hair5_2d_512", "hair6_2d_512", "hair7_2d_512", "hair8_2d_512", "hair9_2d_512", "hair10_2d_512", "hair11_2d_512", "hair12_2d_512", "hair13_2d_512", "hair14_2d_512", "hair15_2d_512", "hair16_2d_512", "ant_2d_512"    //   
-   hair1_2d_512 {                //
+   structure_names = "hair1_2d_512_1", "hair2_2d_512_1", "hair3_2d_512_1", "ant_2d_512_1"    //   
+   hair1_2d_512_1 {                //
       level_number = MAX_LEVELS - 1                //
    } //
-   hair2_2d_512 {                //
+   hair2_2d_512_1 {                //
       level_number = MAX_LEVELS - 1                //
    } //
-   hair3_2d_512 {                //
+   hair3_2d_512_1 {                //
       level_number = MAX_LEVELS - 1                //
    } // 
-   hair4_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
-   hair5_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
-   hair6_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
-   hair7_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
-   hair8_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
-   hair9_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
-   hair10_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } //  
-   hair11_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } //  
-   hair12_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
-   hair13_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
-   hair14_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
-   hair15_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
-   hair16_2d_512 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
-   ant_2d_512 {                //
+   ant_2d_512_1 {                //
       level_number = MAX_LEVELS - 1                //
    } // 
 } //
@@ -287,8 +248,8 @@ VelocityBcCoefs_0 {                       // boundary conditions for the x-compo
    bcoef_function_2 = "0.0"                //
    bcoef_function_3 = "0.0"                //
 //
-   gcoef_function_0 = "if(t <= 0.0782, if(t<= 0.0782*0.05, FS*(t/0.0782*0.05), if(t>= 0.0782-0.0782*0.05, FS-FS*(t/0.0782*0.05), FS ) ), if(t<= 0.0782+0.0782*0.05, RS*(t/0.0782*0.05), if(t>= 0.1385-0.0782*0.05, RS-RS*(t/0.0782*0.05), RS ) ))"                //
-   gcoef_function_1 = "if(t <= 0.0782, if(t<= 0.0782*0.05, FS*(t/0.0782*0.05), if(t>= 0.0782-0.0782*0.05, FS-FS*(t/0.0782*0.05), FS ) ), if(t<= 0.0782+0.0782*0.05, RS*(t/0.0782*0.05), if(t>= 0.1385-0.0782*0.05, RS-RS*(t/0.0782*0.05), RS ) ))"                //
+   gcoef_function_0 = "if(t <= 0.0125, (FS/0.0125)*t, FS)" //
+   gcoef_function_1 = "if(t <= 0.0125, (FS/0.0125)*t, FS)" //
    gcoef_function_2 = "0.0"                //
    gcoef_function_3 = "0.0"                //
 } //

@@ -1,14 +1,14 @@
 function [p] = generate_mesh2d(GtD,dist,theta,setn)
 % Sets initial parameters
-L = 0.1;                            % length of computational domain (m)
+L = 0.5;                            % length of computational domain (m)
 N = 512;                            % number of Cartesian grid meshwidths at the finest level of the AMR grid
-dx = (L/N)/(2);                           % Cartesian mesh width (m)
+dx = (L/N)/(3)                           % Cartesian mesh width (m)
 % Notes ~ Rule of thumb: 2 boundary points per fluid grid point. 
 %        vertex pts too far apart: flow thru boundary, too close: numerical weirdness
 NFINEST = 64;  % NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
 
-hdia = 0.1;     % Diameter of hair
-adia = 1.0;     % Diameter of flagellum
+hdia = 0.01;     % Diameter of hair
+adia = 0.1;     % Diameter of flagellum
 
 theta = (theta/180)*pi;      % Angle off positive x-axis in radians
 %GtD = 1.1;      % Gap width to diameter ratio
@@ -45,15 +45,15 @@ kappa_target = 1.0e-2;        % target point penalty spring constant (Newton)
 aN = round((adia*pi)/dx)+1;
 [aH,xa,ya] = circle([0,0],0.5*adia,aN,'.');
 hold on
-xlim([-1,1])
-ylim([-1,1])
+xlim([-L,L])
+ylim([-L,L])
 
 vertex_fid = fopen(['ant_2d_' num2str(N) '_' num2str(setn) '.vertex'], 'w');
 
 % first line is the number of vertices in the file
 fprintf(vertex_fid, '%d\n', aN);
 % Step 2: Write out the vertex information
-for j = 1:aN-1
+for j = 1:aN
   fprintf(vertex_fid, '%1.16e %1.16e\n', xa(j), ya(j));
 end
 %end
@@ -71,6 +71,24 @@ end
 
 fclose(target_fid);
 
+% Step 4: Write out the beam point information
+beam_fid = fopen(['ant_2d_' num2str(N) '_' num2str(setn) '.beam'], 'w');
+
+baN = aN;
+
+fprintf(beam_fid, '%d\n', baN+1);
+
+for s = 0:baN-3
+   fprintf(beam_fid, '%d %d %d %1.16e\n', s, s+1, s+2, kappa_target);
+end
+
+fprintf(beam_fid, '%d %d %d %1.16e\n', baN-3, baN-2, 0, kappa_target);
+fprintf(beam_fid, '%d %d %d %1.16e\n', baN-2, baN-1, 0, kappa_target);
+fprintf(beam_fid, '%d %d %d %1.16e\n', baN-1, 0, 1, kappa_target);
+
+fclose(beam_fid);
+
+
 % Hair 1 (center)
 hN = round((hdia*pi)/dx)+1;
 [hH1,xh1,yh1] = circle([hair1Centerx,hair1Centery],0.5*hdia,hN,'.');
@@ -80,7 +98,7 @@ vertex_fid = fopen(['hair1_2d_' num2str(N) '_' num2str(setn) '.vertex'], 'w');
 % first line is the number of vertices in the file
 fprintf(vertex_fid, '%d\n', hN);
 % Step 2: Write out the vertex information
-for j = 1:hN-1
+for j = 1:hN
   fprintf(vertex_fid, '%1.16e %1.16e\n', xh1(j), yh1(j));
 end
 %end
@@ -108,7 +126,7 @@ vertex_fid = fopen(['hair2_2d_' num2str(N) '_' num2str(setn) '.vertex'], 'w');
 % first line is the number of vertices in the file
 fprintf(vertex_fid, '%d\n', hN);
 % Step 2: Write out the vertex information
-for j = 1:hN-1
+for j = 1:hN
   fprintf(vertex_fid, '%1.16e %1.16e\n', xh2(j), yh2(j));
 end
 %end
@@ -135,7 +153,7 @@ vertex_fid = fopen(['hair3_2d_' num2str(N) '_' num2str(setn) '.vertex'], 'w');
 % first line is the number of vertices in the file
 fprintf(vertex_fid, '%d\n', hN);
 % Step 2: Write out the vertex information
-for j = 1:hN-1
+for j = 1:hN
   fprintf(vertex_fid, '%1.16e %1.16e\n', xh3(j), yh3(j));
 end
 %end
