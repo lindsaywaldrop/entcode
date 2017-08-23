@@ -88,26 +88,44 @@ IBHierarchyIntegrator {                //
    enable_logging      = ENABLE_LOGGING                //
 } //
 //
-IBMethod {                //
-   delta_fcn      = DELTA_FUNCTION                //
-   enable_logging = ENABLE_LOGGING                //
-}                //
+ConstraintIBMethod { //
+   delta_fcn                = DELTA_FUNCTION  //
+   enable_logging           = ENABLE_LOGGING  //
+   num_INS_cycles           = NUM_CYCLES //
+   needs_divfree_projection = FALSE  //
+   rho_fluid                = RHO //
+   mu_fluid                 = MU //
+//
+   PrintOutput { //
+   print_output          = TRUE               //default false
+   output_interval       = 1                  //default 1
+   output_drag           = TRUE               //default false
+   output_power          = FALSE              //default false
+   output_rig_transvel   = TRUE               //default false
+   output_rig_rotvel     = TRUE               //default false
+   output_com_coords     = TRUE               //default false
+   output_moment_inertia = TRUE               //default false 
+   output_dirname        = "./Dump--hair"    //default "./ConstraintIBMethodDump" 
+   base_filename         = "hairs"      //default  "ImmersedStructure" 
+  } //
+//
+} //
                 //
 IBStandardInitializer {                //
    max_levels = MAX_LEVELS                //
-   structure_names = "hair1_2d_512_1", "hair2_2d_512_1", "hair3_2d_512_1", "ant_2d_512_1"    //   
+   structure_names = "hair1_2d_512_1", "hair2_2d_512_1" //, "hair3_2d_512_1", "ant_2d_512_1"    //   
    hair1_2d_512_1 {                //
       level_number = MAX_LEVELS - 1                //
    } //
    hair2_2d_512_1 {                //
       level_number = MAX_LEVELS - 1                //
    } //
-   hair3_2d_512_1 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
-   ant_2d_512_1 {                //
-      level_number = MAX_LEVELS - 1                //
-   } // 
+//   hair3_2d_512_1 {                //
+//      level_number = MAX_LEVELS - 1                //
+//   } // 
+//   ant_2d_512_1 {                //
+//      level_number = MAX_LEVELS - 1                //
+//   } // 
 } //
 //
 INSStaggeredHierarchyIntegrator {                //
@@ -195,9 +213,44 @@ LoadBalancer {                //
    max_workload_factor = 1                //
 }                //
 //
+ConstraintIBKinematics {
+
+     hairs {
+     structure_names                  = "hair1_2d_512_1", "hair2_2d_512_1" //, "hair3_2d_512_1", "ant_2d_512_1"    //
+     structure_levels                 = MAX_LEVELS - 1
+     calculate_translational_momentum = 0,0,0
+     calculate_rotational_momentum    = 0,0,0
+     lag_position_update_method       = "CONSTRAINT_VELOCITY"
+     tagged_pt_identifier             = MAX_LEVELS - 1, 0  // level, relative idx of lag point
+
+     kinematics_velocity_function_0   = "0.0"
+     kinematics_velocity_function_1   = "0.0"
+     kinematics_velocity_function_2   = "0.0"
+
+    }
+
+}
+
+
+  PrintOutput {
+
+      print_output                = TRUE    //default false, if false nothing will be printed.
+      output_interval             = 1       //default 1
+      output_drag_kinetic_energy  = TRUE    //default false, if false it will not be computed.
+      output_power                = FALSE    //default false, if false it will not be computed.
+      output_rig_transvel         = FALSE    //default false
+      output_rig_rotvel           = FALSE    //default false
+      output_com_coords           = FALSE    //default false
+      output_moment_inertia       = FALSE   //default false
+
+      output_dirname              = "./cylinder_dump"
+      base_filename               = "cylinder2d"
+  }
+
+
 Main { //
 // log file parameters
-   log_file_name = "IB2d.log"                //
+   log_file_name = "IB2dhairs.log"                //
    log_all_nodes = FALSE                //
 //
 // visualization dump parameters

@@ -1,6 +1,6 @@
 // Config files
-//#include <IBAMR_prefix_config.h>
-//#include <IBTK_prefix_config.h>
+#include <IBAMR_config.h>
+#include <IBTK_config.h>
 #include <SAMRAI_config.h>
 
 // Headers for basic PETSc functions
@@ -13,10 +13,11 @@
 #include <StandardTagAndInitialize.h>
 
 // Headers for application-specific algorithm/data structure objects
+#include <ibamr/ConstraintIBMethod.h>
 #include <ibamr/IBExplicitHierarchyIntegrator.h>
-#include <ibamr/IBMethod.h>
 #include <ibamr/IBStandardForceGen.h>
 #include <ibamr/IBStandardInitializer.h>
+#include <ibamr/INSCollocatedHierarchyIntegrator.h>
 #include <ibamr/INSStaggeredHierarchyIntegrator.h>
 #include <ibamr/app_namespaces.h>
 #include <ibtk/AppInitializer.h>
@@ -26,6 +27,7 @@
 
 // Headers for application specific operations.
 #include "update_target_point_positions.h"
+#include "RigidBodyKinematics.h"
 
 // Function prototypes
 void
@@ -91,7 +93,8 @@ main(
         // Create major algorithm and data objects that comprise the
         // application.  These objects are configured from the input database
         // and, if this is a restarted run, from the restart database.
-        Pointer<IBMethod> ib_method_ops = new IBMethod("IBMethod", app_initializer->getComponentDatabase("IBMethod"));
+        const int num_structures = input_db->getIntegerWithDefault("num_structures", 2);
+	Pointer<ConstraintIBMethod> ib_method_ops = new ConstraintIBMethod("ConstraintIBMethod", app_initializer->getComponentDatabase("ConstraintIBMethod"), num_structures);
         Pointer<INSHierarchyIntegrator> navier_stokes_integrator = new INSStaggeredHierarchyIntegrator("INSStaggeredHierarchyIntegrator", app_initializer->getComponentDatabase("INSStaggeredHierarchyIntegrator"));
         Pointer<IBHierarchyIntegrator> time_integrator = new IBExplicitHierarchyIntegrator("IBHierarchyIntegrator", app_initializer->getComponentDatabase("IBHierarchyIntegrator"), ib_method_ops, navier_stokes_integrator);
         Pointer<CartesianGridGeometry<NDIM> > grid_geometry = new CartesianGridGeometry<NDIM>("CartesianGeometry", app_initializer->getComponentDatabase("CartesianGeometry"));
@@ -154,6 +157,21 @@ main(
 
         // Initialize hierarchy configuration and data on all patches.
         time_integrator->initializePatchHierarchy(patch_hierarchy, gridding_algorithm);
+
+        // Create ConstraintIBKinematics objects                                                                                              
+        vector<Pointer<ConstraintIBKinematics> > ibkinematics_ops_vec;
+        Pointer<ConstraintIBKinematics> ib_kinematics_op;
+        // struct_0                                                                                                                           
+        ib_kinematics_op = new RigidBodyKinematics(
+						   "hairs",
+						   app_initializer->getComponentDatabase("ConstraintIBKinematics")->getDatabase("hairs"),
+						   ib_method_ops->getLDataManager(),
+						   patch_hierarchy);
+        ibkinematics_ops_vec.push_back(ib_kinematics_op);
+
+        // register ConstraintIBKinematics objects with ConstraintIBMethod.                                                                   
+        ib_method_ops->registerConstraintIBKinematics(ibkinematics_ops_vec);
+        ib_method_ops->initializeHierarchyOperatorsandData();
 
         // Deallocate initialization objects.
         ib_method_ops->freeLInitStrategy();
