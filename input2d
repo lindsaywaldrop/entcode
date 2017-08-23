@@ -113,13 +113,13 @@ ConstraintIBMethod { //
                 //
 IBStandardInitializer {                //
    max_levels = MAX_LEVELS                //
-   structure_names = "hair1_2d_512_1", "hair2_2d_512_1" //, "hair3_2d_512_1", "ant_2d_512_1"    //   
-   hair1_2d_512_1 {                //
+   structure_names = "hairs" //, "hair2_2d_512_1", "hair3_2d_512_1", "ant_2d_512_1"    //   
+   hairs {                //
       level_number = MAX_LEVELS - 1                //
    } //
-   hair2_2d_512_1 {                //
-      level_number = MAX_LEVELS - 1                //
-   } //
+//   hair2_2d_512_1 {                //
+//      level_number = MAX_LEVELS - 1                //
+//   } //
 //   hair3_2d_512_1 {                //
 //      level_number = MAX_LEVELS - 1                //
 //   } // 
@@ -216,7 +216,7 @@ LoadBalancer {                //
 ConstraintIBKinematics {
 
      hairs {
-     structure_names                  = "hair1_2d_512_1", "hair2_2d_512_1" //, "hair3_2d_512_1", "ant_2d_512_1"    //
+     structure_names                  = "hairs" // 1_2d_512_1", "hair2_2d_512_1" //, "hair3_2d_512_1", "ant_2d_512_1"    //
      structure_levels                 = MAX_LEVELS - 1
      calculate_translational_momentum = 0,0,0
      calculate_rotational_momentum    = 0,0,0

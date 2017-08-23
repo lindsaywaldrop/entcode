@@ -93,7 +93,7 @@ main(
         // Create major algorithm and data objects that comprise the
         // application.  These objects are configured from the input database
         // and, if this is a restarted run, from the restart database.
-        const int num_structures = input_db->getIntegerWithDefault("num_structures", 2);
+        const int num_structures = input_db->getIntegerWithDefault("num_structures", 1);
 	Pointer<ConstraintIBMethod> ib_method_ops = new ConstraintIBMethod("ConstraintIBMethod", app_initializer->getComponentDatabase("ConstraintIBMethod"), num_structures);
         Pointer<INSHierarchyIntegrator> navier_stokes_integrator = new INSStaggeredHierarchyIntegrator("INSStaggeredHierarchyIntegrator", app_initializer->getComponentDatabase("INSStaggeredHierarchyIntegrator"));
         Pointer<IBHierarchyIntegrator> time_integrator = new IBExplicitHierarchyIntegrator("IBHierarchyIntegrator", app_initializer->getComponentDatabase("IBHierarchyIntegrator"), ib_method_ops, navier_stokes_integrator);
