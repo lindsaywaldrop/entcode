@@ -44,8 +44,8 @@ kappa_target = 1.0e-2;        % target point penalty spring constant (Newton)
 % Generate grid of points
 
 
-x_grid = linspace(-L,L,0.5*N);
-y_grid = linspace(-L,L,0.5*N);
+x_grid = linspace(-L,L,2*L/dx);
+y_grid = linspace(-L,L,2*L/dx);
 [gridpts_x,gridpts_y] = meshgrid(x_grid,y_grid);
 
 % Antennule
@@ -199,7 +199,7 @@ hold off
 
 % Write out vertex points
 
-vertex_fid = fopen(['hairs_' num2str(N) '_' num2str(setn) '.vertex'], 'w');
+vertex_fid = fopen('hairs.vertex', 'w');
 
 totpoints = length(ant_x)+length(h1_x)+length(h2_x)+length(h3_x);
 
@@ -211,15 +211,15 @@ for j = 1:length(ant_x)
 end
 
 for j = 1:length(h1_x)
-  fprintf(vertex_fid, '%1.16e %1.16e\n', xh1(j), yh1(j));
+  fprintf(vertex_fid, '%1.16e %1.16e\n', h1_x(j), h1_y(j));
 end
 
 for j = 1:length(h2_x)
-  fprintf(vertex_fid, '%1.16e %1.16e\n', xh2(j), yh2(j));
+  fprintf(vertex_fid, '%1.16e %1.16e\n', h2_x(j), h2_y(j));
 end
 
 for j = 1:length(h3_x)
-  fprintf(vertex_fid, '%1.16e %1.16e\n', xh3(j), yh3(j));
+  fprintf(vertex_fid, '%1.16e %1.16e\n', h3_x(j), h3_y(j));
 end
 %end
 %hold off
