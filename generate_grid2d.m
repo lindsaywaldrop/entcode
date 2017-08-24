@@ -1,4 +1,12 @@
 function [p] = generate_grid2d(GtD,dist,theta,setn)
+% Generates grid for use with Constraint IB Method IBAMR
+%
+% GtD = gap to diameter ratio between hairs
+% dist = distance from antennule
+% theta = angle of center hair with positive x-axis
+%
+%
+
 % Sets initial parameters
 L = 0.5;                            % length of computational domain (m)
 N = 512;                            % number of Cartesian grid meshwidths at the finest level of the AMR grid
@@ -63,16 +71,6 @@ ant_y = gridpts_y(antIn);
 plot(ant_x,ant_y,'.')
 
 
-% Step 3: Write out the target point information
-target_fid = fopen(['ant_2d_' num2str(N) '_' num2str(setn) '.target'], 'w');
-
-fprintf(target_fid, '%d\n', length(ant_x));
-
-for s = 0:length(ant_x)-1
-   fprintf(target_fid, '%d %1.16e\n', s, kappa_target*dx/(dx^2));
-end
-
-fclose(target_fid);
 
 % Step 4: Write out the beam point information
 % beam_fid = fopen(['ant_2d_' num2str(N) '_' num2str(setn) '.beam'], 'w');
@@ -103,27 +101,6 @@ h1_y = gridpts_y(h1In);
 
 plot(h1_x,h1_y,'.')
 
-vertex_fid = fopen(['hair1_2d_' num2str(N) '_' num2str(setn) '.vertex'], 'w');
-
-% first line is the number of vertices in the file
-fprintf(vertex_fid, '%d\n', length(h1_x));
-% Step 2: Write out the vertex information
-
-%end
-%hold off
-fclose(vertex_fid);
-
-% Step 3: Write out the target point information
-target_fid = fopen(['hair1_2d_' num2str(N) '_' num2str(setn) '.target'], 'w');
-
-fprintf(target_fid, '%d\n', length(h1_x));
-
-for s = 0:length(h1_x)-1
-   fprintf(target_fid, '%d %1.16e\n', s, kappa_target*dx/(dx^2));
-end
-
-fclose(target_fid);
-
 
 
 % Hair 2 (top)
@@ -135,28 +112,6 @@ h2_x = gridpts_x(h2In);
 h2_y = gridpts_y(h2In);
 
 plot(h2_x,h2_y,'.')
-
-vertex_fid = fopen(['hair2_2d_' num2str(N) '_' num2str(setn) '.vertex'], 'w');
-
-% first line is the number of vertices in the file
-fprintf(vertex_fid, '%d\n', length(h2_x));
-% Step 2: Write out the vertex information
-
-%end
-%hold off
-fclose(vertex_fid);
-
-% Step 3: Write out the target point information
-target_fid = fopen(['hair2_2d_' num2str(N) '_' num2str(setn) '.target'], 'w');
-
-fprintf(target_fid, '%d\n', length(h2_x));
-
-for s = 0:length(h2_x)-1
-   fprintf(target_fid, '%d %1.16e\n', s, kappa_target*dx/(dx^2));
-end
-
-fclose(target_fid);
-
 
 
 
@@ -170,26 +125,6 @@ h3_y = gridpts_y(h3In);
 
 plot(h3_x,h3_y,'.')
 
-vertex_fid = fopen(['hair3_2d_' num2str(N) '_' num2str(setn) '.vertex'], 'w');
-
-% first line is the number of vertices in the file
-fprintf(vertex_fid, '%d\n', length(h3_x));
-% Step 2: Write out the vertex information
-
-%end
-%hold off
-fclose(vertex_fid);
-
-% Step 3: Write out the target point information
-target_fid = fopen(['hair3_2d_' num2str(N) '_' num2str(setn) '.target'], 'w');
-
-fprintf(target_fid, '%d\n', length(h3_x));
-
-for s = 0:length(h3_x)-1
-   fprintf(target_fid, '%d %1.16e\n', s, kappa_target*dx/(dx^2));
-end
-
-fclose(target_fid);
 
 
 
@@ -200,6 +135,7 @@ hold off
 % Write out vertex points
 
 vertex_fid = fopen('hairs.vertex', 'w');
+%vertex_fid = fopen(['hairs',num2str(setn),'.vertex'], 'w');
 
 totpoints = length(ant_x)+length(h1_x)+length(h2_x)+length(h3_x);
 
@@ -224,6 +160,51 @@ end
 %end
 %hold off
 fclose(vertex_fid);
+
+
+% Step 3: Write out the target point information
+% target_fid = fopen(['ant_2d_' num2str(N) '_' num2str(setn) '.target'], 'w');
+% 
+% fprintf(target_fid, '%d\n', length(ant_x));
+% 
+% for s = 0:length(ant_x)-1
+%    fprintf(target_fid, '%d %1.16e\n', s, kappa_target*dx/(dx^2));
+% end
+% 
+% fclose(target_fid);
+% 
+% 
+% 
+% target_fid = fopen(['hair1_2d_' num2str(N) '_' num2str(setn) '.target'], 'w');
+% 
+% fprintf(target_fid, '%d\n', length(h1_x));
+% 
+% for s = 0:length(h1_x)-1
+%    fprintf(target_fid, '%d %1.16e\n', s, kappa_target*dx/(dx^2));
+% end
+% 
+% fclose(target_fid);
+% 
+% target_fid = fopen(['hair2_2d_' num2str(N) '_' num2str(setn) '.target'], 'w');
+% 
+% fprintf(target_fid, '%d\n', length(h2_x));
+% 
+% for s = 0:length(h2_x)-1
+%    fprintf(target_fid, '%d %1.16e\n', s, kappa_target*dx/(dx^2));
+% end
+% 
+% fclose(target_fid);
+% 
+% 
+% target_fid = fopen(['hair3_2d_' num2str(N) '_' num2str(setn) '.target'], 'w');
+% 
+% fprintf(target_fid, '%d\n', length(h3_x));
+% 
+% for s = 0:length(h3_x)-1
+%    fprintf(target_fid, '%d %1.16e\n', s, kappa_target*dx/(dx^2));
+% end
+% 
+% fclose(target_fid);
 
 
 p=1;
