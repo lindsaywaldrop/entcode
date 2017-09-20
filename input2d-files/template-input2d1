@@ -1,9 +1,9 @@
 // physical parameters
 //
-L = 0.5                                   // length of the computational (fluid) domain (m)
+L = 2.0                                   // length of the computational (fluid) domain (m)
 RHO = 1000  				  //fluid mass density (kg/m^3)
 FS = 0.06				  // Flow speed of tank (m/s)
-RE = 1.0				  // Reynolds number of real aesthetasc
+RE = 5.0				  // Reynolds number of real aesthetasc
 DD = 0.01				  // diameter of model aesthetasc in simulation (m)
 MU = DD*RHO*FS/RE                           // fluid dynamic viscosity (N s / m^2)
 //
@@ -12,14 +12,14 @@ MU = DD*RHO*FS/RE                           // fluid dynamic viscosity (N s / m^
 
 MAX_LEVELS = 4                            // maximum number of levels in locally refined grid
 REF_RATIO  = 4                            // refinement ratio between levels
-N = 8                                     // actual    number of grid cells on coarsest grid level
+N = 16                                     // actual    number of grid cells on coarsest grid level
 NFINEST = (REF_RATIO^(MAX_LEVELS - 1))*N  // effective number of grid cells on finest   grid level
 DX = (1.0*L)/NFINEST                      // Cartesian mesh width (m)
 //
 // solver parameters
 DELTA_FUNCTION      = "IB_4"              //
 START_TIME          = 0.0e0               // initial simulation time
-END_TIME            = 0.10               // final simulation time
+END_TIME            = 0.05               // final simulation time
 GROW_DT             = 2.0e0               // growth factor for timesteps
 NUM_CYCLES          = 1                   // number of cycles of fixed-point iteration
 CONVECTIVE_OP_TYPE  = "PPM"               // convective differencing discretization type
@@ -105,7 +105,7 @@ ConstraintIBMethod { //
    output_rig_rotvel     = TRUE               //default false
    output_com_coords     = TRUE               //default false
    output_moment_inertia = TRUE               //default false 
-   output_dirname        = "./Dump--hair"    //default "./ConstraintIBMethodDump" 
+   output_dirname        = "./Dump--hair4"    //default "./ConstraintIBMethodDump" 
    base_filename         = "hairs"      //default  "ImmersedStructure" 
   } //
 //
@@ -113,8 +113,8 @@ ConstraintIBMethod { //
                 //
 IBStandardInitializer {                //
    max_levels = MAX_LEVELS                //
-   structure_names = "hairs" //, "hair2_2d_512_1", "hair3_2d_512_1", "ant_2d_512_1"    //   
-   hairs {                //
+   structure_names = "hairs1" //, "hair2_2d_512_1", "hair3_2d_512_1", "ant_2d_512_1"    //   
+   hairs1 {                //
       level_number = MAX_LEVELS - 1                //
    } //
 //   hair2_2d_512_1 {                //
@@ -216,7 +216,7 @@ LoadBalancer {                //
 ConstraintIBKinematics {
 
      hairs {
-     structure_names                  = "hairs" // 1_2d_512_1", "hair2_2d_512_1" //, "hair3_2d_512_1", "ant_2d_512_1"    //
+     structure_names                  = "hairs1" // 1_2d_512_1", "hair2_2d_512_1" //, "hair3_2d_512_1", "ant_2d_512_1"    //
      structure_levels                 = MAX_LEVELS - 1
      calculate_translational_momentum = 0,0,0
      calculate_rotational_momentum    = 0,0,0
@@ -243,20 +243,20 @@ ConstraintIBKinematics {
       output_com_coords           = FALSE    //default false
       output_moment_inertia       = FALSE   //default false
 
-      output_dirname              = "./cylinder_dump"
-      base_filename               = "cylinder2d"
+      output_dirname              = "./cylinder_hairs"
+      base_filename               = "hairs2d"
   }
 
 
 Main { //
 // log file parameters
-   log_file_name = "IB2dhairs.log"                //
+   log_file_name = "IB2dhairs1.log"                //
    log_all_nodes = FALSE                //
 //
 // visualization dump parameters
    viz_writer = "VisIt"                //
    viz_dump_interval = 500        // set to zero to turn off
-   viz_dump_dirname = "viz_IB2d"                //
+   viz_dump_dirname = "runs/viz_IB2d1"                //
    visit_number_procs_per_file = 1                //
 //
 // restart dump parameters
@@ -264,7 +264,7 @@ Main { //
    restart_write_dirname = "restart_IB2d"                //
 //
 // hierarchy data dump parameters
-   data_dump_interval = 1000         // set to zero to turn off
+   data_dump_interval = 0         // set to zero to turn off
    data_dump_dirname = "hier_data_IB2d"                //
 //
 // timer dump parameters
@@ -303,8 +303,8 @@ VelocityBcCoefs_0 {                       // boundary conditions for the x-compo
 //
    gcoef_function_0 = "if(t <= 0.0125, (FS/0.0125)*t, FS)" //
    gcoef_function_1 = "if(t <= 0.0125, (FS/0.0125)*t, FS)" //
-   gcoef_function_2 = "0.0"                //
-   gcoef_function_3 = "0.0"                //
+   gcoef_function_2 = "if(t <= 0.0125, (FS/0.0125)*t, FS)"                //
+   gcoef_function_3 = "if(t <= 0.0125, (FS/0.0125)*t, FS)"                //
 } //
 //
 VelocityBcCoefs_1 {                       // boundary conditions for the y-component of the velocity
