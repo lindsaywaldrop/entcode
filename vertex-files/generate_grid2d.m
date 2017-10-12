@@ -52,8 +52,8 @@ kappa_target = 1.0e-2;        % target point penalty spring constant (Newton)
 % Generate grid of points
 
 
-x_grid = linspace(-L,L,2*L/dx);
-y_grid = linspace(-L,L,2*L/dx);
+x_grid = linspace(-L,L,8*L/dx);
+y_grid = linspace(-L,L,8*L/dx);
 [gridpts_x,gridpts_y] = meshgrid(x_grid,y_grid);
 
 % Antennule

@@ -1,10 +1,20 @@
 #!/bin/bash
 
+# Optional clear hairline of curve files. 
+#for i in `seq 1 1233`; do cd viz_IB2d${i}/hairline; rm *.curve; cd /Users/Bosque/IBAMR/entcode/code/runs; done
+
 # Separate main parameter file into three files
 cut -f 2 lineout_analysis.txt > startx.txt
 cut -f 3 lineout_analysis.txt > starty.txt
 cut -f 4 lineout_analysis.txt > endx.txt
 cut -f 5 lineout_analysis.txt > endy.txt
+
+cut -f 6 lineout_analysis.txt > hair1x.txt
+cut -f 7 lineout_analysis.txt > hair1y.txt
+cut -f 8 lineout_analysis.txt > hair2x.txt
+cut -f 9 lineout_analysis.txt > hair2y.txt
+cut -f 10 lineout_analysis.txt > hair3x.txt
+cut -f 11 lineout_analysis.txt > hair3y.txt
 
 # Count number of lines in files
 numlines=$(grep -c "^" lineout_analysis.txt)
@@ -12,14 +22,12 @@ numlines=$(grep -c "^" lineout_analysis.txt)
 # initialize variables
 SX=0
 SY=0
-SZ=0
 EX=0
 EY=0
-EZ=0
 
 # For loop that will write files
-#for i in `seq 1 $numlines`;
-for i in `seq 1 2`;
+for i in `seq 1 $numlines`;
+#for i in `seq 1 2`;
 do
 # Sets Wo based on i
 SX=$(awk -v var="$i" 'NR==var' startx.txt)
@@ -27,7 +35,7 @@ SY=$(awk -v var="$i" 'NR==var' starty.txt)
 EX=$(awk -v var="$i" 'NR==var' endx.txt)
 EY=$(awk -v var="$i" 'NR==var' endy.txt)
 
-/Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout1.py ${i} $SX $SY $SZ $EX $EY $EZ
+/Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout1.py ${i} $SX $SY $EX $EY
 
 done
 

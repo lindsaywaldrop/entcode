@@ -10,7 +10,7 @@ angle = data(:,1);
 % Generate hair files
 
 for i = 1:size(data,1)
-   
+ 
    [p] = generate_grid2d(Gap(i),0.02,angle(i),i);
     
 end

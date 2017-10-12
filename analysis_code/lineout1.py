@@ -24,10 +24,8 @@ import sys
 num=sys.argv[1]
 startpointx=sys.argv[2]
 startpointy=sys.argv[3]
-startpointz=sys.argv[4]
-endpointx=sys.argv[5]
-endpointy=sys.argv[6]
-endpointz=sys.argv[7]
+endpointx=sys.argv[4]
+endpointy=sys.argv[5]
 
 OpenDatabase("localhost:/Users/Bosque/IBAMR/entcode/code/runs/viz_IB2d"+str(num)+"/lag_data.visit", 0)
 AddPlot("Mesh", "hairs"+str(num)+"_vertices", 1, 1)
@@ -35,7 +33,7 @@ DrawPlots()
 OpenDatabase("localhost:/Users/Bosque/IBAMR/entcode/code/runs/viz_IB2d"+str(num)+"/dumps.visit", 0)
 AddPlot("Pseudocolor", "U_magnitude", 1, 1)
 DrawPlots()
-Query("Lineout", end_point=(0, -0.99, 0), num_samples=50, start_point=(0, 0.99, 0), use_sampling=0, vars=("U_magnitude"))
+Query("Lineout", end_point=(float(endpointx), float(endpointy), 0), num_samples=1000, start_point=(float(startpointx), float(startpointy), 0), use_sampling=1, vars=("U_magnitude"))
 SetActiveWindow(2)
 for i in range(TimeSliderGetNStates()):
 	SetTimeSliderState(i)
