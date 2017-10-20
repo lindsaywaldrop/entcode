@@ -1,4 +1,4 @@
-function [p] = generate_grid2d(GtD,dist,theta,setn)
+function [p] = generate_grid2d(GtD,dist,theta,setn,np,N)
 % Generates grid for use with Constraint IB Method IBAMR
 %
 % GtD = gap to diameter ratio between hairs
@@ -9,11 +9,11 @@ function [p] = generate_grid2d(GtD,dist,theta,setn)
 
 % Sets initial parameters
 L = 2.0;                            % length of computational domain (m)
-N = 1024;                            % number of Cartesian grid meshwidths at the finest level of the AMR grid
-dx = 1.0*L/N                           % Cartesian mesh width (m)
+%N = 4096;                            % number of Cartesian grid meshwidths at the finest level of the AMR grid
+dx = 1*L/N                           % Cartesian mesh width (m)
 % Notes ~ Rule of thumb: 2 boundary points per fluid grid point. 
 %        vertex pts too far apart: flow thru boundary, too close: numerical weirdness
-NFINEST = 4;  % NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
+NFINEST = 5;  % NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
 
 hdia = 0.01;     % Diameter of hair
 adia = 0.1;     % Diameter of flagellum
@@ -27,11 +27,11 @@ width = GtD*hdia+hdia;
 hair1Centerx = mindGap*cos(theta);
 hair1Centery = mindGap*sin(theta);
 
-hair2Centerx = hair1Centerx-width*sin(theta);
-hair2Centery = hair1Centery+width*cos(theta);
+hair2Centerx = hair1Centerx-width*sin(theta)
+hair2Centery = hair1Centery+width*cos(theta)
 
-hair3Centerx = hair1Centerx+width*sin(theta);
-hair3Centery = hair1Centery-width*cos(theta);
+hair3Centerx = hair1Centerx+width*sin(theta)
+hair3Centery = hair1Centery-width*cos(theta)
 
 %dx = L/(16*1.5*NFINEST);
 % 
@@ -52,8 +52,8 @@ kappa_target = 1.0e-2;        % target point penalty spring constant (Newton)
 % Generate grid of points
 
 
-x_grid = linspace(-L,L,8*L/dx);
-y_grid = linspace(-L,L,8*L/dx);
+x_grid = linspace(-L,L,np*L/dx);
+y_grid = linspace(-L,L,np*L/dx);
 [gridpts_x,gridpts_y] = meshgrid(x_grid,y_grid);
 
 % Antennule
@@ -137,7 +137,7 @@ hold off
 %vertex_fid = fopen('hairs.vertex', 'w');
 vertex_fid = fopen(['hairs',num2str(setn),'.vertex'], 'w');
 
-totpoints = length(ant_x)+length(h1_x)+length(h2_x)+length(h3_x);
+totpoints = length(ant_x)+length(h1_x)+length(h2_x)+length(h3_x)
 
 % first line is the number of vertices in the file
 fprintf(vertex_fid, '%d\n', totpoints);

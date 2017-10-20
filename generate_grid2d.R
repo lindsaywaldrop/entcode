@@ -16,7 +16,10 @@ circle<-function(center,radius,L,dx){
 	
 	THETA=seq(0,2*pi,length=250)
 	RHO=array(1,250)*radius
-	points<-pol2cart(RHO,THETA,degrees=FALSE)
+	Z = array(1,length(RHO))*0
+	nap<-matrix(c(THETA,RHO,Z),nrow=250,ncol=3)
+	points<-pol2cart(nap)
+	points<-as.data.frame(points)
 	
 	In<-inpolygon(whole_grid$X,whole_grid$Y,points$x,points$y,boundary=FALSE)
 	Xin<-whole_grid$X[In]
@@ -28,10 +31,10 @@ circle<-function(center,radius,L,dx){
 	return(circ)
 }
 
-theta=0
-L = 0.5         # length of computational domain (m)
-N = 512        # number of Cartesian grid meshwidths at the finest level of the AMR grid
-dx = (L/N)/(2)  # Cartesian mesh width (m)
+th=20.286
+L = 2.0         # length of computational domain (m)
+N = 1024        # number of Cartesian grid meshwidths at the finest level of the AMR grid
+dx = 1.0*(L/N)  # Cartesian mesh width (m)
 # Notes ~ Rule of thumb: 2 boundary points per fluid grid point. 
 #        vertex pts too far apart: flow thru boundary, too close: numerical weirdness
 NFINEST = 4  # NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
@@ -39,20 +42,20 @@ NFINEST = 4  # NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
 hdia = 0.01     # Diameter of hair
 adia = 0.1     # Diameter of flagellum
 
-theta = (theta/180)*pi      # Angle off positive x-axis in radians
-GtD = 1.1      # Gap width to diameter ratio
-dist = 0.01     # Distance between antennule and hair 
+th2 = (th/180)*pi      # Angle off positive x-axis in radians
+GtD = 6.0787      # Gap width to diameter ratio
+dist = 0.02     # Distance between antennule and hair 
 mindGap = (0.5*adia)+(0.5*hdia)+dist  # Calculate distance between hair centers
 width = GtD*hdia+hdia
 
-hair1Centerx = mindGap*cos(theta)
-hair1Centery = mindGap*sin(theta)
+hair1Centerx = mindGap*cos(th2)
+hair1Centery = mindGap*sin(th2)
 
-hair2Centerx = hair1Centerx-width*sin(theta)
-hair2Centery = hair1Centery+width*cos(theta)
+hair2Centerx = hair1Centerx-width*sin(th2)
+hair2Centery = hair1Centery+width*cos(th2)
 
-hair3Centerx = hair1Centerx+width*sin(theta)
-hair3Centery = hair1Centery-width*cos(theta)
+hair3Centerx = hair1Centerx+width*sin(th2)
+hair3Centery = hair1Centery-width*cos(th2)
 
 kappa_target = 1.0e-2        # target point penalty spring constant (Newton)
 
@@ -83,18 +86,18 @@ points(Y~X,data=h3)
 
 totalN<-aN+h1N+h2N+h3N
 
-filename<-"hairs2.vertex"
-if(file.exists(filename)) file.remove(filename)
-cat(as.character(totalN),sep="\n",file=filename,append=TRUE)
-for (i in 1:aN){
-cat(c(as.character(ant$X[i])," ",as.character(ant$Y[i]),"\n"),file=filename,sep="",append=TRUE)	
-}
-for (i in 1:h1N){
-cat(c(as.character(h1$X[i])," ",as.character(h1$Y[i]),"\n"),file=filename,sep="",append=TRUE)	
-}
-for (i in 1:h2N){
-cat(c(as.character(h2$X[i])," ",as.character(h2$Y[i]),"\n"),file=filename,sep="",append=TRUE)	
-}
-for (i in 1:h3N){
-cat(c(as.character(h3$X[i])," ",as.character(h3$Y[i]),"\n"),file=filename,sep="",append=TRUE)	
-}
+#filename<-"hairs2.vertex"
+#if(file.exists(filename)) file.remove(filename)
+#cat(as.character(totalN),sep="\n",file=filename,append=TRUE)
+#for (i in 1:aN){
+#cat(c(as.character(ant$X[i])," ",as.character(ant$Y[i]),"\n"),file=filename,sep="",append=TRUE)	
+#}
+#for (i in 1:h1N){
+#cat(c(as.character(h1$X[i])," ",as.character(h1$Y[i]),"\n"),file=filename,sep="",append=TRUE)	
+#}
+#for (i in 1:h2N){
+#cat(c(as.character(h2$X[i])," ",as.character(h2$Y[i]),"\n"),file=filename,sep="",append=TRUE)	
+#}
+#for (i in 1:h3N){
+#cat(c(as.character(h3$X[i])," ",as.character(h3$Y[i]),"\n"),file=filename,sep="",append=TRUE)	
+#}
