@@ -11,6 +11,6 @@ angle = data(:,1);
 
 for i = 1:size(data,1)
  
-   [p] = generate_grid2d(Gap(i),0.02,angle(i),i);
+   [p] = generate_grid2d(Gap(i),0.02,angle(i),i,3,4096);
     
 end
