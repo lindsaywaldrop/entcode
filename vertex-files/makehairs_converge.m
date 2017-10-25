@@ -2,9 +2,8 @@
 
 
 %handle the data
-N=2048;
+N=4096;
 numPts = [0.5,1,2,3,4,5];
-
 % Generate hair files
 
 for i = 1:size(numPts,2)

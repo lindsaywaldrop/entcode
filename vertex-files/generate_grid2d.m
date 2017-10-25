@@ -17,21 +17,29 @@ NFINEST = 5;  % NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
 
 hdia = 0.01;     % Diameter of hair
 adia = 0.1;     % Diameter of flagellum
+p.hdia=hdia;
 
 theta = (theta/180)*pi;      % Angle off positive x-axis in radians
 %GtD = 1.1;      % Gap width to diameter ratio
 %dist = 0.1;     % Distance between antennule and hair 
 mindGap = 0.5*adia+0.5*hdia+dist;  % Calculate distance between hair centers
 width = GtD*hdia+hdia;
+p.width=width;
 
 hair1Centerx = mindGap*cos(theta);
 hair1Centery = mindGap*sin(theta);
+p.hair1Centerx = hair1Centerx;
+p.hair1Centery = hair1Centery;
 
 hair2Centerx = hair1Centerx-width*sin(theta)
 hair2Centery = hair1Centery+width*cos(theta)
+p.hair2Centerx = hair2Centerx;
+p.hair2Centery = hair2Centery;
 
 hair3Centerx = hair1Centerx+width*sin(theta)
 hair3Centery = hair1Centery-width*cos(theta)
+p.hair3Centerx = hair3Centerx;
+p.hair3Centery = hair3Centery;
 
 %dx = L/(16*1.5*NFINEST);
 % 
@@ -101,7 +109,8 @@ h1_y = gridpts_y(h1In);
 
 plot(h1_x,h1_y,'.')
 
-
+p.h1_x = h1_x;
+p.h1_y = h1_y;
 
 % Hair 2 (top)
 [hH2,xh2,yh2] = circle([hair2Centerx,hair2Centery],0.5*hdia,hN,'.');
@@ -113,6 +122,8 @@ h2_y = gridpts_y(h2In);
 
 plot(h2_x,h2_y,'.')
 
+p.h2_x = h2_x;
+p.h2_y = h2_y;
 
 
 % Hair 3 (bottom)
@@ -125,7 +136,8 @@ h3_y = gridpts_y(h3In);
 
 plot(h3_x,h3_y,'.')
 
-
+p.h3_x = h3_x;
+p.h3_y = h3_y;
 
 
 
@@ -207,7 +219,7 @@ fclose(vertex_fid);
 % fclose(target_fid);
 
 
-p=1;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
