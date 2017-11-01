@@ -10,11 +10,11 @@ rm(list=ls())
 
 # Calculate leakiness base (no hairs condition)
 domain = 2.0		   	 # length of computational domain, m
-dx = 0.002       	     # Distance of mesh grid, m
+dx = 4.8828e-04       	     # Distance of mesh grid, m
 hair_dia = 0.01   	 	 # diameter of each hair, m
 speed = 0.06      	 	 # fluid speed, m/s
-duration = 0.05   	 	 # duration of simulation, s
-sample = 1000			 # sampling rate
+duration = 0.025   	 	 # duration of simulation, s
+sample = 5000			 # sampling rate
 
 half_sample = floor(sample/2)	 # Calculates the position of hair 1
 shear_pt = floor(sample*(0.3*hair_dia+0.5*hair_dia)/domain) # Calculates distance of shear measurement from hair center
@@ -38,7 +38,7 @@ for (j in 1:n){		# Main loop
 	# Sets working directory
 	setwd(dirname)
 	# Loads final time-step data
-	data1 <- read.table("hairline0100.curve", header=FALSE, sep="")	
+	data1 <- read.table("hairline0005.curve", header=FALSE, sep="")	
 	
 	# Calculates bottom of leakiness ratio based on hair spacing for each simulation
 	gapshere<-floor(sample*(gaps$V1[j]/domain))			# Calculates the gap distance in sampling units
@@ -82,6 +82,6 @@ points(shear_hair$hair3top,pch=21,col="blue",bg="blue")
 points(shear_hair$hair3bottom,pch=21,col="blue")
 
 # Saves leakiness values
-#write.table(leakiness,file=paste("leakiness",n,"-",Sys.Date(),".csv",sep=""),sep=",")
+write.table(leakiness,file=paste("leakiness",n,"-",Sys.Date(),".csv",sep=""),sep=",")
 write.table(shear_hair,file=paste("shear_hair",n,"-",Sys.Date(),".csv",sep=""),sep=",")
 #################################################################################################################
