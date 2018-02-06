@@ -1,9 +1,9 @@
 #!/bin/bash
-# SBATCH -p RM-shared
-# SBATCH -t 12:00:00
-# SBATCH -N 1
-# SBATCH --ntasks-per-node=1
-# SBATCH --mail-type=ALL
+#SBATCH -p RM-shared
+#SBATCH -t 12:00:00
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=1
+#SBATCH --mail-type=ALL
 
 #set -x 
    # move to working directory

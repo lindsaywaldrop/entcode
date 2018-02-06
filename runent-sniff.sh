@@ -1,9 +1,9 @@
 #!/bin/bash
-# SBATCH -p RM-shared
-# SBATCH -t 12:00:00
-# SBATCH -N 1
-# SBATCH --ntasks-per-node=1
-# SBATCH --mail-type=ALL
+#SBATCH -p RM-shared
+#SBATCH -t 12:00:00
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=1
+#SBATCH --mail-type=ALL
 
 #ARRAYNAME='runs'
 #runs=( 93 98 121 128 )
@@ -29,7 +29,7 @@
    #  sh `cp -r /pylon2/ca4s8kp/lwaldrop/peri-gPC-git/input.${SLURM_PROCID} $LOCAL`
    # run MPI program
    #mpirun -n 2 ./main2d input2d-files/input2d${run} > mpirun.out 
-   matlab -r entsniff
+   matlab -r entsniff(401,403)
   #copy output files to persistent space
    #srun -N $SLURM_NNodes -n 1 \
    #  sh `cp -r $LOCAL/output.* /pylon2/ca4s8kp/lwaldrop/`

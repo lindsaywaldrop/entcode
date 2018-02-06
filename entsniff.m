@@ -1,3 +1,4 @@
+function entsniff(start,end)
 % entsniff.m
 %
 % Script for running code on Bridges
@@ -25,12 +26,12 @@ clc
 
 GridSize = 4096;        %Size of the finest grid
 final_time=25000;      %Final time step to be included in data analysis
-n=1233; %Number of simulations
+%n=1233; %Number of simulations
 
 pathbase1='/pylon5/ca4s8kp/lwaldrop/entcode/runs/';
 pathbase2='/pylon5/ca4s8kp/lwaldrop/entcode/hairinfo_files/';
 
-for i=401:402
+for i=start:end
     %i=3
 tic
     clear V Vinterp x y
