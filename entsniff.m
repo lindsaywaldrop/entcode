@@ -13,6 +13,9 @@
 % 	n = total number of simulations
 %	pathbase = where runs are located
 
+%Change directory
+cd('/pylon5/ca4s8kp/lwaldrop/entcode/')
+
 % Add paths to relevant matlab analysis scripts
 addpath(genpath('/pylon5/ca4s8kp/lwaldrop/entcode/'))
 
@@ -27,8 +30,9 @@ n=1233; %Number of simulations
 pathbase1='/pylon5/ca4s8kp/lwaldrop/entcode/runs/';
 pathbase2='/pylon5/ca4s8kp/lwaldrop/entcode/hairinfo_files/';
 
-for i=1:n
+for i=401:402
     %i=3
+tic
     clear V Vinterp x y
     file1=['viz_IB2d',num2str(i)];
     path1=[pathbase1,file1];
@@ -50,5 +54,5 @@ for i=1:n
     
     % Saves data relevant to next step in workflow.
     % save([pathbase,'/matfiles/',file,'.mat'],'V','Vinterp','x','y','GridSize','final_time')
-
+toc
 end
