@@ -1,4 +1,4 @@
-function entsniff(start,end)
+function entsniff(startrun,endrun)
 % entsniff.m
 %
 % Script for running code on Bridges
@@ -20,18 +20,14 @@ cd('/pylon5/ca4s8kp/lwaldrop/entcode/')
 % Add paths to relevant matlab analysis scripts
 addpath(genpath('/pylon5/ca4s8kp/lwaldrop/entcode/'))
 
-close all
-clear all
-clc
-
 GridSize = 4096;        %Size of the finest grid
 final_time=25000;      %Final time step to be included in data analysis
 %n=1233; %Number of simulations
 
-pathbase1='/pylon5/ca4s8kp/lwaldrop/entcode/runs/';
-pathbase2='/pylon5/ca4s8kp/lwaldrop/entcode/hairinfo_files/';
+pathbase1='/pylon2/ca4s8kp/lwaldrop/entcode_finished/';
+pathbase2='/pylon2/ca4s8kp/lwaldrop/hairinfo_files/';
 
-for i=start:end
+for i=startrun:endrun
     %i=3
 tic
     clear V Vinterp x y
