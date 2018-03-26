@@ -6,15 +6,13 @@
 # 
 # Open terminal window in Bosque and paste: 
 #
-# /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout1.py 1 2 3 4 5 6 7
+# /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout1.py 1 2 3 4 5 
 # Where the following numbers must be provided:
 #  - 1: the number of the simulation
 #  - 2: the x value of the startpoint for the lineout
 #  - 3: the y value of the startpoint for the lineout
-#  - 4: the z value of the startpoint for the lineout
-#  - 5: the x value of the endpoint for the lineout
-#  - 6: the y value of the endpoint for the lineout
-#  - 7: the z value of the endpoint for the lineout
+#  - 4: the x value of the endpoint for the lineout
+#  - 5: the y value of the endpoint for the lineout
 #
 # Replace [script.py] with the name of this file
 #
@@ -33,7 +31,7 @@ DrawPlots()
 OpenDatabase("localhost:/Users/Bosque/IBAMR/entcode/code/runs/viz_IB2d"+str(num)+"/dumps.visit", 0)
 AddPlot("Pseudocolor", "U_magnitude", 1, 1)
 DrawPlots()
-Query("Lineout", end_point=(float(endpointx), float(endpointy), 0), num_samples=1000, start_point=(float(startpointx), float(startpointy), 0), use_sampling=1, vars=("U_magnitude"))
+Query("Lineout", end_point=(float(endpointx), float(endpointy), 0), num_samples=5000, start_point=(float(startpointx), float(startpointy), 0), use_sampling=1, vars=("U_magnitude"))
 SetActiveWindow(2)
 for i in range(TimeSliderGetNStates()):
 	SetTimeSliderState(i)

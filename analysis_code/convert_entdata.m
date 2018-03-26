@@ -18,10 +18,10 @@ GridSize = 4096;        %Size of the finest grid
 final_time=25000;      %Final time step to be included in data analysis
 n=1233; %Number of simulations
 
-pathbase='/Users/Bosque/IBAMR/entcode/code/runs/';
+pathbase='/Volumes/HelmsDeep/IBAMR/entcode/usedruns/';
 
-for i=1:n
-    %i=3
+%for i=1:n
+    i=1233
     clear V Vinterp x y
     file=['viz_IB2d',num2str(i)];
     path1=[pathbase,file];
@@ -35,10 +35,10 @@ for i=1:n
     [x,y,Vinterp,V] = importsamrai(path_name1,'interpolaten',[GridSize GridSize]);
     
     %Shilpa's code goes here. 
-    w = 
+    
     
     % Saves data relevant to next step in workflow.
     % Note: to tighten workflow, we won't be saving this step. 
-    % save([pathbase,'/matfiles/',file,'.mat'],'V','Vinterp','x','y','GridSize','final_time')
+    save([file,'.mat'],'V','Vinterp','x','y','GridSize','final_time')
 
-end
+%end

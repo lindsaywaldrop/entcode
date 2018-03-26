@@ -67,16 +67,16 @@ y_grid = linspace(-L,L,np*L/dx);
 % Antennule
 aN = round((adia*pi)/dx)+1;
 [aH,xa,ya] = circle([0,0],0.5*adia,aN,'.');
-hold on
-xlim([-0.5*L,0.5*L])
-ylim([-0.5*L,0.5*L])
+%hold on
+%xlim([-0.5*L,0.5*L])
+%ylim([-0.5*L,0.5*L])
 
 antIn = inpolygon(gridpts_x,gridpts_y,xa,ya);
 
 ant_x = gridpts_x(antIn);
 ant_y = gridpts_y(antIn);
 
-plot(ant_x,ant_y,'.')
+%plot(ant_x,ant_y,'.')
 
 
 
@@ -107,7 +107,7 @@ h1In = inpolygon(gridpts_x,gridpts_y,xh1,yh1);
 h1_x = gridpts_x(h1In);
 h1_y = gridpts_y(h1In);
 
-plot(h1_x,h1_y,'.')
+%plot(h1_x,h1_y,'.')
 
 p.h1_x = h1_x;
 p.h1_y = h1_y;
@@ -120,7 +120,7 @@ h2In = inpolygon(gridpts_x,gridpts_y,xh2,yh2);
 h2_x = gridpts_x(h2In);
 h2_y = gridpts_y(h2In);
 
-plot(h2_x,h2_y,'.')
+%plot(h2_x,h2_y,'.')
 
 p.h2_x = h2_x;
 p.h2_y = h2_y;
@@ -134,14 +134,14 @@ h3In = inpolygon(gridpts_x,gridpts_y,xh3,yh3);
 h3_x = gridpts_x(h3In);
 h3_y = gridpts_y(h3In);
 
-plot(h3_x,h3_y,'.')
+%plot(h3_x,h3_y,'.')
 
 p.h3_x = h3_x;
 p.h3_y = h3_y;
 
 
 
-hold off
+%hold off
 
 
 % Write out vertex points
