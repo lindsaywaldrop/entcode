@@ -15,17 +15,18 @@ function entsniff(startrun,endrun)
 %	pathbase = where runs are located
 
 %Change directory
-cd('/pylon5/ca4s8kp/lwaldrop/entcode/')
+cd('/pylon5/bi561lp/lwaldrop/shilpa/')
 
 % Add paths to relevant matlab analysis scripts
-addpath(genpath('/pylon5/ca4s8kp/lwaldrop/entcode/'))
+addpath(genpath('/pylon5/bi561lp/lwaldrop/entcode/'))
+addpath(genpath('/pylon5/bi561lp/lwaldrop/shilpa/'))
 
 GridSize = 4096;        %Size of the finest grid
 final_time=25000;      %Final time step to be included in data analysis
 %n=1233; %Number of simulations
 
-pathbase1='/pylon2/ca4s8kp/lwaldrop/entcode_finished/';
-pathbase2='/pylon2/ca4s8kp/lwaldrop/hairinfo_files/';
+pathbase1='/pylon5/bi561lp/lwaldrop/shilpa/pivdata/';
+pathbase2='/pylon5/bi561lp/lwaldrop/shilpa/pivdata/';
 
 for i=startrun:endrun
     %i=3
@@ -45,11 +46,15 @@ tic
     % Loads hairdata
     load([pathbase2,'hairinfo',num2str(i),'.mat'])
     
-    % Run Shilpa's code here.
-    j = i.^2;
-    disp(num2str(j))
-    
     % Saves data relevant to next step in workflow.
-    % save([pathbase,'/matfiles/',file,'.mat'],'V','Vinterp','x','y','GridSize','final_time')
+    save([pathbase1,file1,'.mat'],'V','Vinterp','x','y','GridSize','final_time')
+    clear x y Vinterp V
+    
+    % Run Shilpa's code
+    filename=sprintf('%04d',i);
+    crabs(filename)
+
+    clear filename
+    
 toc
 end
