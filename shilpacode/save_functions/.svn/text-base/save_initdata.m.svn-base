@@ -1,0 +1,15 @@
+function save_initdata()
+%function save_initdata.m 
+%input: 
+%output: 
+%saves fixed parameters/variables initially
+
+global run_id dx dy dt Nx Ny t_final xlength ylength x y 
+global explicit_vel 
+global D
+
+%the default extension is .mat
+filename = ['postprocessing/initdata_',run_id];
+save(filename, 'dx','dy', 'dt', 'Nx', 'Ny', 't_final', 'xlength', ...
+     'ylength', 'x', 'y','run_id', 'explicit_vel', 'D');
+

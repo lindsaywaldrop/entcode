@@ -1,0 +1,15 @@
+function save_data_vel()
+%function save_data_vel.m 
+%input: 
+%output: 
+%saves velocity data
+
+global run_id 
+global u v 
+
+%the default extension is .mat
+filename = ['postprocessing/velocity_',run_id];
+
+save(filename, 'u','v'); 
+
+
