@@ -94,6 +94,7 @@ ConstraintIBMethod { //
    num_INS_cycles           = NUM_CYCLES //
    needs_divfree_projection = FALSE  //
    rho_fluid                = RHO //
+   rho_solid		    = 1.1 //
    mu_fluid                 = MU //
 //
    PrintOutput { //

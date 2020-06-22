@@ -1,8 +1,8 @@
 ######################################################################
 ## Here specify the location of the IBAMR source and the location
 ## where IBAMR has been built.
-IBAMR_SRC_DIR = /Users/Bosque/sfw/ibamr/IBAMR
-IBAMR_BUILD_DIR = /Users/Bosque/sfw/ibamr/killdevil-opt
+IBAMR_SRC_DIR = /home/lwaldrop/sfw/bridges/ibamr/IBAMR
+IBAMR_BUILD_DIR = /home/lwaldrop/sfw/bridges/ibamr/bridges-intel-opt
 
 ######################################################################
 ## Include variables specific to the particular IBAMR build.
