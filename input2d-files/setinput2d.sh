@@ -22,12 +22,12 @@ awk -v var="$Re" 'NR==6 {$0="RE = "'"var"'"   // Reynolds number of real aesthet
 # Sets Freq based on i
 name=hairs${i}
 # Writes file to replace line with Freq
-awk -v var="$name" 'NR==116 {$0="   structure_names = \42"'"var"'"\42    // "} 1' input2dRe > input2dRe1
-awk -v var="$name" 'NR==117 {$0="   "'"var"'"{   // "} 1' input2dRe1 > input2dRe2
-awk -v var="$name" 'NR==219 {$0="     structure_names                  = \42"'"var"'"\42   // "} 1' input2dRe2 > input2dRe3
+awk -v var="$name" 'NR==117 {$0="   structure_names = \42"'"var"'"\42    // "} 1' input2dRe > input2dRe1
+awk -v var="$name" 'NR==118 {$0="   "'"var"'"{   // "} 1' input2dRe1 > input2dRe2
+awk -v var="$name" 'NR==220 {$0="     structure_names                  = \42"'"var"'"\42   // "} 1' input2dRe2 > input2dRe3
 # Edits input2d to create different IBlog and visit files and folders
-awk -v var="$i" 'NR==253 {$0="   log_file_name = \42runs/IB2d.log"'"var"'"\42                //"} 1' input2dRe3 > input2dRe4
-awk -v var="$i" 'NR==259 {$0="   viz_dump_dirname = \42runs/viz_IB2d"'"var"'"\42                //"} 1' input2dRe4 > input2dRe5
+awk -v var="$i" 'NR==254 {$0="   log_file_name = \42runs/IB2d.log"'"var"'"\42                //"} 1' input2dRe3 > input2dRe4
+awk -v var="$i" 'NR==260 {$0="   viz_dump_dirname = \42runs/viz_IB2d"'"var"'"\42                //"} 1' input2dRe4 > input2dRe5
 
 # Cleans up folder
 rm input2dRe input2dRe1 input2dRe2 input2dRe3 input2dRe4
