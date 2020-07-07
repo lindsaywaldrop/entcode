@@ -296,36 +296,38 @@ VelocityInitialConditions {                //
 } //
 //
 VelocityBcCoefs_0 {                       // boundary conditions for the x-component of the velocity
-   t_half = 0.5				//
-   tau = 0.125				//
+   FS=0.06    //
    acoef_function_0 = "1.0"                //
-   acoef_function_1 = "0.0"                //
-   acoef_function_2 = "0.0"                //
-   acoef_function_3 = "0.0"                //
-//
-   bcoef_function_0 = "0.0"                //
-   bcoef_function_1 = "1.0"                //
-   bcoef_function_2 = "1.0"                //
-   bcoef_function_3 = "1.0"                //
-//
-   gcoef_function_0 = "(tanh((t-t_half)/tau)+tanh(t_half/tau))/(1+tanh(t_half/tau))" //
-   gcoef_function_1 = "0.0" //
-   gcoef_function_2 = "0.0"                //
-   gcoef_function_3 = "0.0"                //
-} //
-//
-VelocityBcCoefs_1 {                       // boundary conditions for the y-component of the velocity
-   acoef_function_0 = "1.0"                //
-   acoef_function_1 = "0.0"                //
+   acoef_function_1 = "1.0"                //
    acoef_function_2 = "1.0"                //
    acoef_function_3 = "1.0"                //
 //
    bcoef_function_0 = "0.0"                //
-   bcoef_function_1 = "1.0"                //
+   bcoef_function_1 = "0.0"                //
    bcoef_function_2 = "0.0"                //
    bcoef_function_3 = "0.0"                //
 //
-   gcoef_function_0 = "cos(pi*X_1/16.0)*exp(-2.0*t)"                //
+   gcoef_function_0 = "(t<=0.0125) ? (FS/0.0125)*t : (FS)" //
+   gcoef_function_1 = "(t<=0.0125) ? (FS/0.0125)*t : (FS)" //
+   gcoef_function_2 = "(t<=0.0125) ? (FS/0.0125)*t : (FS)"                //
+   gcoef_function_3 = "(t<=0.0125) ? (FS/0.0125)*t : (FS)"                //
+} //
+//
+VelocityBcCoefs_1 {                       // boundary conditions for the y-component of the velocity
+   t_half = 0.05 //
+   tau = 0.0125 //
+   Vel = 0.06  //
+   acoef_function_0 = "1.0"                //
+   acoef_function_1 = "1.0"                //
+   acoef_function_2 = "1.0"                //
+   acoef_function_3 = "1.0"                //
+//
+   bcoef_function_0 = "0.0"                //
+   bcoef_function_1 = "0.0"                //
+   bcoef_function_2 = "0.0"                //
+   bcoef_function_3 = "0.0"                //
+//
+   gcoef_function_0 = "0.0"                //
    gcoef_function_1 = "0.0"                //
    gcoef_function_2 = "0.0"                //
    gcoef_function_3 = "0.0"                //
