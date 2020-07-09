@@ -26,8 +26,8 @@ endrun=1
 
 #### Defines functions ####
 circle<-function(center,radius,L,dx){
-	x_grid = seq(-radius,radius,by=dx)
-	y_grid = seq(-radius,radius,by=dx)
+	x_grid = seq(-radius,radius,by=dx/2)
+	y_grid = seq(-radius,radius,by=dx/2)
 	whole_grid = meshgrid(x_grid,y_grid)
 	
 	THETA=c(seq(0,2*pi,length=250),0)

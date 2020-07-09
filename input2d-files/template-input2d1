@@ -10,7 +10,7 @@ MU = DD*RHO*FS/RE                           // fluid dynamic viscosity (N s / m^
 //
 // grid spacing parameters
 
-MAX_LEVELS = 4                            // maximum number of levels in locally refined grid
+MAX_LEVELS = 5                            // maximum number of levels in locally refined grid
 REF_RATIO  = 4                            // refinement ratio between levels
 N = 16                                     // actual    number of grid cells on coarsest grid level
 NFINEST = (REF_RATIO^(MAX_LEVELS - 1))*N  // effective number of grid cells on finest   grid level
