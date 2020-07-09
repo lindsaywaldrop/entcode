@@ -3,6 +3,17 @@
 # dist = distance from antennule
 # theta = angle of center hair with positive x-axis
 #
+# To run this R script on Bridges, enter the following commands: 
+# - module add R
+# - R   ## This will start R!##
+# - source('generate_grid2d.R')  ## Follow prompts if installing packages
+# - quit
+# - n
+
+
+# Install packages. You should only have to run these once!
+install.packages("useful",dependencies = TRUE)
+install.packages("pracma",dependencies = TRUE)
 
 #### Loads required packages ####
 require(pracma)
@@ -107,7 +118,7 @@ points(Y~X,data=h5,pch=19)
 
 totalN<-aN+h1N+h2N+h3N+h4N+h5N  # Calculates total number of points (first line of vertex file)
 
-filename<-"hairs2.vertex"   # Defines file name
+filename<-"hairs1.vertex"   # Defines file name
 if(file.exists(filename)) file.remove(filename)  # Deletes file with that name if it exists
 cat(as.character(totalN),sep="\n",file=filename,append=TRUE)
 for (i in 1:aN){
