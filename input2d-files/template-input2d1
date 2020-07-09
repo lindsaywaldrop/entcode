@@ -256,7 +256,7 @@ Main { //
 //
 // visualization dump parameters
    viz_writer = "VisIt","Silo"                //
-   viz_dump_interval = 500        // set to zero to turn off
+   viz_dump_interval = 1000        // set to zero to turn off
    viz_dump_dirname = "runs/viz_IB2d1"                //
    visit_number_procs_per_file = 1                //
 //

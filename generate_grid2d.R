@@ -35,7 +35,7 @@ circle<-function(center,radius,L,dx){
 
 ##### Input parameter definitions ####
 
-th=20.286
+th=0
 L = 2.0         # length of computational domain (m)
 N = 1024        # number of Cartesian grid meshwidths at the finest level of the AMR grid
 dx = 1.0*(L/N)  # Cartesian mesh width (m)
@@ -63,6 +63,13 @@ hair2Centery = hair1Centery+width*cos(th2)
 hair3Centerx = hair1Centerx+width*sin(th2)
 hair3Centery = hair1Centery-width*cos(th2)
 
+hair4Centerx = hair1Centerx+width*cos((30/180)*pi)
+hair4Centery = hair1Centery+width*sin((30/180)*pi)
+
+hair5Centerx = hair1Centerx+width*cos((30/180)*pi)
+hair5Centery = hair1Centery-width*sin((30/180)*pi)
+
+
 #### Produces points within defined hairs ####
 
 # Antennule
@@ -85,10 +92,20 @@ h3<-circle(c(hair3Centerx,hair3Centery),0.5*hdia,L,dx)
 h3N<-size(h3$X,2)
 points(Y~X,data=h3,pch=19)
 
+# Hair 4
+h4<-circle(c(hair4Centerx,hair4Centery),0.5*hdia,L,dx)
+h4N<-size(h4$X,2)
+points(Y~X,data=h4,pch=19)
+
+# Hair 5
+h5<-circle(c(hair5Centerx,hair5Centery),0.5*hdia,L,dx)
+h5N<-size(h5$X,2)
+points(Y~X,data=h5,pch=19)
+
 
 #### Write points to vertex file ####
 
-totalN<-aN+h1N+h2N+h3N  # Calculates total number of points (first line of vertex file)
+totalN<-aN+h1N+h2N+h3N+h4N+h5N  # Calculates total number of points (first line of vertex file)
 
 filename<-"hairs2.vertex"   # Defines file name
 if(file.exists(filename)) file.remove(filename)  # Deletes file with that name if it exists
@@ -104,6 +121,13 @@ cat(c(as.character(h2$X[i])," ",as.character(h2$Y[i]),"\n"),file=filename,sep=""
 }
 for (i in 1:h3N){
 cat(c(as.character(h3$X[i])," ",as.character(h3$Y[i]),"\n"),file=filename,sep="",append=TRUE)
+}
+for (i in 1:h4N){
+  cat(c(as.character(h4$X[i])," ",as.character(h4$Y[i]),"\n"),file=filename,sep="",append=TRUE)
+}
+
+for (i in 1:h5N){
+  cat(c(as.character(h5$X[i])," ",as.character(h5$Y[i]),"\n"),file=filename,sep="",append=TRUE)
 }
 
 
