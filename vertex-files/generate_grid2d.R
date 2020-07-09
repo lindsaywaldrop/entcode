@@ -22,7 +22,7 @@ require(useful)
 rm(list=ls()) # Clears workspace
 
 startrun=1
-endrun=1
+endrun=8
 
 #### Defines functions ####
 circle<-function(center,radius,L,dx){

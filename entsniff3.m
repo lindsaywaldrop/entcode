@@ -15,17 +15,17 @@ function entsniff3(filenumbers)
 %	pathbase = where runs are located
 
 %Change directory
-cd('/pylon5/bi561lp/lwaldrop/shilpa/')
+cd('/pylon5/bi561lp/lwaldrop/entcode/shilpacode/')
 
 % Add paths to relevant matlab analysis scripts
 addpath(genpath('/pylon5/bi561lp/lwaldrop/entcode/'))
-addpath(genpath('/pylon5/bi561lp/lwaldrop/shilpa/'))
+addpath(genpath('/pylon5/bi561lp/lwaldrop/entcode/shilpacode/'))
 
 global pathbase1 pathbase2 GridSize final_time files files0
 GridSize=4096;
-final_time=25000;
+final_time=30000;
 %assignin('base','GridSize',4096)        %Size of the finest grid
-%assignin('base','final_time',25000)      %Final time step to be included in data analysis
+%assignin('base','final_time',30000)      %Final time step to be included in data analysis
 %n=1233; %Number of simulations
 j = length(filenumbers);
 for ii=1:j
@@ -36,8 +36,8 @@ end
 assignin('base','files',files)
 assignin('base','files0',files0)
 %assignin('base','pathbase1','/pylon5/bi561lp/lwaldrop/shilpa/pivdata/')
-pathbase1='/pylon5/bi561lp/lwaldrop/shilpa/pivdata/';
-pathbase2='/pylon5/bi561lp/lwaldrop/shilpa/postprocessing/';
+pathbase1='/pylon5/bi561lp/lwaldrop/shilpacode/pivdata/';
+pathbase2='/pylon5/bi561lp/lwaldrop/shilpacode/postprocessing/';
 %save('work.mat','GridSize','final_time','files','files0','pathbase1')
 
 mycluster=parpool(8)

@@ -1,0 +1,5 @@
+*.out
+input2d-files/input2d*
+vertex-files/hairs*.vertex
+vertex-files/hair*.mat
+hairs*.vertex
