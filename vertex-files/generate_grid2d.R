@@ -21,6 +21,9 @@ require(useful)
 
 rm(list=ls()) # Clears workspace
 
+startrun=1
+endrun=1
+
 #### Defines functions ####
 circle<-function(center,radius,L,dx){
 	x_grid = seq(-radius,radius,by=dx)
@@ -48,11 +51,11 @@ makehairs<-function(th,GtD,number){
   
 #th=0
 L = 2.0         # length of computational domain (m)
-N = 1024        # number of Cartesian grid meshwidths at the finest level of the AMR grid
+N = 4096        # number of Cartesian grid meshwidths at the finest level of the AMR grid
 dx = 1.0*(L/N)  # Cartesian mesh width (m)
 # Notes ~ Rule of thumb: 2 boundary points per fluid grid point. 
 #        vertex pts too far apart: flow thru boundary, too close: numerical weirdness
-NFINEST = 4  # NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
+NFINEST = 5  # NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
 kappa_target = 1.0e-2        # target point penalty spring constant (Newton)
 
 hdia = 0.01     # Diameter of hair
@@ -86,7 +89,7 @@ hair5Centery = hair1Centery-width*sin((30/180)*pi)
 # Antennule
 ant<-circle(c(0,0),0.5*adia,L,dx);  # Produces points that define antennule
 aN<-size(ant$X,2)                   # Records number of points inside antennule
-plot(Y~X,data=ant,xlim=c(-0.25,0.25),ylim=c(-0.25,0.25),pch=19) #Plots antennule
+plot(Y~X,data=ant,xlim=c(-1,1),ylim=c(-1,1),pch=19) #Plots antennule
 
 # Hair 1
 h1<-circle(c(hair1Centerx,hair1Centery),0.5*hdia,L,dx)
@@ -145,7 +148,9 @@ for (i in 1:h5N){
 
 ##### Input parameter definitions ####
 
+parameters<-read.table("allpara_1233.txt")
+names(parameters)<-c("angle","gap","Re")
 
-for (i in 1:5){
-  makehairs(0,12,i)
+for (i in startrun:endrun){
+  makehairs(parameters$angle[i],parameters$gap[i],i)
 }
