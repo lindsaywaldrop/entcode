@@ -26,8 +26,8 @@ endrun=8
 
 #### Defines functions ####
 circle<-function(center,radius,L,dx){
-	x_grid = seq(-radius,radius,by=dx/2)
-	y_grid = seq(-radius,radius,by=dx/2)
+	x_grid = seq(-(radius+0.01),radius+0.01,by=dx)
+	y_grid = seq(-(radius+0.01),radius+0.01,by=dx)
 	whole_grid = meshgrid(x_grid,y_grid)
 	
 	THETA=c(seq(0,2*pi,length=250),0)
@@ -50,9 +50,10 @@ circle<-function(center,radius,L,dx){
 makehairs<-function(th,GtD,number){
   
   #th=0
+  np = 3
   L = 2.0         # length of computational domain (m)
   N = 4096        # number of Cartesian grid meshwidths at the finest level of the AMR grid
-  dx = 1.0*(L/N)  # Cartesian mesh width (m)
+  dx = (2.0*L)/(N*np)  # Cartesian mesh width (m)
   # Notes ~ Rule of thumb: 2 boundary points per fluid grid point. 
   #        vertex pts too far apart: flow thru boundary, too close: numerical weirdness
   NFINEST = 5  # NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
@@ -101,6 +102,7 @@ makehairs<-function(th,GtD,number){
   # Hair 1
   h1<-circle(c(hair1Centerx,hair1Centery),0.5*hdia,L,dx)
   h1N<-size(h1$X,2)
+  disp(h1N)
   points(Y~X,data=h1,pch=19)
   
   # Hair 2
@@ -133,9 +135,14 @@ makehairs<-function(th,GtD,number){
   h7N<-size(h7$X,2)
   points(Y~X,data=h7,pch=19)
   
+  # Hair 8
+  h8<-circle(c(hair8Centerx,hair8Centery),0.5*hdia,L,dx)
+  h8N<-size(h8$X,2)
+  points(Y~X,data=h8,pch=19)
+  
   #### Write points to vertex file ####
   
-  totalN<-aN+h1N+h2N+h3N+h4N+h5N  # Calculates total number of points (first line of vertex file)
+  totalN<-aN+h1N+h2N+h3N+h4N+h5N+h6N+h7N+h8N  # Calculates total number of points (first line of vertex file)
   
   filename<-paste("hairs",number,".vertex",sep="")   # Defines file name
   if(file.exists(filename)) file.remove(filename)  # Deletes file with that name if it exists
@@ -159,6 +166,28 @@ makehairs<-function(th,GtD,number){
   for (i in 1:h5N){
     cat(c(as.character(h5$X[i])," ",as.character(h5$Y[i]),"\n"),file=filename,sep="",append=TRUE)
   }
+  
+  for (i in 1:h6N){
+    cat(c(as.character(h6$X[i])," ",as.character(h6$Y[i]),"\n"),file=filename,sep="",append=TRUE)
+  }
+  
+  for (i in 1:h7N){
+    cat(c(as.character(h7$X[i])," ",as.character(h7$Y[i]),"\n"),file=filename,sep="",append=TRUE)
+  }
+  
+  for (i in 1:h8N){
+    cat(c(as.character(h8$X[i])," ",as.character(h8$Y[i]),"\n"),file=filename,sep="",append=TRUE)
+  }
+  a<-c(aN,0,0)
+  h1<-c(h1N,hair1Centerx,hair1Centery)
+  h2<-c(h2N,hair2Centerx,hair2Centery)
+  h3<-c(h3N,hair3Centerx,hair3Centery)
+  h4<-c(h4N,hair4Centerx,hair4Centery)
+  h5<-c(h5N,hair5Centerx,hair5Centery)
+  h6<-c(h6N,hair6Centerx,hair6Centery)
+  h7<-c(h7N,hair7Centerx,hair7Centery)
+  h8<-c(h8N,hair8Centerx,hair8Centery)
+  write.csv(data.frame(a,h1,h2,h3,h4,h5,h6,h7,h8),file=paste("hairs",number,".csv",sep=""),row.names = FALSE)
 
 }
 

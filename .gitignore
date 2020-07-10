@@ -5,4 +5,5 @@
 input2d-files/input2d*
 vertex-files/hairs*.vertex
 vertex-files/hair*.mat
+vertex-files/hair*.csv
 hairs*.vertex
