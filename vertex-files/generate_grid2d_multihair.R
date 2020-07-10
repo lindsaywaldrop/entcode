@@ -12,8 +12,8 @@
 
 
 # Install packages. You should only have to run these once!
-#install.packages("useful",dependencies = TRUE)
-#install.packages("pracma",dependencies = TRUE)
+#install.packages("useful",dependencies = TRUE, repos='http://cran.us.r-project.org')
+#install.packages("pracma",dependencies = TRUE, repos='http://cran.us.r-project.org')
 
 #### Loads required packages ####
 require(pracma)

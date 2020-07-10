@@ -1,4 +1,7 @@
+*~
 *.out
+*.Rhistory
+*.DS_Store
 input2d-files/input2d*
 vertex-files/hairs*.vertex
 vertex-files/hair*.mat
