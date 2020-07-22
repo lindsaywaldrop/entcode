@@ -7,7 +7,7 @@
 # - module add R
 # - R   ## This will start R!##
 # - source('generate_grid2d.R')  ## Follow prompts if installing packages
-# - quit
+# - quit()
 # - n
 
 
@@ -193,7 +193,7 @@ makehairs<-function(th,GtD,number){
 
 ##### Input parameter definitions ####
 
-parameters<-read.table("allpara_1233.txt")
+parameters<-read.table("allpara_165.txt")
 names(parameters)<-c("angle","gap","Re")
 
 for (i in startrun:endrun){
