@@ -22,7 +22,7 @@ require(useful)
 rm(list=ls()) # Clears workspace
 
 startrun=1
-endrun=8
+endrun=1
 
 #### Defines functions ####
 circle<-function(center,radius,L,dx){
@@ -59,12 +59,12 @@ makehairs<-function(th,GtD,number){
   NFINEST = 5  # NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
   kappa_target = 1.0e-2        # target point penalty spring constant (Newton)
   
-  hdia = 0.01     # Diameter of hair
-  adia = 0.1     # Diameter of flagellum
+  hdia = (3/8)*0.01     # Diameter of hair
+  adia = 10*hdia     # Diameter of flagellum
   
   th2 = (th/180)*pi      # Angle off positive x-axis in radians
   #GtD = 1.0      # Gap width to diameter ratio
-  dist = 0.02     # Distance between antennule and hair 
+  dist = 2*hdia     # Distance between antennule and hair 
   mindGap = (0.5*adia)+(0.5*hdia)+dist  # Calculate distance between hair centers
   width = GtD*hdia+hdia
   
@@ -97,7 +97,7 @@ makehairs<-function(th,GtD,number){
   # Antennule
   ant<-circle(c(0,0),0.5*adia,L,dx);  # Produces points that define antennule
   aN<-size(ant$X,2)                   # Records number of points inside antennule
-  plot(Y~X,data=ant,xlim=c(-1,1),ylim=c(-1,1),pch=19) #Plots antennule
+  plot(Y~X,data=ant,xlim=c(-0.5,0.5),ylim=c(-0.5,0.5),pch=19) #Plots antennule
   
   # Hair 1
   h1<-circle(c(hair1Centerx,hair1Centery),0.5*hdia,L,dx)

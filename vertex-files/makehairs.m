@@ -17,7 +17,7 @@ angle = data(:,1);
 % end
 
 
-for i = 1:8
+for i = 1:1
 %i=1; 
    [p] = generate_grid2d_multihair(Gap(i),i,8);
     save(['hairinfo',num2str(i),'.mat'],'p')

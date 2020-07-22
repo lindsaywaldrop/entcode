@@ -3,10 +3,10 @@
 # Separate main parameter file into three files
 #cut -f 1 allpara_1233.txt > angle.txt
 #cut -f 2 allpara_1233.txt > gap.txt
-cut -f 3 allpara_1233.txt > Re.txt
+cut -f 3 allpara_165.txt > Re.txt
 
 # Count number of lines in files
-numlines=$(grep -c "^" allpara_1233.txt)
+numlines=$(grep -c "^" allpara_165.txt)
 
 # initialize variables
 #angle=0
