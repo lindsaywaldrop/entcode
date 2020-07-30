@@ -59,8 +59,10 @@ makehairs<-function(th,GtD,number){
   NFINEST = 5  # NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
   kappa_target = 1.0e-2        # target point penalty spring constant (Newton)
   
-  hdia = (3/8)*0.01     # Diameter of hair
-  adia = 10*hdia     # Diameter of flagellum
+  #hdia = (3/8)*0.01     # Diameter of hair
+  #adia = 10*hdia     # Diameter of flagellum
+  hdia = 0.01     # Diameter of hair
+  adia = 0.1     # Diameter of flagellum
   
   th2 = (th/180)*pi      # Angle off positive x-axis in radians
   #GtD = 1.0      # Gap width to diameter ratio
