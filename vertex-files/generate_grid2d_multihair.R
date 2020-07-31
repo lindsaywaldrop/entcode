@@ -49,7 +49,7 @@ circle<-function(center,radius,L,dx){
 
 makehairs<-function(th,GtD,number){
   
-  #th=90
+  #th=0
   np = 3
   L = 2.0         # length of computational domain (m)
   N = 4096        # number of Cartesian grid meshwidths at the finest level of the AMR grid
@@ -113,6 +113,7 @@ makehairs<-function(th,GtD,number){
   ant<-circle(c(0,0),0.5*adia,L,dx);  # Produces points that define antennule
   aN<-size(ant$X,2)                   # Records number of points inside antennule
   plot(0,0,xlim=c(-0.5,0.5),ylim=c(-0.5,0.5),pch=19,cex=4.5) #Plots antennule
+  text(0,0,labels="Ant",col="red")
   
   # Hair 1
   h1<-circle(c(hair1Centerx,hair1Centery),0.5*hdia,L,dx)
