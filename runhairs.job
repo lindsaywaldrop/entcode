@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -p RM-shared
-#SBATCH -t 12:00:00
+#SBATCH -t 2:00:00
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=16
 #SBATCH --mail-type=ALL
@@ -16,7 +16,7 @@ module load  psc_path/1.1 slurm/default git/2.10.2 xdusage/2.1-1 intel/19.5 mpi/
 # run MPI program
 mpirun -n $SLURM_NTASKS ./main2d input2d-files/input2d${i}
 # check and zip finished simulation
-cd ../runs/
+cd runs/
 if test -d viz_IB2d${i}/lag_data.cycle_030000; then
     zip -r viz_IB2d${i}.zip viz_IB2d${i}/
 else 

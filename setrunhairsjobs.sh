@@ -2,7 +2,7 @@
 
 # What should you space the jobs by?
 startrun=2
-endrun=3
+endrun=5
 
 echo Submitting simulations $startrun to $endrun.
 
