@@ -25,10 +25,10 @@ startpointy=sys.argv[3]
 endpointx=sys.argv[4]
 endpointy=sys.argv[5]
 
-OpenDatabase("localhost:/Users/Bosque/IBAMR/entcode/code/runs/viz_IB2d"+str(num)+"/lag_data.visit", 0)
+OpenDatabase("localhost:/Users/waldrop/Dropbox (Chapman)/EntIBAMR/entcode/runs/viz_IB2d"+str(num)+"/lag_data.visit", 0)
 AddPlot("Mesh", "hairs"+str(num)+"_vertices", 1, 1)
 DrawPlots()
-OpenDatabase("localhost:/Users/Bosque/IBAMR/entcode/code/runs/viz_IB2d"+str(num)+"/dumps.visit", 0)
+OpenDatabase("localhost:/Users/waldrop/Dropbox (Chapman)/EntIBAMR/entcode/runs/viz_IB2d"+str(num)+"/dumps.visit", 0)
 AddPlot("Pseudocolor", "U_magnitude", 1, 1)
 DrawPlots()
 Query("Lineout", end_point=(float(endpointx), float(endpointy), 0), num_samples=5000, start_point=(float(startpointx), float(startpointy), 0), use_sampling=1, vars=("U_magnitude"))
@@ -37,7 +37,7 @@ for i in range(TimeSliderGetNStates()):
 	SetTimeSliderState(i)
 	SaveWindowAtts = SaveWindowAttributes()
 	SaveWindowAtts.outputToCurrentDirectory = 0
-	SaveWindowAtts.outputDirectory = "/Users/Bosque/IBAMR/entcode/code/runs/viz_IB2d"+str(num)+"/hairline"
+	SaveWindowAtts.outputDirectory = "/Users/waldrop/Dropbox (Chapman)/EntIBAMR/entcode/runs/viz_IB2d"+str(num)+"/hairline"
 	SaveWindowAtts.fileName = "hairline"
 	SaveWindowAtts.family = 1
 	SaveWindowAtts.format = SaveWindowAtts.CURVE  # BMP, CURVE, JPEG, OBJ, PNG, POSTSCRIPT, POVRAY, PPM, RGB, STL, TIFF, ULTRA, VTK, PLY

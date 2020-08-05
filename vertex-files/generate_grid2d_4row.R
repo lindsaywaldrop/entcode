@@ -22,7 +22,7 @@ require(useful)
 rm(list=ls()) # Clears workspace
 
 startrun=1
-endrun=24
+endrun=2
 starthair=8  #  first row start: 2, second row start: 6, third row start: 8
 endhair=12    #  first row end: 3, second row end: 7, third row end: 12
 
@@ -49,9 +49,17 @@ circle<-function(center,radius,L,dx){
 	return(circ)
 }
 
+plotahair<-function(hairxCenterx,hairxCentery,hdia,L,dx,no){
+  h1<-circle(c(hairxCenterx,hairxCentery),0.5*hdia,L,dx)
+  points(hairxCenterx,hairxCentery,pch=19,cex=2.5)
+  text(hairxCenterx,hairxCentery,labels=no,col="red")
+  return(h1)
+}
+
 makehairs<-function(th,GtD,number){
   
   #th=0
+  nohairs=19
   np = 3
   L = 2.0         # length of computational domain (m)
   N = 4096        # number of Cartesian grid meshwidths at the finest level of the AMR grid
@@ -109,6 +117,27 @@ makehairs<-function(th,GtD,number){
   hair12Centerx = hair6Centerx+width*cos(th2+(30/180)*pi)
   hair12Centery = hair6Centery+width*sin(th2+(30/180)*pi)
   
+  hair13Centerx = hair8Centerx+width*cos(th2-(30/180)*pi)
+  hair13Centery = hair8Centery-width*sin(-th2+(30/180)*pi)
+  
+  hair14Centerx = hair9Centerx+width*cos(th2-(30/180)*pi)
+  hair14Centery = hair9Centery-width*sin(-th2+(30/180)*pi)
+  
+  hair15Centerx = hair10Centerx+width*cos(th2-(30/180)*pi)
+  hair15Centery = hair10Centery-width*sin(-th2+(30/180)*pi)
+  
+  hair16Centerx = hair10Centerx+width*cos(th2-(30/180)*pi)
+  hair16Centery = hair10Centery-width*sin(-th2+(30/180)*pi)
+  
+  hair17Centerx = hair11Centerx+width*cos(th2-(30/180)*pi)
+  hair17Centery = hair11Centery-width*sin(-th2+(30/180)*pi)
+  
+  hair18Centerx = hair12Centerx+width*cos(th2-(30/180)*pi)
+  hair18Centery = hair12Centery-width*sin(-th2+(30/180)*pi)
+  
+  hair19Centerx = hair12Centerx+width*cos(th2+(30/180)*pi)
+  hair19Centery = hair12Centery+width*sin(th2+(30/180)*pi)
+  
   #### Produces points within defined hairs ####
   
   # Antennule
@@ -116,83 +145,20 @@ makehairs<-function(th,GtD,number){
   aN<-size(ant$X,2)                   # Records number of points inside antennule
   plot(0,0,xlim=c(-0.5,0.5),ylim=c(-0.5,0.5),pch=19,cex=4.5) #Plots antennule
   text(0,0,labels="Ant",col="red")
+
+  for (i in 1:nohairs){
+    hairx<-eval(as.name(paste("hair",i,"Centerx",sep="")))
+    hairy<-eval(as.name(paste("hair",i,"Centery",sep="")))
+    h<-plotahair(hairx,hairy,hdia,L,dx,i)
+    assign(paste("h",i,sep=""),h)
+  }
+  hN<-size(h$X,2)
+  disp(paste("Array number: ",number,", number of points per hair: ",hN,sep=""))
   
-  # Hair 1
-  h1<-circle(c(hair1Centerx,hair1Centery),0.5*hdia,L,dx)
-  h1N<-size(h1$X,2)
-  disp(paste("Array number: ",number,", number of points per hair: ",h1N,sep=""))
-  points(hair1Centerx,hair1Centery,pch=19,cex=2.5)
-  text(hair1Centerx,hair1Centery,labels="1",col="red")
-  
-  # Hair 2
-  h2<-circle(c(hair2Centerx,hair2Centery),0.5*hdia,L,dx)
-  h2N<-size(h2$X,2)
-  points(hair2Centerx,hair2Centery,pch=19,cex=2.5)
-  text(hair2Centerx,hair2Centery,labels="2",col="red")
-  
-  # Hair 3
-  h3<-circle(c(hair3Centerx,hair3Centery),0.5*hdia,L,dx)
-  h3N<-size(h3$X,2)
-  points(hair3Centerx,hair3Centery,pch=19,cex=2.5)
-  text(hair3Centerx,hair3Centery,labels="3",col="red")
-  
-  # Hair 4
-  h4<-circle(c(hair4Centerx,hair4Centery),0.5*hdia,L,dx)
-  h4N<-size(h4$X,2)
-  points(hair4Centerx,hair4Centery,pch=19,cex=2.5)
-  text(hair4Centerx,hair4Centery,labels="4",col="red")
-  
-  # Hair 5
-  h5<-circle(c(hair5Centerx,hair5Centery),0.5*hdia,L,dx)
-  h5N<-size(h5$X,2)
-  points(hair5Centerx,hair5Centery,pch=19,cex=2.5)
-  text(hair5Centerx,hair5Centery,labels="5",col="red")
-  
-  # Hair 6
-  h6<-circle(c(hair6Centerx,hair6Centery),0.5*hdia,L,dx)
-  h6N<-size(h6$X,2)
-  points(hair6Centerx,hair6Centery,pch=19,cex=2.5)
-  text(hair6Centerx,hair6Centery,labels="6",col="red")
-  
-  # Hair 7
-  h7<-circle(c(hair7Centerx,hair7Centery),0.5*hdia,L,dx)
-  h7N<-size(h7$X,2)
-  points(hair7Centerx,hair7Centery,pch=19,cex=2.5)
-  text(hair7Centerx,hair7Centery,labels="7",col="red")
-  
-  # Hair 8
-  h8<-circle(c(hair8Centerx,hair8Centery),0.5*hdia,L,dx)
-  h8N<-size(h8$X,2)
-  points(hair8Centerx,hair8Centery,pch=19,cex=2.5)
-  text(hair8Centerx,hair8Centery,labels="8",col="red")
-  
-  # Hair 9
-  h9<-circle(c(hair9Centerx,hair9Centery),0.5*hdia,L,dx)
-  h9N<-size(h9$X,2)
-  points(hair9Centerx,hair9Centery,pch=19,cex=2.5)
-  text(hair9Centerx,hair9Centery,labels="9",col="red")
-  
-  # Hair 10
-  h10<-circle(c(hair10Centerx,hair10Centery),0.5*hdia,L,dx)
-  h10N<-size(h10$X,2)
-  points(hair10Centerx,hair10Centery,pch=19,cex=2.5)
-  text(hair10Centerx,hair10Centery,labels="10",col="red")
-  
-  # Hair 11
-  h11<-circle(c(hair11Centerx,hair11Centery),0.5*hdia,L,dx)
-  h11N<-size(h11$X,2)
-  points(hair11Centerx,hair11Centery,pch=19,cex=2.5)
-  text(hair11Centerx,hair11Centery,labels="11",col="red")
-  
-  # Hair 12
-  h12<-circle(c(hair12Centerx,hair12Centery),0.5*hdia,L,dx)
-  h12N<-size(h12$X,2)
-  points(hair12Centerx,hair12Centery,pch=19,cex=2.5)
-  text(hair12Centerx,hair12Centery,labels="12",col="red")
   
   #### Write points to vertex file ####
   
-  totalN<-aN+h1N+h2N+h3N+h4N+h5N+h6N+h7N+h8N+h9N+h10N+h11N+h12N  # Calculates total number of points (first line of vertex file)
+  totalN<-aN+nohairs*hN  # Calculates total number of points (first line of vertex file)
   
   filename<-paste("hairs",number,".vertex",sep="")   # Defines file name
   if(file.exists(filename)) file.remove(filename)  # Deletes file with that name if it exists
@@ -200,56 +166,22 @@ makehairs<-function(th,GtD,number){
   for (i in 1:aN){
   cat(c(as.character(ant$X[i])," ",as.character(ant$Y[i]),"\n"),file=filename,sep="",append=TRUE)
   }
-  for (i in 1:h1N){
-  cat(c(as.character(h1$X[i])," ",as.character(h1$Y[i]),"\n"),file=filename,sep="",append=TRUE)
+  for (k in 1:nohairs){
+    for (i in 1:hN){
+      hair<-eval(as.name(paste("h",k,sep="")))
+      cat(c(as.character(hair$X[i])," ",as.character(hair$Y[i]),"\n"),file=filename,sep="",append=TRUE)
+    }
   }
-  for (i in 1:h2N){
-  cat(c(as.character(h2$X[i])," ",as.character(h2$Y[i]),"\n"),file=filename,sep="",append=TRUE)
+  
+  allhairs<-data.frame("a"=c(aN,0,0))
+  names(allhairs)<-"a"
+  for (i in 1:nohairs){
+    hairx<-eval(as.name(paste("hair",i,"Centerx",sep="")))
+    hairy<-eval(as.name(paste("hair",i,"Centery",sep="")))
+    allhairs<-cbind(allhairs,"h"=c(hN,hairx,hairy))
   }
-  for (i in 1:h3N){
-  cat(c(as.character(h3$X[i])," ",as.character(h3$Y[i]),"\n"),file=filename,sep="",append=TRUE)
-  }
-  for (i in 1:h4N){
-    cat(c(as.character(h4$X[i])," ",as.character(h4$Y[i]),"\n"),file=filename,sep="",append=TRUE)
-  }
-  for (i in 1:h5N){
-    cat(c(as.character(h5$X[i])," ",as.character(h5$Y[i]),"\n"),file=filename,sep="",append=TRUE)
-  }
-  for (i in 1:h6N){
-    cat(c(as.character(h6$X[i])," ",as.character(h6$Y[i]),"\n"),file=filename,sep="",append=TRUE)
-  }
-  for (i in 1:h7N){
-    cat(c(as.character(h7$X[i])," ",as.character(h7$Y[i]),"\n"),file=filename,sep="",append=TRUE)
-  }
-  for (i in 1:h8N){
-    cat(c(as.character(h8$X[i])," ",as.character(h8$Y[i]),"\n"),file=filename,sep="",append=TRUE)
-  }
-  for (i in 1:h9N){
-    cat(c(as.character(h9$X[i])," ",as.character(h9$Y[i]),"\n"),file=filename,sep="",append=TRUE)
-  }
-  for (i in 1:h10N){
-    cat(c(as.character(h10$X[i])," ",as.character(h10$Y[i]),"\n"),file=filename,sep="",append=TRUE)
-  }
-  for (i in 1:h11N){
-    cat(c(as.character(h11$X[i])," ",as.character(h11$Y[i]),"\n"),file=filename,sep="",append=TRUE)
-  }
-  for (i in 1:h12N){
-    cat(c(as.character(h12$X[i])," ",as.character(h12$Y[i]),"\n"),file=filename,sep="",append=TRUE)
-  }
-  a<-c(aN,0,0)
-  h1<-c(h1N,hair1Centerx,hair1Centery)
-  h2<-c(h2N,hair2Centerx,hair2Centery)
-  h3<-c(h3N,hair3Centerx,hair3Centery)
-  h4<-c(h4N,hair4Centerx,hair4Centery)
-  h5<-c(h5N,hair5Centerx,hair5Centery)
-  h6<-c(h6N,hair6Centerx,hair6Centery)
-  h7<-c(h7N,hair7Centerx,hair7Centery)
-  h8<-c(h8N,hair8Centerx,hair8Centery)
-  h9<-c(h9N,hair9Centerx,hair9Centery)
-  h10<-c(h10N,hair10Centerx,hair10Centery)
-  h11<-c(h11N,hair11Centerx,hair11Centery)
-  h12<-c(h12N,hair12Centerx,hair12Centery)
-  write.csv(data.frame(a,h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12),file=paste("hairs",number,".csv",sep=""),row.names = FALSE)
+
+  write.csv(allhairs,file=paste("hairs",number,".csv",sep=""),row.names = FALSE)
   
 }
 
