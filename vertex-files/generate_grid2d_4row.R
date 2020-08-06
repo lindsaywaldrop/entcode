@@ -21,8 +21,8 @@ require(useful)
 
 rm(list=ls()) # Clears workspace
 
-startrun=1
-endrun=20
+startrun=21
+endrun=165
 
 #### Defines functions ####
 circle<-function(center,radius,L,dx){

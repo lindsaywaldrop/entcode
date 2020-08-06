@@ -56,8 +56,8 @@ plotahair<-function(hairxCenterx,hairxCentery,hdia,L,dx,no){
 
 makehairs<-function(th,GtD,number){
   
-  #th=0
-  nohairs=18
+  th=0
+  nohairs=25
   np = 3
   L = 2.0         # length of computational domain (m)
   N = 4096        # number of Cartesian grid meshwidths at the finest level of the AMR grid
@@ -73,7 +73,7 @@ makehairs<-function(th,GtD,number){
   adia = 0.1     # Diameter of flagellum
   
   th2 = (th/180)*pi      # Angle off positive x-axis in radians
-  #GtD = 5.0      # Gap width to diameter ratio
+  GtD = 5.0      # Gap width to diameter ratio
   dist = 2*hdia     # Distance between antennule and hair 
   mindGap = (0.5*adia)+(0.5*hdia)+dist  # Calculate distance between hair centers
   width = GtD*hdia+hdia
@@ -132,6 +132,29 @@ makehairs<-function(th,GtD,number){
   
   hair18Centerx = hair12Centerx+width*cos(th2+(30/180)*pi)
   hair18Centery = hair12Centery+width*sin(th2+(30/180)*pi)
+  
+  hair19Centerx = hair13Centerx+width*cos(th2-(30/180)*pi)
+  hair19Centery = hair13Centery-width*sin(-th2+(30/180)*pi)
+  
+  hair20Centerx = hair14Centerx+width*cos(th2-(30/180)*pi)
+  hair20Centery = hair14Centery-width*sin(-th2+(30/180)*pi)
+  
+  hair21Centerx = hair15Centerx+width*cos(th2-(30/180)*pi)
+  hair21Centery = hair15Centery-width*sin(-th2+(30/180)*pi)
+  
+  hair22Centerx = hair16Centerx+width*cos(th2-(30/180)*pi)
+  hair22Centery = hair16Centery-width*sin(-th2+(30/180)*pi)
+  
+  hair23Centerx = hair17Centerx+width*cos(th2-(30/180)*pi)
+  hair23Centery = hair17Centery-width*sin(-th2+(30/180)*pi)
+  
+  hair24Centerx = hair18Centerx+width*cos(th2-(30/180)*pi)
+  hair24Centery = hair18Centery-width*sin(-th2+(30/180)*pi)
+  
+  hair25Centerx = hair18Centerx+width*cos(th2+(30/180)*pi)
+  hair25Centery = hair18Centery+width*sin(th2+(30/180)*pi)
+  
+  #### ####
   
   #### Produces points within defined hairs ####
   

@@ -13,7 +13,7 @@
 rm(list=ls()) # Clears workspace
 
 startrun=1
-endrun=20
+endrun=165
 starthair=13  #  first row start: 2, second row start: 6, third row start: 8, fourth row start: 13
 endhair=18    #  first row end: 3, second row end: 7, third row end: 12, fourth row end: 18
 

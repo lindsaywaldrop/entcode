@@ -26,8 +26,8 @@ setwd(dirname)
 gaps<-read.table("analysis_code/gapwidths.txt",sep="")			# Loads file with gapwidth values in main directory
 
 leakiness = rep(0,n)					# Allocates space for leakiness calculation
-# shear_hair<-data.frame(seq(1,n),seq(1,n),seq(1,n),seq(1,n),seq(1,n),seq(1,n))	# Allocates space for shear calculations
-# names(shear_hair)<-c("hair1top","hair1bottom","hair2top","hair2bottom","hair3top","hair3bottom")
+shear_hair<-data.frame(seq(1,n),seq(1,n),seq(1,n),seq(1,n),seq(1,n),seq(1,n))	# Allocates space for shear calculations
+names(shear_hair)<-c("hair1top","hair1bottom","hair2top","hair2bottom","hair3top","hair3bottom")
 
 #par(mfrow=c(1,3))
 plot(c(0),ylim=c(-0.1,0.1),xlim=c(0,sample))	# Optional plotting for running data
