@@ -6,4 +6,7 @@ input2d-files/input2d*
 vertex-files/hairs*.vertex
 vertex-files/hair*.mat
 vertex-files/hair*.csv
+vertex-files/line*.txt
 hairs*.vertex
+analysis_code/*.txt
+analysis_code/visit*

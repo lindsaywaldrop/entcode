@@ -27,8 +27,8 @@ EX=0
 EY=0
 
 # For loop that will write files
-#for i in `seq 1 $numlines`;
-for i in `seq 1 12`;
+for i in `seq 1 $numlines`;
+#for i in `seq 1 12`;
 do
 # Sets Wo based on i
 SX=$(awk -v var="$i" 'NR==var' startx.txt)

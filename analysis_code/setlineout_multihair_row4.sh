@@ -4,21 +4,21 @@
 #for i in `seq 1 1233`; do cd viz_IB2d${i}/hairline; rm *.curve; cd /Users/Bosque/IBAMR/entcode/code/runs; done
 
 # Separate main parameter file into three files
-cut -f 2 lineout_h8-h12.txt > startx.txt
-cut -f 3 lineout_h8-h12.txt > starty.txt
-cut -f 4 lineout_h8-h12.txt > endx.txt
-cut -f 5 lineout_h8-h12.txt > endy.txt
+cut -f 2 lineout_h13-h18.txt > startx.txt
+cut -f 3 lineout_h13-h18.txt > starty.txt
+cut -f 4 lineout_h13-h18.txt > endx.txt
+cut -f 5 lineout_h13-h18.txt > endy.txt
 
-cut -f 6 lineout_h8-h12.txt > hair1x.txt
-cut -f 7 lineout_h8-h12.txt > hair1y.txt
-cut -f 8 lineout_h8-h12.txt > hair2x.txt
-cut -f 9 lineout_h8-h12.txt > hair2y.txt
-cut -f 10 lineout_h8-h12.txt > hair3x.txt
-cut -f 11 lineout_h8-h12.txt > hair3y.txt
-cut -f 12 lineout_h8-h12.txt > gapwidths.txt
+cut -f 6 lineout_h13-h18.txt > hair1x.txt
+cut -f 7 lineout_h13-h18.txt > hair1y.txt
+cut -f 8 lineout_h13-h18.txt > hair2x.txt
+cut -f 9 lineout_h13-h18.txt > hair2y.txt
+cut -f 10 lineout_h13-h18.txt > hair3x.txt
+cut -f 11 lineout_h13-h18.txt > hair3y.txt
+cut -f 12 lineout_h13-h18.txt > gapwidths.txt
 
 # Count number of lines in files
-numlines=$(grep -c "^" lineout_h8-h12.txt)
+numlines=$(grep -c "^" lineout_h13-h18.txt)
 
 # initialize variables
 SX=0
