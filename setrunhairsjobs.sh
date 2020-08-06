@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # What should you space the jobs by?
-startrun=11
-endrun=12
+startrun=2
+endrun=20
 
 echo Submitting simulations $startrun to $endrun.
 

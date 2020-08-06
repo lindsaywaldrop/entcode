@@ -4,7 +4,7 @@ L = 2.0                                   // length of the computational (fluid)
 RHO = 1000  				  //fluid mass density (kg/m^3)
 FS = 0.06				  // Flow speed of tank (m/s)
 RE = 5.0				  // Reynolds number of real aesthetasc
-DD = 0.01				  // diameter of model aesthetasc in simulation (m)
+DD = 0.002				  // diameter of model aesthetasc in simulation (m)
 MU = DD*RHO*FS/RE                           // fluid dynamic viscosity (N s / m^2)
 //
 //
