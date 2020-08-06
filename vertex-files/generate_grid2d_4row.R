@@ -22,7 +22,7 @@ require(useful)
 rm(list=ls()) # Clears workspace
 
 startrun=1
-endrun=2
+endrun=20
 starthair=8  #  first row start: 2, second row start: 6, third row start: 8
 endhair=12    #  first row end: 3, second row end: 7, third row end: 12
 
@@ -58,8 +58,8 @@ plotahair<-function(hairxCenterx,hairxCentery,hdia,L,dx,no){
 
 makehairs<-function(th,GtD,number){
   
-  #th=0
-  nohairs=19
+  th=0
+  nohairs=18
   np = 3
   L = 2.0         # length of computational domain (m)
   N = 4096        # number of Cartesian grid meshwidths at the finest level of the AMR grid
@@ -71,11 +71,11 @@ makehairs<-function(th,GtD,number){
   
   #hdia = (3/8)*0.01     # Diameter of hair
   #adia = 10*hdia     # Diameter of flagellum
-  hdia = 0.01     # Diameter of hair
+  hdia = 0.002     # Diameter of hair
   adia = 0.1     # Diameter of flagellum
   
   th2 = (th/180)*pi      # Angle off positive x-axis in radians
-  #GtD = 5.0      # Gap width to diameter ratio
+  GtD = 5.0      # Gap width to diameter ratio
   dist = 2*hdia     # Distance between antennule and hair 
   mindGap = (0.5*adia)+(0.5*hdia)+dist  # Calculate distance between hair centers
   width = GtD*hdia+hdia
@@ -126,24 +126,21 @@ makehairs<-function(th,GtD,number){
   hair15Centerx = hair10Centerx+width*cos(th2-(30/180)*pi)
   hair15Centery = hair10Centery-width*sin(-th2+(30/180)*pi)
   
-  hair16Centerx = hair10Centerx+width*cos(th2-(30/180)*pi)
-  hair16Centery = hair10Centery-width*sin(-th2+(30/180)*pi)
+  hair16Centerx = hair11Centerx+width*cos(th2-(30/180)*pi)
+  hair16Centery = hair11Centery-width*sin(-th2+(30/180)*pi)
   
-  hair17Centerx = hair11Centerx+width*cos(th2-(30/180)*pi)
-  hair17Centery = hair11Centery-width*sin(-th2+(30/180)*pi)
+  hair17Centerx = hair12Centerx+width*cos(th2-(30/180)*pi)
+  hair17Centery = hair12Centery-width*sin(-th2+(30/180)*pi)
   
-  hair18Centerx = hair12Centerx+width*cos(th2-(30/180)*pi)
-  hair18Centery = hair12Centery-width*sin(-th2+(30/180)*pi)
-  
-  hair19Centerx = hair12Centerx+width*cos(th2+(30/180)*pi)
-  hair19Centery = hair12Centery+width*sin(th2+(30/180)*pi)
+  hair18Centerx = hair12Centerx+width*cos(th2+(30/180)*pi)
+  hair18Centery = hair12Centery+width*sin(th2+(30/180)*pi)
   
   #### Produces points within defined hairs ####
   
   # Antennule
   ant<-circle(c(0,0),0.5*adia,L,dx);  # Produces points that define antennule
   aN<-size(ant$X,2)                   # Records number of points inside antennule
-  plot(0,0,xlim=c(-0.5,0.5),ylim=c(-0.5,0.5),pch=19,cex=4.5) #Plots antennule
+  plot(0,0,xlim=c(-0.1,0.1),ylim=c(-0.1,0.1),pch=19,cex=4.5) #Plots antennule
   text(0,0,labels="Ant",col="red")
 
   for (i in 1:nohairs){

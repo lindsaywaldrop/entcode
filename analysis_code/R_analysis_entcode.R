@@ -15,9 +15,8 @@ hair_dia = 0.01   	 	 # diameter of each hair, m
 speed = 0.06      	 	 # fluid speed, m/s
 duration = 0.03   	 	 # duration of simulation, s
 sample = 5000			 # sampling rate
-arrayrow<-2   # number of array row
+arrayrow<-1   # number of array row
 
-half_sample = floor(sample/2)	 # Calculates the position of hair 1
 #shear_pt = floor(sample*(0.3*hair_dia+0.5*hair_dia)/domain) # Calculates distance of shear measurement from hair center
 
 n = 12				 # number of simulations to analyze
@@ -36,7 +35,7 @@ plot(c(0),ylim=c(-0.1,0.1),xlim=c(0,sample))	# Optional plotting for running dat
 for (j in 1:n){		# Main loop
 	print(paste("Simulation: ",j,sep=""))					# Prints simulation number 
 	# Construct directory name
-	dirname2<-paste(dirname,"runs/viz_IB2d",j,"/hairline",arrayrow,sep="")
+	dirname2<-paste(dirname,"runs_12hair/viz_IB2d",j,"/hairline",arrayrow,sep="")
 	# Sets working directory
 	setwd(dirname2)
 	# Loads final time-step data
