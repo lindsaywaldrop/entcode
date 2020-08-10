@@ -22,7 +22,7 @@ require(useful)
 rm(list=ls()) # Clears workspace
 
 startrun=1
-endrun=20
+endrun=1
 
 #### Defines functions ####
 circle<-function(center,radius,L,dx){
@@ -56,7 +56,7 @@ plotahair<-function(hairxCenterx,hairxCentery,hdia,L,dx,no){
 
 makehairs<-function(th,GtD,number){
   
-  th=0
+  #th=0
   nohairs=25
   np = 3
   L = 2.0         # length of computational domain (m)
@@ -73,7 +73,7 @@ makehairs<-function(th,GtD,number){
   adia = 0.1     # Diameter of flagellum
   
   th2 = (th/180)*pi      # Angle off positive x-axis in radians
-  GtD = 5.0      # Gap width to diameter ratio
+  #GtD = 5.0      # Gap width to diameter ratio
   dist = 2*hdia     # Distance between antennule and hair 
   mindGap = (0.5*adia)+(0.5*hdia)+dist  # Calculate distance between hair centers
   width = GtD*hdia+hdia

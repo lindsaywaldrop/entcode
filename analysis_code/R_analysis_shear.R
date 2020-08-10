@@ -8,10 +8,10 @@
 rm(list=ls()) # Clears any previous data
 
 #### Assign condition values ####
-norows<-3              # Total number of rows in the array. Options: "3", "4"
-nohairs<-12            # Total number of hairs in the array. Options: "12", "18"
+norows<-4              # Total number of rows in the array. Options: "3", "4"
+nohairs<-18            # Total number of hairs in the array. Options: "12", "18"
 dirname<-"/Users/waldrop/Dropbox (Chapman)/EntIBAMR/entcode/"	
-rundir<-"runs_3row/"
+rundir<-"runs/"
 
 # The following vector dictates which side the shear should be sampled on. 
 # The hair where sampling started (e.g. hair 2 for row 1) should be "-1".
@@ -23,7 +23,7 @@ whichside<-c(0,-1,1,         # row 1
              -1,0,0,0,0,1,   # row 4
              -1,0,0,0,0,0,1) # row 5
 
-n = 12				         # number of simulations to analyze
+n = 165				         # number of simulations to analyze
 
 hair_dia = 0.002   	 	 # diameter of each hair, m
 sample = 5000			     # sampling rate

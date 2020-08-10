@@ -8,12 +8,12 @@
 rm(list=ls()) # Clears any previous data
 
 #### Assign condition values ####
-norows<-3              # Total number of rows in the array. Options: "3", "4"
-nohairs<-12            # Total number of hairs in the array. Options: "12", "18"
+norows<-4              # Total number of rows in the array. Options: "3", "4"
+nohairs<-18            # Total number of hairs in the array. Options: "12", "18"
 dirname<-"/Users/waldrop/Dropbox (Chapman)/EntIBAMR/entcode/"	
-rundir<-"runs_3row/"   # Runs directory. Options: "runs_3row/", "runs/"
+rundir<-"runs/"   # Runs directory. Options: "runs_3row/", "runs/"
 
-n = 12				 # number of simulations to analyze
+n = 165				 # number of simulations to analyze
 
 speed = 0.06      	 	 # fluid speed, m/s
 duration = 0.03   	 	 # duration of simulation, s
