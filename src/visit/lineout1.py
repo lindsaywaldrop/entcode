@@ -19,16 +19,18 @@
 
 import sys
 
-num=sys.argv[1]
-startpointx=sys.argv[2]
-startpointy=sys.argv[3]
-endpointx=sys.argv[4]
-endpointy=sys.argv[5]
+WDin=sys.argv[1]
+WDout=sys.argv[2]
+num=sys.argv[3]
+startpointx=sys.argv[4]
+startpointy=sys.argv[5]
+endpointx=sys.argv[6]
+endpointy=sys.argv[7]
 
-OpenDatabase("localhost:/Users/waldrop/Dropbox (Chapman)/EntIBAMR/entcode/runs/viz_IB2d"+str(num)+"/lag_data.visit", 0)
+OpenDatabase(str(WDin)+"/lag_data.visit", 0)
 AddPlot("Mesh", "hairs"+str(num)+"_vertices", 1, 1)
 DrawPlots()
-OpenDatabase("localhost:/Users/waldrop/Dropbox (Chapman)/EntIBAMR/entcode/runs/viz_IB2d"+str(num)+"/dumps.visit", 0)
+OpenDatabase(str(WDin)+"/dumps.visit", 0)
 AddPlot("Pseudocolor", "U_magnitude", 1, 1)
 DrawPlots()
 Query("Lineout", end_point=(float(endpointx), float(endpointy), 0), num_samples=5000, start_point=(float(startpointx), float(startpointy), 0), use_sampling=1, vars=("U_magnitude"))
@@ -37,7 +39,7 @@ for i in range(TimeSliderGetNStates()):
 	SetTimeSliderState(i)
 	SaveWindowAtts = SaveWindowAttributes()
 	SaveWindowAtts.outputToCurrentDirectory = 0
-	SaveWindowAtts.outputDirectory = "/Users/waldrop/Dropbox (Chapman)/EntIBAMR/entcode/runs/viz_IB2d"+str(num)+"/hairline"
+	SaveWindowAtts.outputDirectory = str(WDout)
 	SaveWindowAtts.fileName = "hairline"
 	SaveWindowAtts.family = 1
 	SaveWindowAtts.format = SaveWindowAtts.CURVE  # BMP, CURVE, JPEG, OBJ, PNG, POSTSCRIPT, POVRAY, PPM, RGB, STL, TIFF, ULTRA, VTK, PLY
