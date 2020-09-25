@@ -1,0 +1,30 @@
+#!/bin/bash
+#SBATCH -p RM-shared
+#SBATCH -t 1:00:00
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=16
+#SBATCH --mail-type=ALL
+
+# echo commands to stdout
+set -x 
+# Set simulation number 
+i=119
+# Set path 
+WD=/pylon5/bi561lp/lwaldrop/entcode/
+# move to working directory
+cd "${WD}"/bin
+# add appropriate modules
+module load  psc_path/1.1 slurm/default git/2.10.2 xdusage/2.1-1 intel/19.5 mpi/intel_openmpi/19.5 hdf5/1.8.16_intel silo/4.10.2-intel-lw boost/1.60.0-intel-lw petsc/3.7.2-intel-lw samrai/2.4.4-intel-lw IBAMR/IBAMR-intel-lw
+# Copy data files to bin directory
+cp "${WD}"/data/input2d-files/input2d${i} .
+cp "${WD}"/data/vertex-files/hairs${i}.vertex .
+# run MPI program
+mpirun -n $SLURM_NTASKS ./main2d input2d${i}
+rm input2d${i} hairs${i}.vertex
+# check and zip finished simulation
+cd ../results/runs/
+if test -d viz_IB2d${i}/lag_data.cycle_030000; then
+    zip -r viz_IB2d${i}.zip viz_IB2d${i}/
+else 
+    echo "Simulation failed"
+fi
