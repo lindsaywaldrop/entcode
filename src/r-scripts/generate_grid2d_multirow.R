@@ -27,7 +27,7 @@ package.check <- lapply(
 plotit <- 0  # plot the hairs? yes = 1, no = 0
 startrun <- 1
 endrun <- 165
-nohairs <- 25  # 3 row: 12, 4 row: 18, 5 row: 25
+nohairs <- 18  # 3 row: 12, 4 row: 18, 5 row: 25
 #starthair <- 8  #  first row start: 2, second row start: 6, third row start: 8
 #endhair <- 12    #  first row end: 3, second row end: 7, third row end: 12
 
