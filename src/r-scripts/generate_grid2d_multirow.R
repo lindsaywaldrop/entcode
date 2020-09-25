@@ -10,45 +10,48 @@
 # - quit()
 # - n
 
-
-# Install packages. You should only have to run these once!
-#install.packages("useful", dependencies = TRUE, repos='http://cran.us.r-project.org')
-#install.packages("pracma", dependencies = TRUE, repos='http://cran.us.r-project.org')
-#install.packages("data.table", dependencies = TRUE, repos='http://cran.us.r-project.org')
-
 #### Loads required packages ####
-require(pracma)
-require(useful)
-require(data.table)
 
-plotit <- 0  # plot the hairs? yes=1 no=0
+packages <- c("pracma", "useful", "data.table")
 
+package.check <- lapply(
+  packages,
+  FUN <- function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE, repos='http://cran.us.r-project.org')
+      library(x, character.only = TRUE)
+    }
+  }
+)
+
+plotit <- 0  # plot the hairs? yes = 1, no = 0
 startrun <- 1
 endrun <- 165
-starthair <- 8  #  first row start: 2, second row start: 6, third row start: 8
-endhair <- 12    #  first row end: 3, second row end: 7, third row end: 12
+nohairs <- 25  # 3 row: 12, 4 row: 18, 5 row: 25
+#starthair <- 8  #  first row start: 2, second row start: 6, third row start: 8
+#endhair <- 12    #  first row end: 3, second row end: 7, third row end: 12
 
 #### Defines functions ####
 circle <- function(center, radius, L, dx){
-	x_grid <- seq(-(radius + 0.01), radius + 0.01, by = dx)
-	y_grid <- seq(-(radius + 0.01), radius + 0.01, by = dx)
-	whole_grid <- meshgrid(x_grid, y_grid)
-	
-	THETA <- c(seq(0, 2 * pi, length = 250), 0)
-	RHO <- array(1, length(THETA)) * radius
-	Z <- array(1, length(RHO)) * 0
-	nap < -matrix(c(THETA, RHO), nrow = length(THETA), ncol = 2)
-	points <- pol2cart(RHO, THETA)
-	points <- as.data.frame(points)
-	
-	In <- inpolygon(whole_grid$X, whole_grid$Y, points$x, points$y, boundary = FALSE)
-	Xin <- whole_grid$X[In]
-	Yin <- whole_grid$Y[In]
-	
-	X <- Xin + center[1]
-	Y <- Yin + center[2]
-	circ <- data.frame(X, Y)
-	return(circ)
+  x_grid <- seq(-(radius + 0.01), radius + 0.01, by = dx)
+  y_grid <- seq(-(radius + 0.01), radius + 0.01, by = dx)
+  whole_grid <- meshgrid(x_grid, y_grid)
+  
+  THETA <- c(seq(0, 2 * pi, length = 250), 0)
+  RHO <- array(1, length(THETA)) * radius
+  Z <- array(1, length(RHO)) * 0
+  nap <- matrix(c(THETA, RHO), nrow = length(THETA), ncol = 2)
+  points <- pol2cart(RHO, THETA)
+  points <- as.data.frame(points)
+  
+  In <- inpolygon(whole_grid$X, whole_grid$Y, points$x, points$y, boundary = FALSE)
+  Xin <- whole_grid$X[In]
+  Yin <- whole_grid$Y[In]
+  
+  X <- Xin + center[1]
+  Y <- Yin + center[2]
+  circ <- data.frame(X, Y)
+  return(circ)
 }
 plotahair <- function(hairxCenterx, hairxCentery, hdia, L, dx, no, plotit){
   h1 <- circle(c(hairxCenterx, hairxCentery), 0.5 * hdia, L, dx)
@@ -58,10 +61,10 @@ plotahair <- function(hairxCenterx, hairxCentery, hdia, L, dx, no, plotit){
   }
   return(h1)
 }
-makehairs <- function(th, GtD, number, plotit){
+makehairs <- function( th, GtD, number, nohairs, plotit = 0){
   
-  #th <- 0
-  nohairs <- 18
+  #th=0
+  #nohairs <- 25
   np <- 3
   L <- 2.0         # length of computational domain (m)
   N <- 4096        # number of Cartesian grid meshwidths at the finest level of the AMR grid
@@ -70,10 +73,13 @@ makehairs <- function(th, GtD, number, plotit){
   #        vertex pts too far apart: flow thru boundary, too close: numerical weirdness
   NFINEST <- 5  # NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
   kappa_target <- 1.0e-2        # target point penalty spring constant (Newton)
+  
+  #hdia <- (3/8)*0.01     # Diameter of hair
+  #adia <- 10*hdia     # Diameter of flagellum
   hdia <- 0.002     # Diameter of hair
   adia <- 0.1     # Diameter of flagellum
   
-  th2 <- (th/180) * pi      # Angle off positive x-axis in radians
+  th2 <- (th / 180) * pi      # Angle off positive x-axis in radians
   #GtD <- 5.0      # Gap width to diameter ratio
   dist <- 2 * hdia     # Distance between antennule and hair 
   mindGap <- (0.5 * adia) + (0.5 * hdia) + dist  # Calculate distance between hair centers
@@ -134,16 +140,37 @@ makehairs <- function(th, GtD, number, plotit){
   hair18Centerx <- hair12Centerx + width * cos(th2 + (30/180) * pi)
   hair18Centery <- hair12Centery + width * sin(th2 + (30/180) * pi)
   
+  hair19Centerx <- hair13Centerx + width * cos(th2 - (30/180) * pi)
+  hair19Centery <- hair13Centery - width * sin(-th2 + (30/180) * pi)
+  
+  hair20Centerx <- hair14Centerx + width * cos(th2 - (30/180) * pi)
+  hair20Centery <- hair14Centery - width * sin(-th2 + (30/180) * pi)
+  
+  hair21Centerx <- hair15Centerx + width * cos(th2 - (30/180) * pi)
+  hair21Centery <- hair15Centery - width * sin(-th2 + (30/180) * pi)
+  
+  hair22Centerx <- hair16Centerx + width * cos(th2 - (30/180) * pi)
+  hair22Centery <- hair16Centery - width * sin(-th2 + (30/180) * pi)
+  
+  hair23Centerx <- hair17Centerx + width * cos(th2 - (30/180) * pi)
+  hair23Centery <- hair17Centery - width * sin(-th2 + (30/180) * pi)
+  
+  hair24Centerx <- hair18Centerx + width * cos(th2 - (30/180) * pi)
+  hair24Centery <- hair18Centery - width * sin(-th2 + (30/180) * pi)
+  
+  hair25Centerx <- hair18Centerx + width * cos(th2 + (30/180) * pi)
+  hair25Centery <- hair18Centery + width * sin(th2 + (30/180) * pi)
+  
   #### Produces points within defined hairs ####
   
   # Antennule
   ant <- circle(c(0, 0), 0.5 * adia, L, dx);  # Produces points that define antennule
   aN <- size(ant$X, 2)                   # Records number of points inside antennule
   if(plotit == 1){
-    plot(0, 0, xlim = c(-0.1, 0.1), ylim = c(-0.1, 0.1), pch = 19, cex = 4.5) #Plots antennule
+    plot(0, 0, xlim = c(-0.1, 0.1), ylim = c(-0.1,0.1), pch = 19, cex = 4.5) #Plots antennule
     text(0, 0, labels = "Ant", col = "red")
   }
-
+  
   for (i in 1:nohairs){
     hairx <- eval(as.name(paste("hair", i, "Centerx", sep = "")))
     hairy <- eval(as.name(paste("hair", i, "Centery", sep = "")))
@@ -157,7 +184,7 @@ makehairs <- function(th, GtD, number, plotit){
   
   totalN <- aN + nohairs * hN  # Calculates total number of points (first line of vertex file)
   
-  filename <- paste("hairs", number, ".vertex", sep = "")   # Defines file name
+  filename <- paste("./data/vertex-files/",nohairs,"hair_files/hairs", number, ".vertex", sep = "")   # Defines file name
   if(file.exists(filename)) file.remove(filename)  # Deletes file with that name if it exists
   cat(as.character(totalN), sep = "\n", file = filename, append = FALSE)
   # new code with fwrite in data.table package
@@ -166,7 +193,7 @@ makehairs <- function(th, GtD, number, plotit){
     hair <- eval(as.name(paste("h", k, sep = "")))
     fwrite(data.frame(hair), file = filename, append = TRUE, sep = " ", nThread = 2)
   }
-
+  
   allhairs <- data.frame("a" = c(aN, 0, 0))
   names(allhairs) <- "a"
   for (i in 1:nohairs){
@@ -174,19 +201,19 @@ makehairs <- function(th, GtD, number, plotit){
     hairy <- eval(as.name(paste("hair", i, "Centery", sep = "")))
     allhairs <- cbind(allhairs, "h" = c(hN, hairx, hairy))
   }
-
-  fwrite(allhairs,file = paste("hairs", number, ".csv", sep = ""), row.names = FALSE)
+  
+  fwrite(allhairs, file = paste("./data/csv-files/",nohairs,"hair_files/hairs", number, ".csv", sep = ""), row.names = FALSE)
   
 }
 
 ##### Input parameter definitions ####
 
-parameters <- read.table("allpara_165.txt")
+parameters <- read.table(paste("./data/parameters/allpara_",endrun,".txt",sep = ""))
 names(parameters) <- c("angle", "gap", "Re")
 
 for (j in startrun:endrun){
   #ptm <- proc.time()
-  makehairs(parameters$angle[j], parameters$gap[j], j, plotit)
+  makehairs(parameters$angle[j], parameters$gap[j], j, nohairs, plotit)
   #t <- (proc.time() - ptm)
   #message(t)
 }
