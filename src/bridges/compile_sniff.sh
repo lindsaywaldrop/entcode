@@ -11,10 +11,10 @@ mkdir results/ibamr
 mkdir results/ibamr/runs/
 mkdir results/ibamr/log-files/
 mkdir results/visit/
-mkdir results/visit/7hair_files/
-mkdir results/visit/12hair_files/
-mkdir results/visit/18hair_files/
-mkdir results/visit/25hair_files/
+mkdir results/visit/7hair_runs/
+mkdir results/visit/12hair_runs/
+mkdir results/visit/18hair_runs/
+mkdir results/visit/25hair_runs/
 mkdir data/
 mkdir data/vertex-files/
 mkdir data/vertex-files/7hair_files/
