@@ -49,16 +49,15 @@ EX=0
 EY=0
 
 # For loop that will write files
-#for i in `seq 1 $numlines`; do
-for i in `seq 1 1`; do
+for i in `seq 1 $numlines`; do
+#for i in `seq 1 1`; do
   # Sets Wo based on i
   SX=$(awk -v var="$i" 'NR==var' startx.txt)
   SY=$(awk -v var="$i" 'NR==var' starty.txt)
   EX=$(awk -v var="$i" 'NR==var' endx.txt)
   EY=$(awk -v var="$i" 'NR==var' endy.txt)
 
-#  /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout1.py \
-/opt/packages/VisIt/visit2.13.0/src/bin/visit -nowin -s \
+  /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout1.py \
  "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/hairline${row} ${i} $SX $SY $EX $EY
 
 done
