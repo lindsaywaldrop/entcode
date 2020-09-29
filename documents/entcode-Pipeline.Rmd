@@ -74,6 +74,7 @@ The input2d files will be located in `data/input2d-files`.
 
 Vertex files describe the positions of the antennule and each hair in the array. These are divided up by the number of hairs in each array: 
 
+ * 5 hairs (one row)
  * 7 hairs (two rows)
  * 12 hairs (three rows)
  * 18 hairs (four rows)
@@ -83,10 +84,23 @@ Each vertex file needs to be different depending on the parameters set by the gP
 
  * Line 29: the endrun parameter should equal the number of simulations in the gPC set (either 165, 681, or 1233)
  * Line 30: the number of hairs in the array (either 7, 12, 18, or 25)
- 
-Once changed, run the file using the R console:
 
-`> source('generate_grid2d_multirow.R')`
+ 
+Once changed, return to the main directory and run the file using the R console:
+
+`> setwd(getwd())`
+
+`> source('src/r-scripts/generate_grid2d_multirow.R')`
+
+If you are running the one row with 5 hairs, it is necessary to run a separate script: `generate_grid2dSY.R` in the same folder. IN this file, change the lines: 
+
+ * Line 23: the endrun parameter should equal the number of simulations in the gPC set. 
+ 
+Then run the script:
+
+`> setwd(getwd())`
+
+`> source('src/r-scripts/generate_grid2dSY.R')`
 
 The vertex files will be located in `data/vertex-files` in a directory corresponding to the number of hairs in the array. The csv files will similarly be located in `data/csv-files`. 
 
@@ -126,9 +140,16 @@ This script will return "Simulation found" if it exists, is unzipped, and is com
 
 Fluid speeds need to be sampled along a line that intersects all hairs in a row. In order for VisIt to extract fluid speeds, it needs to know where each hair exists in the doman for each array configuration in each simulation. Then these values need to be put in a standard form so that VisIt can read them automatically from the python script. 
 
-This is done by way of a standard lineout text file, which you can generate using `generate_lineouts.R` in `src/r-scripts`. Be sure to edit line 18 (endrun) with the number of simulations in the set. In the R console, run: 
+This is done by way of a standard lineout text file, which you can generate using `generate_lineouts.R` in `src/r-scripts`. Be sure to edit: 
 
-`> source('generate_lineouts.R')`
+ * Line 13 (nohairs) with the number of hairs in the array. (Note: separate files are produced with running either 5 or 25 hairs, but 7, 12, 18, and 25 hair arrays may use the 25-hair lineout files.)
+ * Line 18 (endrun) with the number of simulations in the set. 
+ 
+ In the R console in the main directory, run: 
+
+`> setwd(getwd())`
+
+`> source('src/r-scripts/generate_lineouts.R')`
 
 This script will read in the csv files in `results/csv-files` and deposit the lineout files into `data/lineout-files`. This only needs to be run once, as all the hairs in all the arrays conform to the same standards. 
 
@@ -141,6 +162,8 @@ To execute the python script, use the shell script `setlineout_multihair.sh` thr
 For this example, the 25-hair array is processed for row 1. VisIt will write these values to a .curve file and store them in `results/visit/nhair_runs/simi/hairlinej` where n number of hairs in the array, i is the simulation number, and j is the row number. 
 
 This script needs to be executed independently for each row in the array. 
+
+## 5. Execution of R scripts for calculation of final values
 
 
 

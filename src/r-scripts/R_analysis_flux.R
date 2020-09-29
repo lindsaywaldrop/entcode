@@ -5,30 +5,23 @@
 ###
 #################################################################################################################
 
-# Clears any previous data
-rm(list=ls())
+rowno <- 5              # Total number of rows in the array. Options: "3", "4"
+nohairs <- 25            # Total number of hairs in the array. Options: "12", "18"
+n <- 165				 # number of simulations to analyze
 
 # Calculate leakiness base (no hairs condition)
-domain = 2.0		   	 # length of computational domain, m
-dx = 0.002       	     # Distance of mesh grid, m
-hair_dia = 0.01   	 	 # diameter of each hair, m
-speed = 0.06      	 	 # fluid speed, m/s
-duration = 0.05   	 	 # duration of simulation, s
-sample = 11			 # sampling rate
+domain <- 2.0		   	 # length of computational domain, m
+dx <- 0.002       	     # Distance of mesh grid, m
+hair_dia <- 0.002   	 	 # diameter of each hair, m
+speed <- 0.06      	 	 # fluid speed, m/s
+duration <- 0.03   	 	 # duration of simulation, s
+sample <- 5000			 # sampling rate
 
 half_sample = floor(sample/2)	 # Calculates the position of hair 1
 shear_pt = floor(sample*(0.3*hair_dia+0.5*hair_dia)/domain) # Calculates distance of shear measurement from hair center
 
-n = 1233				 # number of simulations to analyze
-	
-setwd("/Users/Bosque/IBAMR/entcode/code/runs/")	# Sets directory to main
-
 Uxmean<-matrix(data=0,nrow=n,ncol=3)
 Uymean<-matrix(data=0,nrow=n,ncol=3)
-
-k<-c(0,4,8)
-cols<-c("purple","blue","red")
-
 
 for (j in 1:n){		# Main loop
 	print(paste("Simulation: ",j,sep=""))					# Prints simulation number 

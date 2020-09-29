@@ -4,7 +4,9 @@ WD=${1:?Please provide a top-level working directory}
 a=${2:?Provide the number of hairs in the array}
 row=${3:?Provide the row number to process}
 
-if [ "$row" == 1 ]; then
+if [ "$row" == 1 ] && [ "$a" == 5 ]; then
+  filename="lineout_h5-h4.txt"
+elif [ "$row" == 1 ] && [ "$a" != 5 ]; then
   filename="lineout_h3-h2.txt"
 elif [ "$row" == 2 ]; then
   filename="lineout_h7-h6.txt"

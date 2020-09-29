@@ -10,12 +10,16 @@
 # - quit()
 # - n
 
-#nohairs <- 25  # 3 row: 12, 4 row: 18, 5 row: 25
-hairendpts <- data.frame(starthair = c(3, 7, 8, 13, 19), endhair = c(2, 6, 12, 18, 25))
-#starthair <- 19  #  first row start: 3, second row start: 7, third row start: 8, fourth row start: 13, fifth row start: 19
-#endhair <- 25    #  first row end: 2, second row end: 6, third row end: 12, fourth row end: 18, fifth row end: 25
+nohairs <- 5  # 1 row: 5, 3 row: 12, 4 row: 18, 5 row: 25
+
 startrun <- 1
 endrun <- 165
+
+if (nohairs == 5) {
+  hairendpts <- data.frame(starthair = c(5), endhair = c(4))
+}else {
+  hairendpts <- data.frame(starthair = c(3, 7, 8, 13, 19), endhair = c(2, 6, 12, 18, 25))
+}
 
 #### Defines functions ####
 
@@ -23,7 +27,7 @@ generateLineout <- function(starthair, endhair, startrun, endrun){
   filename2 <- paste("./data/lineout-files/lineout_h", starthair, "-h", endhair, ".txt", sep = "")   # Defines file name
   if(file.exists(filename2)) file.remove(filename2)  # Deletes file with that name if it exists
   for (p in startrun:endrun){
-    hair.data <- read.csv(paste("./data/csv-files/25hair_files/hairs", p, ".csv", sep = ""))
+    hair.data <- read.csv(paste("./data/csv-files/",nohairs,"hair_files/hairs", p, ".csv", sep = ""))
     l <- sqrt((hair.data[2, starthair + 1] - hair.data[2, endhair + 1])^2 + (hair.data[3, starthair + 1] - hair.data[3, endhair + 1])^2)
     cat(c(as.character(p),
           as.character(hair.data[2, starthair + 1]), as.character(hair.data[3, starthair + 1]),
