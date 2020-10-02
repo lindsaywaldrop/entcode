@@ -6,24 +6,42 @@
 #################################################################################################################
 
 #### Assign condition values ####
-norows <- 5              # Total number of rows in the array. Options: "3", "4"
 nohairs <- 25            # Total number of hairs in the array. Options: "12", "18"
 rundir <- paste(nohairs, "hair_runs/", sep = "")   # Runs directory. Options: "runs_3row/", "runs/"
 n <- 165				         # number of simulations to analyze
+
+# Assigns total number of rows in the array.
+if(nohairs == 25){ 
+  norows <- 5
+}else if (nohairs == 18){
+  norows <- 4
+}else if(nohairs == 12){
+  norows <- 3
+}else if (nohairs == 7){
+  norows <- 2
+}else {
+  norows <- 1
+}
+disp(paste(nohairs,"hairs in",norows, "rows"))
 
 # The following vector dictates which side the shear should be sampled on. 
 # The hair where sampling started (e.g. hair 3 for row 1) should be "-1".
 # The hair where sampling ended (e.g. hair 2 for row 1) should be "1".
 # All interior hairs should be "0".
-whichside<-c( 0,  1, -1,         # row 1
-              0,  0,  1, -1,       # row 2
-             -1,  0,  0,  0,  1,     # row 3
-             -1,  0,  0,  0,  0,  1,   # row 4
-             -1,  0,  0,  0,  0,  0,  1) # row 5
+
+if(nohairs == 5){
+  whichside<-c( 0,  0,  0, -1,  1 )
+}else {
+  whichside<-c( 0,  -1, 1,         # row 1
+                0,  0,  -1,  1,       # row 2
+               -1,  0,  0,  0,  1,     # row 3
+               -1,  0,  0,  0,  0,  1,   # row 4
+               -1,  0,  0,  0,  0,  0,  1 ) # row 5
+}
 
 hair_dia <- 0.002   	 	 # diameter of each hair, m
 sample <- 5000			     # sampling rate
-shear_hair < -matrix(data = 0, nrow = n, ncol = nohairs)	# Allocates space for shear calculations
+shear_hair <- matrix(data = 0, nrow = n, ncol = nohairs)	# Allocates space for shear calculations
 
 #### Main Loop for Calculations ####
 for (j in 1:n){		# Main loop
@@ -39,9 +57,12 @@ for (j in 1:n){		# Main loop
     half_hair_width <- floor((0.5) * hair_dia / samplewidth) # Calculates number of sample points covered by hair radius
     shear_point <- floor((1) * hair_dia / samplewidth) # Calculates number of sample points covered by hair diameter
     
-    if (arrayrow==1){ # Assigning which hairs to run calculation
-      hairsinrow <- 3    # Sets the number of hairs in the current rwo
+    if (arrayrow==1 && nohairs==5){ # Assigning which hairs to run calculation
+      hairsinrow <- 5    # Sets the number of hairs in the current rwo
       hairsdone <- 0     # Sets the hairs already calculated based on current row
+    }else if (arrayrow==1 && nohairs!=5){
+      hairsinrow <- 3
+      hairsdone <- 0
     }else if (arrayrow==2){
       hairsinrow <- 4
       hairsdone <- 3
@@ -51,11 +72,13 @@ for (j in 1:n){		# Main loop
     }else if (arrayrow==4){
       hairsinrow <- 6
       hairsdone <- 12
-    }else{ 
+    }else if (arrayrow==5){ 
       hairsinrow <- 7
       hairsdone <- 18
+    } else{
+      disp("Unknown configuration")
     }
-    
+    disp(paste("Row",arrayrow,"with",hairsinrow,"hairs"))
     for (k in 1:hairsinrow){  
       side <- whichside[k + hairsdone] # Assigns which side the shear calculation should be on
       if (side==-1){  # Sets start and end points of calculation based on which side 
@@ -65,7 +88,7 @@ for (j in 1:n){		# Main loop
         stpt <- (length(data1$V1) - (half_hair_width + shear_point))
         endpt <- (length(data1$V1) - half_hair_width)
       }
-      curve < -smooth.spline(data1$V1[stpt:endpt], data1$V2[stpt:endpt], spar = 0.90) # Creates smooth spline fit of data
+      curve <- smooth.spline(data1$V1[stpt:endpt], data1$V2[stpt:endpt], spar = 0.90) # Creates smooth spline fit of data
       new.curve <- predict(curve, seq(min(data1$V1[stpt:endpt]), max(data1$V1[stpt:endpt]),
                                     by = 0.00005)) # Resamples to create smooth spline curve
       slopes <- diff(new.curve$y) / diff(new.curve$x)  # Calculates slopes between points of smooth spline

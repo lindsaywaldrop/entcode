@@ -155,7 +155,7 @@ This script will read in the csv files in `results/csv-files` and deposit the li
 
 ### Running VisIt python scripts
 
-To execute the python script, use the shell script `setlineout_multihair.sh` through command-line bash:
+To execute the python script, use the shell script `setlineout_multihair.sh` in the folder `src/visit` through command-line bash:
 
 `$ sh setlineout_multihair.sh "$WD" 25 1`
 
@@ -163,7 +163,27 @@ For this example, the 25-hair array is processed for row 1. VisIt will write the
 
 This script needs to be executed independently for each row in the array. 
 
+For the second script, through the command line, enter: 
+
+`$ sh setlineout_flux.sh "$WD" 25`
+
+Specify only the number of hairs in the array after the working directory. It will deposit curve files in `results/visit/nhair_runs/simi/hairline_flux`. Four files will be produced for each hair. This script needs to be run only once. 
+
 ## 5. Execution of R scripts for calculation of final values
+
+### Leakiness 
+
+
+
+### Flux
+
+
+
+### Shear around hairs
+
+
+
+### Mean magnitude of velocity
 
 
 

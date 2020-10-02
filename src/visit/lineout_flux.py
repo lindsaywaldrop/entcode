@@ -18,25 +18,27 @@
 
 import sys
 
-num=sys.argv[1]
-hairx=sys.argv[2]
-hairy=sys.argv[3]
-dist=sys.argv[4]
+WDin=sys.argv[1]
+WDout=sys.argv[2]
+num=sys.argv[3]
+hairx=sys.argv[4]
+hairy=sys.argv[5]
+dist=sys.argv[6]
 
-OpenDatabase("localhost:/Volumes/HelmsDeep/IBAMR/entcode/usedruns/viz_IB2d"+str(num)+"/lag_data.visit", 0)
+OpenDatabase(str(WDin)+"/lag_data.visit", 0)
 AddPlot("Mesh", "hairs"+str(num)+"_vertices", 1, 1)
 DrawPlots()
-OpenDatabase("localhost:/Volumes/HelmsDeep/IBAMR/entcode/usedruns/viz_IB2d"+str(num)+"/dumps.visit", 0)
+OpenDatabase(str(WDin)+"/dumps.visit", 0)
 AddPlot("Pseudocolor", "U_magnitude", 1, 1)
 DrawPlots()
 SetActivePlots(2)
-SetTimeSliderState(5)
+SetTimeSliderState(3)
 Query("Lineout", end_point=(float(float(hairx)+float(dist)), float(float(hairy)-float(dist)), 0), num_samples=1000, start_point=(float(float(hairx)+float(dist)), float(float(hairy)+float(dist)), 0), use_sampling=0, vars=("U_x"))
 Query("Lineout", end_point=(float(float(hairx)+float(dist)), float(float(hairy)-float(dist)), 0), num_samples=1000, start_point=(float(float(hairx)+float(dist)), float(float(hairy)+float(dist)), 0), use_sampling=0, vars=("U_y"))
 SetActiveWindow(2)
 SaveWindowAtts = SaveWindowAttributes()
 SaveWindowAtts.outputToCurrentDirectory = 0
-SaveWindowAtts.outputDirectory = "/Volumes/HelmsDeep/IBAMR/entcode/usedruns/viz_IB2d"+str(num)+"/hairline_flux"
+SaveWindowAtts.outputDirectory = str(WDout)
 SaveWindowAtts.fileName = "hairline_flux"
 SaveWindowAtts.family = 1
 SaveWindowAtts.format = SaveWindowAtts.CURVE  # BMP, CURVE, JPEG, OBJ, PNG, POSTSCRIPT, POVRAY, PPM, RGB, STL, TIFF, ULTRA, VTK, PLY
@@ -62,7 +64,7 @@ Query("Lineout", end_point=(float(float(hairx)-float(dist)), float(float(hairy)-
 SetActiveWindow(2)
 SaveWindowAtts = SaveWindowAttributes()
 SaveWindowAtts.outputToCurrentDirectory = 0
-SaveWindowAtts.outputDirectory = "/Volumes/HelmsDeep/IBAMR/entcode/usedruns/viz_IB2d"+str(num)+"/hairline_flux"
+SaveWindowAtts.outputDirectory = str(WDout)
 SaveWindowAtts.fileName = "hairline_flux"
 SaveWindowAtts.family = 1
 SaveWindowAtts.format = SaveWindowAtts.CURVE  # BMP, CURVE, JPEG, OBJ, PNG, POSTSCRIPT, POVRAY, PPM, RGB, STL, TIFF, ULTRA, VTK, PLY
@@ -88,7 +90,7 @@ Query("Lineout", end_point=(float(float(hairx)-float(dist)), float(float(hairy)+
 SetActiveWindow(2)
 SaveWindowAtts = SaveWindowAttributes()
 SaveWindowAtts.outputToCurrentDirectory = 0
-SaveWindowAtts.outputDirectory = "/Volumes/HelmsDeep/IBAMR/entcode/usedruns/viz_IB2d"+str(num)+"/hairline_flux"
+SaveWindowAtts.outputDirectory = str(WDout)
 SaveWindowAtts.fileName = "hairline_flux"
 SaveWindowAtts.family = 1
 SaveWindowAtts.format = SaveWindowAtts.CURVE  # BMP, CURVE, JPEG, OBJ, PNG, POSTSCRIPT, POVRAY, PPM, RGB, STL, TIFF, ULTRA, VTK, PLY
@@ -114,7 +116,7 @@ Query("Lineout", end_point=(float(float(hairx)+float(dist)), float(float(hairy)+
 SetActiveWindow(2)
 SaveWindowAtts = SaveWindowAttributes()
 SaveWindowAtts.outputToCurrentDirectory = 0
-SaveWindowAtts.outputDirectory = "/Volumes/HelmsDeep/IBAMR/entcode/usedruns/viz_IB2d"+str(num)+"/hairline_flux"
+SaveWindowAtts.outputDirectory = str(WDout)
 SaveWindowAtts.fileName = "hairline_flux"
 SaveWindowAtts.family = 1
 SaveWindowAtts.format = SaveWindowAtts.CURVE  # BMP, CURVE, JPEG, OBJ, PNG, POSTSCRIPT, POVRAY, PPM, RGB, STL, TIFF, ULTRA, VTK, PLY
@@ -132,9 +134,6 @@ SaveWindowAtts.resConstraint = SaveWindowAtts.ScreenProportions  # NoConstraint,
 SaveWindowAtts.advancedMultiWindowSave = 0
 SetSaveWindowAttributes(SaveWindowAtts)
 SaveWindow()
-
-
-
 
 DeleteAllPlots()
 

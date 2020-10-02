@@ -10,7 +10,7 @@
 # - quit()
 # - n
 
-nohairs <- 5  # 1 row: 5, 3 row: 12, 4 row: 18, 5 row: 25
+nohairs <- 25  # 1 row: 5, 3 row: 12, 4 row: 18, 5 row: 25
 
 startrun <- 1
 endrun <- 165
@@ -21,7 +21,7 @@ if (nohairs == 5) {
   hairendpts <- data.frame(starthair = c(3, 7, 8, 13, 19), endhair = c(2, 6, 12, 18, 25))
 }
 
-#### Defines functions ####
+#### Defines function ####
 
 generateLineout <- function(starthair, endhair, startrun, endrun){
   filename2 <- paste("./data/lineout-files/lineout_h", starthair, "-h", endhair, ".txt", sep = "")   # Defines file name
@@ -32,10 +32,7 @@ generateLineout <- function(starthair, endhair, startrun, endrun){
     cat(c(as.character(p),
           as.character(hair.data[2, starthair + 1]), as.character(hair.data[3, starthair + 1]),
           as.character(hair.data[2, endhair + 1]), as.character(hair.data[3, endhair + 1]),
-          as.character(hair.data[2, 1 + 1]), as.character(hair.data[3, 1 + 1]),
-          as.character(hair.data[2, 2 + 1]), as.character(hair.data[3, 2 + 1]),
-          as.character(hair.data[2, 3 + 1]), as.character(hair.data[3, 3 + 1]),
-          as.character(l), "\n"),
+         as.character(l), "\n"),
         file = filename2, sep = "\t", append = TRUE)
   }
 }

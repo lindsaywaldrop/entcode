@@ -38,7 +38,7 @@ done
 
 cd "${WD}"/src/visit/
 
-# Separate main parameter file into three files
+# Separate main parameter file into four files
 cut -f 2 "$WD"/data/lineout-files/$filename > startx.txt
 cut -f 3 "$WD"/data/lineout-files/$filename > starty.txt
 cut -f 4 "$WD"/data/lineout-files/$filename > endx.txt
@@ -59,7 +59,7 @@ for i in `seq 1 $numlines`; do
   EX=$(awk -v var="$i" 'NR==var' endx.txt)
   EY=$(awk -v var="$i" 'NR==var' endy.txt)
 
-  /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout1.py \
+  /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout_leak.py \
  "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/hairline${row} ${i} $SX $SY $EX $EY
 
 done
