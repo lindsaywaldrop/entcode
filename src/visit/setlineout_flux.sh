@@ -38,8 +38,8 @@ DIST=0.002
 for i in `seq 1 1`; do
 
   # For loop that iterates over hairs 
-  for j in `seq 1 ${a}`; do
-  
+  #for j in `seq 1 ${a}`; do
+  for j in `seq 1 2`; do
     cut -d , -f $(($j+1)) "$WD"/data/csv-files/${a}hair_files/hairs${i}.csv > hair.txt
 
     # Sets Hair based on j and i
@@ -47,7 +47,7 @@ for i in `seq 1 1`; do
     HY=$(awk -v var="4" 'NR==var' hair.txt)
 
     /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout_flux.py \
-    "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/hairline_flux ${i} $HX $HY $DIST
+    "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/hairline_flux ${i} ${j} $HX $HY $DIST
     
     /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s Umean.py \
     "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/Umean ${j} $HX $HY $DIST

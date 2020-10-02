@@ -21,9 +21,10 @@ import sys
 WDin=sys.argv[1]
 WDout=sys.argv[2]
 num=sys.argv[3]
-hairx=sys.argv[4]
-hairy=sys.argv[5]
-dist=sys.argv[6]
+hairnum=sys.argv[4]
+hairx=sys.argv[5]
+hairy=sys.argv[6]
+dist=sys.argv[7]
 
 OpenDatabase(str(WDin)+"/lag_data.visit", 0)
 AddPlot("Mesh", "hairs"+str(num)+"_vertices", 1, 1)
@@ -39,7 +40,7 @@ SetActiveWindow(2)
 SaveWindowAtts = SaveWindowAttributes()
 SaveWindowAtts.outputToCurrentDirectory = 0
 SaveWindowAtts.outputDirectory = str(WDout)
-SaveWindowAtts.fileName = "hairline_flux"
+SaveWindowAtts.fileName = "flux_hair"+str(hairnum)+"_"
 SaveWindowAtts.family = 1
 SaveWindowAtts.format = SaveWindowAtts.CURVE  # BMP, CURVE, JPEG, OBJ, PNG, POSTSCRIPT, POVRAY, PPM, RGB, STL, TIFF, ULTRA, VTK, PLY
 SaveWindowAtts.width = 1024
@@ -65,7 +66,7 @@ SetActiveWindow(2)
 SaveWindowAtts = SaveWindowAttributes()
 SaveWindowAtts.outputToCurrentDirectory = 0
 SaveWindowAtts.outputDirectory = str(WDout)
-SaveWindowAtts.fileName = "hairline_flux"
+SaveWindowAtts.fileName = "flux_hair"+str(hairnum)+"_"
 SaveWindowAtts.family = 1
 SaveWindowAtts.format = SaveWindowAtts.CURVE  # BMP, CURVE, JPEG, OBJ, PNG, POSTSCRIPT, POVRAY, PPM, RGB, STL, TIFF, ULTRA, VTK, PLY
 SaveWindowAtts.width = 1024
@@ -91,7 +92,7 @@ SetActiveWindow(2)
 SaveWindowAtts = SaveWindowAttributes()
 SaveWindowAtts.outputToCurrentDirectory = 0
 SaveWindowAtts.outputDirectory = str(WDout)
-SaveWindowAtts.fileName = "hairline_flux"
+SaveWindowAtts.fileName = "flux_hair"+str(hairnum)+"_"
 SaveWindowAtts.family = 1
 SaveWindowAtts.format = SaveWindowAtts.CURVE  # BMP, CURVE, JPEG, OBJ, PNG, POSTSCRIPT, POVRAY, PPM, RGB, STL, TIFF, ULTRA, VTK, PLY
 SaveWindowAtts.width = 1024
@@ -117,7 +118,7 @@ SetActiveWindow(2)
 SaveWindowAtts = SaveWindowAttributes()
 SaveWindowAtts.outputToCurrentDirectory = 0
 SaveWindowAtts.outputDirectory = str(WDout)
-SaveWindowAtts.fileName = "hairline_flux"
+SaveWindowAtts.fileName = "flux_hair"+str(hairnum)+"_"
 SaveWindowAtts.family = 1
 SaveWindowAtts.format = SaveWindowAtts.CURVE  # BMP, CURVE, JPEG, OBJ, PNG, POSTSCRIPT, POVRAY, PPM, RGB, STL, TIFF, ULTRA, VTK, PLY
 SaveWindowAtts.width = 1024
