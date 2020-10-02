@@ -174,12 +174,14 @@ Specify only the number of hairs in the array after the working directory. It wi
 ### Leakiness 
 
 
+### Shear around hairs
+
 
 ### Flux
 
 
 
-### Shear around hairs
+
 
 
 

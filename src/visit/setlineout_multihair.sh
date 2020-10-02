@@ -30,9 +30,9 @@ cd "${WD}"/results/visit/${a}hair_runs/
 # Clear hairline directories of curve files or make hairline directories. 
 for i in `seq 1 $numlines`; do
   if [ -d "sim${i}/hairline${row}/" ]; then
-    rm "sim${i}/hairline${row}/*.curve"
+    rm sim${i}/hairline${row}/*.curve
   else
-    mkdir -p "sim${i}/hairline${row}/"
+    mkdir -p sim${i}/hairline${row}/
   fi
 done
 

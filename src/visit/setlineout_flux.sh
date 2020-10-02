@@ -10,10 +10,18 @@ cd "${WD}"/results/visit/${a}hair_runs/
 
 # Clear hairline directories of curve files or make hairline directories. 
 for i in `seq 1 $numlines`; do
-  if [ -d "sim${i}/hairline_flux/" ]; then
-    rm "sim${i}/hairline_flux/*.curve"
+  if [ -d "sim${i}/hairline_flux" ]; then
+    rm sim${i}/hairline_flux/*.curve
   else
-    mkdir -p "sim${i}/hairline_flux/"
+    mkdir -p sim${i}/hairline_flux/
+  fi
+done
+
+for i in `seq 1 $numlines`; do
+  if [ -d "sim${i}/Umean/" ]; then
+    rm sim${i}/Umean/*.curve
+  else
+    mkdir -p sim${i}/Umean/
   fi
 done
 
@@ -41,7 +49,8 @@ for i in `seq 1 1`; do
     /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout_flux.py \
     "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/hairline_flux ${i} $HX $HY $DIST
     
-    /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s Umean.py ${i} $HX $HY $DIST
+    /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s Umean.py \
+    "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/Umean ${j} $HX $HY $DIST
 
   done
 

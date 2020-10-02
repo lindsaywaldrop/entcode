@@ -18,16 +18,17 @@
 
 import sys
 
-num=sys.argv[1]
-hairx=sys.argv[2]
-hairy=sys.argv[3]
-dist=sys.argv[4]
+WDin=sys.argv[1]
+WDout=sys.argv[2]
+num=sys.argv[3]
+hairx=sys.argv[4]
+hairy=sys.argv[5]
+dist=sys.argv[6]
 
-
-OpenDatabase("localhost:/Volumes/HelmsDeep/IBAMR/entcode/usedruns/viz_IB2d"+str(num)+"/lag_data.visit", 0)
+OpenDatabase(str(WDin)+"/lag_data.visit", 0)
 AddPlot("Mesh", "hairs"+str(num)+"_vertices", 1, 1)
 DrawPlots()
-OpenDatabase("localhost:/Volumes/HelmsDeep/IBAMR/entcode/usedruns/viz_IB2d"+str(num)+"/dumps.visit", 0)
+OpenDatabase(str(WDin)+"/dumps.visit", 0)
 AddPlot("Pseudocolor", "U_magnitude", 1, 1)
 DrawPlots()
 AddOperator("Clip", 1)
@@ -64,12 +65,12 @@ QueryOverTimeAtts.createWindow = 1
 QueryOverTimeAtts.windowId = 2
 SetQueryOverTimeAttributes(QueryOverTimeAtts)
 SetQueryFloatFormat("%g")
-QueryOverTime("Average Value", end_time=5, start_time=0, stride=1)
+QueryOverTime("Average Value", end_time=3, start_time=0, stride=1)
 SetActiveWindow(2)
 SaveWindowAtts = SaveWindowAttributes()
 SaveWindowAtts.outputToCurrentDirectory = 0
-SaveWindowAtts.outputDirectory = "/Volumes/HelmsDeep/IBAMR/entcode/usedruns/Umean"
-SaveWindowAtts.fileName = "Umag"+str(num)+"hair"
+SaveWindowAtts.outputDirectory = str(WDout)
+SaveWindowAtts.fileName = "Umag_hair"+str(num)
 SaveWindowAtts.family = 1
 SaveWindowAtts.format = SaveWindowAtts.CURVE  # BMP, CURVE, JPEG, OBJ, PNG, POSTSCRIPT, POVRAY, PPM, RGB, STL, TIFF, ULTRA, VTK, PLY
 SaveWindowAtts.width = 1024
