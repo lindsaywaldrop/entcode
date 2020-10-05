@@ -6,9 +6,10 @@
 #################################################################################################################
 
 #### Assign condition values ####
-nohairs <- 25            # Total number of hairs in the array. Options: "12", "18"
+nohairs <- 25     # Total number of hairs in the array. 
+# Options: "3", "5", "7", "12", "18", "25"
+n <- 165				  # number of simulations to analyze
 rundir <- paste(nohairs, "hair_runs/", sep = "")   # Runs directory. Options: "runs_3row/", "runs/"
-n <- 165				         # number of simulations to analyze
 
 # Assigns total number of rows in the array.
 if(nohairs == 25){ 
@@ -23,6 +24,8 @@ if(nohairs == 25){
   norows <- 1
 }
 disp(paste(nohairs,"hairs in",norows, "rows"))
+
+
 
 # The following vector dictates which side the shear should be sampled on. 
 # The hair where sampling started (e.g. hair 3 for row 1) should be "-1".

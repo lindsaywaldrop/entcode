@@ -26,14 +26,15 @@ hairx=sys.argv[5]
 hairy=sys.argv[6]
 dist=sys.argv[7]
 
-OpenDatabase(str(WDin)+"/lag_data.visit", 0)
-AddPlot("Mesh", "hairs"+str(num)+"_vertices", 1, 1)
-DrawPlots()
+#OpenDatabase(str(WDin)+"/lag_data.visit", 0)
+#AddPlot("Mesh", "hairs"+str(num)+"_vertices", 1, 1)
+#DrawPlots()
 OpenDatabase(str(WDin)+"/dumps.visit", 0)
 AddPlot("Pseudocolor", "U_magnitude", 1, 1)
 DrawPlots()
 SetActivePlots(2)
 SetTimeSliderState(3)
+#Top right to bottom right
 Query("Lineout", end_point=(float(float(hairx)+float(dist)), float(float(hairy)-float(dist)), 0), num_samples=1000, start_point=(float(float(hairx)+float(dist)), float(float(hairy)+float(dist)), 0), use_sampling=0, vars=("U_x"))
 Query("Lineout", end_point=(float(float(hairx)+float(dist)), float(float(hairy)-float(dist)), 0), num_samples=1000, start_point=(float(float(hairx)+float(dist)), float(float(hairy)+float(dist)), 0), use_sampling=0, vars=("U_y"))
 SetActiveWindow(2)
@@ -60,6 +61,7 @@ SaveWindow()
 DeleteAllPlots()
 SetActiveWindow(1)
 SetActivePlots(2)
+#Bottom right to bottom left
 Query("Lineout", end_point=(float(float(hairx)-float(dist)), float(float(hairy)-float(dist)), 0), num_samples=1000, start_point=(float(float(hairx)+float(dist)), float(float(hairy)-float(dist)), 0), use_sampling=0, vars=("U_x"))
 Query("Lineout", end_point=(float(float(hairx)-float(dist)), float(float(hairy)-float(dist)), 0), num_samples=1000, start_point=(float(float(hairx)+float(dist)), float(float(hairy)-float(dist)), 0), use_sampling=0, vars=("U_y"))
 SetActiveWindow(2)
@@ -86,6 +88,7 @@ SaveWindow()
 DeleteAllPlots()
 SetActiveWindow(1)
 SetActivePlots(2)
+#Bottom left to top left
 Query("Lineout", end_point=(float(float(hairx)-float(dist)), float(float(hairy)+float(dist)), 0), num_samples=1000, start_point=(float(float(hairx)-float(dist)), float(float(hairy)-float(dist)), 0), use_sampling=0, vars=("U_x"))
 Query("Lineout", end_point=(float(float(hairx)-float(dist)), float(float(hairy)+float(dist)), 0), num_samples=1000, start_point=(float(float(hairx)-float(dist)), float(float(hairy)-float(dist)), 0), use_sampling=0, vars=("U_y"))
 SetActiveWindow(2)
@@ -112,6 +115,7 @@ SaveWindow()
 DeleteAllPlots()
 SetActiveWindow(1)
 SetActivePlots(2)
+#Top left to top right
 Query("Lineout", end_point=(float(float(hairx)+float(dist)), float(float(hairy)+float(dist)), 0), num_samples=1000, start_point=(float(float(hairx)-float(dist)), float(float(hairy)+float(dist)), 0), use_sampling=0, vars=("U_x"))
 Query("Lineout", end_point=(float(float(hairx)+float(dist)), float(float(hairy)+float(dist)), 0), num_samples=1000, start_point=(float(float(hairx)-float(dist)), float(float(hairy)+float(dist)), 0), use_sampling=0, vars=("U_y"))
 SetActiveWindow(2)

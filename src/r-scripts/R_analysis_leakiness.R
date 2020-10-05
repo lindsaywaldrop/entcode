@@ -5,10 +5,23 @@
 ###
 #################################################################################################################
 
-#### Assign condition values ####
-rowno <- 5              # Total number of rows in the array. Options: "3", "4"
-nohairs <- 25            # Total number of hairs in the array. Options: "12", "18"
-n <- 165				 # number of simulations to analyze
+nohairs <- 25     # Total number of hairs in the array. 
+# Options: "3", "5", "7", "12", "18", "25"
+n <- 165				  # number of simulations to analyze
+
+# Assigns total number of rows in the array.
+if(nohairs == 25){ 
+  rowno <- 5
+}else if (nohairs == 18){
+  rowno <- 4
+}else if(nohairs == 12){
+  rowno <- 3
+}else if (nohairs == 7){
+  rowno <- 2
+}else {
+  rowno <- 1
+}
+disp(paste(nohairs,"hairs in",rowno, "rows"))
 
 rundir <- paste(nohairs, "hair_runs/", sep = "")   # Runs directory. Options: "runs_3row/", "runs/"
 speed <- 0.06      	 	 # free fluid speed, m/s

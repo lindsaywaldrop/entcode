@@ -1,62 +1,54 @@
 #################################################################################################################
 #################################################################################################################
 ###
-### Volume flow rate Calculations
+### Volume Flux Calculations
 ###
 #################################################################################################################
 
-rowno <- 5              # Total number of rows in the array. Options: "3", "4"
-nohairs <- 25            # Total number of hairs in the array. Options: "12", "18"
-n <- 165				 # number of simulations to analyze
+nohairs <- 25     # Total number of hairs in the array. 
+                  # Options: "3", "5", "7", "12", "18", "25"
+n <- 83				    # Total number of simulations to analyze
 
-# Calculate leakiness base (no hairs condition)
-domain <- 2.0		   	 # length of computational domain, m
-dx <- 0.002       	     # Distance of mesh grid, m
-hair_dia <- 0.002   	 	 # diameter of each hair, m
-speed <- 0.06      	 	 # fluid speed, m/s
+rundir <- paste(nohairs, "hair_runs/", sep = "") # Constructs hair directory
 duration <- 0.03   	 	 # duration of simulation, s
-sample <- 5000			 # sampling rate
+dist <- 0.002          # diameter of each hair, m
 
-half_sample = floor(sample/2)	 # Calculates the position of hair 1
-shear_pt = floor(sample*(0.3*hair_dia+0.5*hair_dia)/domain) # Calculates distance of shear measurement from hair center
+flux <- matrix(data = 0, nrow = n, ncol = nohairs)
+norm <- data.frame(x = c(1, 0, -1, 0), y = c(0, -1, 0, 1))
 
-Uxmean<-matrix(data=0,nrow=n,ncol=3)
-Uymean<-matrix(data=0,nrow=n,ncol=3)
-
-for (j in 1:n){		# Main loop
+for (j in 1:n){		# Main loop over simulations
 	print(paste("Simulation: ",j,sep=""))					# Prints simulation number 
-	
-	# Construct directory name
-	dirname<-paste("/Users/Bosque/IBAMR/entcode/code/runs/viz_IB2d",j,"/hairline_flux",sep="")
-	# Sets working directory
-	setwd(dirname)
-	
-	for (i in 1:3){
-		
-		# Loads final time-step data
-		data <- read.table(paste("hairline_flux000",k[i],".curve",sep=""), header=FALSE, sep="")	
-		
-		Ux<-matrix(data=0,nrow=(sample),ncol=3)
-		Uy<-matrix(data=0,nrow=(sample),ncol=3)
-				
-		#Calculate volume flow rate
-		Ux[,i]<-data$V2[1:(sample)]*duration*-1
-		Uy[,i]<-data$V2[(sample+1):2*(sample)]*duration*-1
-		
-		if (j==1&&i==1){plot(Ux[,i],type="l",col=cols[i],xlab="Dist along y",ylab="X-Component Velocity")
-			}else{lines(Ux[,i],lty=1,col=cols[i],xlab="Dist along y",ylab="X-Component Velocity")}
-		
-		Uxmean[j,i]<-mean(Ux[,i])
-		Uymean[j,i]<-mean(Uy[,i])
-	}
+  dirname <- paste("./results/visit/", rundir, "sim", j, "/hairline_flux/", 
+                    sep = "") # Construct directory name
+  
+	for (i in 1:nohairs){ # Loop over individual hairs to calculate flux
+	  for (k in 0:3){
+	    # Reads in square side velocity components Ux and Uy
+	    # Sides: 0 - Top right to bottom right; 1 - Bottom right to bottom left; 
+	    #        2 - Bottom left to top left;   3 - Top left to top right
+		  Ux <- read.table(paste(dirname, "flux_hair", i, 
+		                         "_Ux_side", k, ".curve", sep=""), header = FALSE, sep = "")	
+		  Uy <- read.table(paste(dirname, "flux_hair", i, 
+		                         "_Uy_side", k, ".curve", sep=""), header = FALSE, sep = "")	
+		  assign(paste("Ux.side", k, sep = ""), Ux)
+		  assign(paste("Uy.side", k, sep = ""), Uy)
+	  }
+	  # Calculates flux
+	  flux[j,i] <- sum(sum(Ux.side0$V2 * norm$x[1]) + sum(Uy.side0$V2 * norm$y[1]),
+	                   sum(Ux.side1$V2 * norm$x[2]) + sum(Uy.side0$V2 * norm$y[2]),
+	                   sum(Ux.side2$V2 * norm$x[3]) + sum(Uy.side2$V2 * norm$y[3]), 
+	                   sum(Ux.side3$V2 * norm$x[4]) + sum(Uy.side3$V2 * norm$y[4])) * (2 * 4 * dist)
+	  # Removes variables
+	  rm(Ux,Uy,Ux.side0,Uy.side0,Ux.side1,Uy.side1,Ux.side2,Uy.side2,Ux.side3,Uy.side3)
+	} # End loop over hairs
+} # End main loop
 
-}
+# Sets up flux in data frame
+fluxnames <- as.character(rep(0, nohairs)) # Allocates space for names 
+for (i in 1:nohairs) fluxnames[i] <- paste("hair", i, sep = "") # Assigns name for each hair
+flux2 <- as.data.frame(flux)
+names(flux2) <- fluxnames
 
-plot(seq(1,n),Uxmean[,1],col=cols[1],pch=19,ylim=c(min(Uxmean),max(Uxmean)),
-xlab="Simulation number",ylab="X-Component Velocity")
-points(seq(1,n),Uxmean[,2],col=cols[2],pch=19)
-points(seq(1,n),Uxmean[,3],col=cols[3],pch=19)
-
-setwd("/Users/Bosque/IBAMR/entcode/code/runs/")	# Sets directory to main
-# Saves leakiness values
-write.table(Uxmean,file=paste("Uxmean",n,"-",Sys.Date(),".csv",sep=""),sep=",")
+# Saves flux values
+write.table(flux2, file = paste("./results/r-csv-files/", nohairs, "hair_results/flux-", n,
+                                "-", Sys.Date(), ".csv", sep = ""), sep = ",")
