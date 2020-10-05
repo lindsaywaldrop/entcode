@@ -5,11 +5,12 @@
 ###
 #################################################################################################################
 
-#### Assign condition values ####
 nohairs <- 25     # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 n <- 165				  # number of simulations to analyze
-rundir <- paste(nohairs, "hair_runs/", sep = "")   # Runs directory. Options: "runs_3row/", "runs/"
+rundir <- paste(nohairs, "hair_runs/", sep = "")   # Constructs hair directory
+hair_dia <- 0.002   	 	 # diameter of each hair, m
+sample <- 5000			     # sampling rate
 
 # Assigns total number of rows in the array.
 if(nohairs == 25){ 
@@ -24,8 +25,6 @@ if(nohairs == 25){
   norows <- 1
 }
 disp(paste(nohairs,"hairs in",norows, "rows"))
-
-
 
 # The following vector dictates which side the shear should be sampled on. 
 # The hair where sampling started (e.g. hair 3 for row 1) should be "-1".
@@ -42,15 +41,13 @@ if(nohairs == 5){
                -1,  0,  0,  0,  0,  0,  1 ) # row 5
 }
 
-hair_dia <- 0.002   	 	 # diameter of each hair, m
-sample <- 5000			     # sampling rate
 shear_hair <- matrix(data = 0, nrow = n, ncol = nohairs)	# Allocates space for shear calculations
 
 #### Main Loop for Calculations ####
-for (j in 1:n){		# Main loop
-  print(paste("Simulation: ", j, sep = ""))					# Prints simulation number 
+for (j in 1:n){		# Main loop over simulations
+  print(paste("Simulation: ", j, sep = ""))		# Prints simulation number 
   
-  for (arrayrow in 1:norows){
+  for (arrayrow in 1:norows){ # Loop over rows 
     dirname2 <- paste("./results/visit/", rundir, "sim", j, "/hairline", 
                       arrayrow, "/", sep = "") # Construct directory name
     data1 <- read.table(paste(dirname2, "hairline0003.curve", sep = ""), 
@@ -82,7 +79,7 @@ for (j in 1:n){		# Main loop
       disp("Unknown configuration")
     }
     disp(paste("Row",arrayrow,"with",hairsinrow,"hairs"))
-    for (k in 1:hairsinrow){  
+    for (k in 1:hairsinrow){  # Loops over individual hairs
       side <- whichside[k + hairsdone] # Assigns which side the shear calculation should be on
       if (side==-1){  # Sets start and end points of calculation based on which side 
         stpt <- half_hair_width
@@ -108,7 +105,7 @@ names(shear_hair2) <- shearnames # Assigns all names to data frame
 
 # Save data!
 write.table(shear_hair2, file=paste("./results/r-csv-files/", nohairs, 
-                                   "hair_results/shearhairs-", n, "-", Sys.Date(), 
+                                   "hair_results/shearhairs_", n, "_", Sys.Date(), 
                                    ".csv", sep = ""),
             sep = ",")
 # Quits R

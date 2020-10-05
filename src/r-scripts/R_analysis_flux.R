@@ -50,5 +50,5 @@ flux2 <- as.data.frame(flux)
 names(flux2) <- fluxnames
 
 # Saves flux values
-write.table(flux2, file = paste("./results/r-csv-files/", nohairs, "hair_results/flux-", n,
-                                "-", Sys.Date(), ".csv", sep = ""), sep = ",")
+write.table(flux2, file = paste("./results/r-csv-files/", nohairs, "hair_results/flux_", n,
+                                "_", Sys.Date(), ".csv", sep = ""), sep = ",")
