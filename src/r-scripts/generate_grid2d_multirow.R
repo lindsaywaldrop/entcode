@@ -24,10 +24,10 @@ package.check <- lapply(
   }
 )
 
-plotit <- 0  # plot the hairs? yes = 1, no = 0
+plotit <- 1  # plot the hairs? yes = 1, no = 0
 startrun <- 1
 endrun <- 165
-nohairs <- 25  # 2 row: 7, 3 row: 12, 4 row: 18, 5 row: 25
+nohairs <- 18  # 2 row: 7; 3 row: 12; 4 row: 18; 5 row: 25
 
 #### Defines functions ####
 circle <- function(center, radius, L, dx){

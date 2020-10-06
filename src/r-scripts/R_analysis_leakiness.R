@@ -21,7 +21,7 @@ if(nohairs == 25){
 }else {
   rowno <- 1
 }
-disp(paste(nohairs,"hairs in",rowno, "rows"))
+#disp(paste(nohairs,"hairs in",rowno, "rows"))
 
 rundir <- paste(nohairs, "hair_runs/", sep = "")   # Constructs hair directory
 speed <- 0.06      	 	 # free fluid speed, m/s

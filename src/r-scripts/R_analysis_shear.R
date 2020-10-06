@@ -24,7 +24,7 @@ if(nohairs == 25){
 }else {
   norows <- 1
 }
-disp(paste(nohairs,"hairs in",norows, "rows"))
+print(paste(nohairs,"hairs in",norows, "rows"))
 
 # The following vector dictates which side the shear should be sampled on. 
 # The hair where sampling started (e.g. hair 3 for row 1) should be "-1".
@@ -76,9 +76,9 @@ for (j in 1:n){		# Main loop over simulations
       hairsinrow <- 7
       hairsdone <- 18
     } else{
-      disp("Unknown configuration")
+      print("Unknown configuration")
     }
-    disp(paste("Row",arrayrow,"with",hairsinrow,"hairs"))
+    print(paste("Row",arrayrow,"with",hairsinrow,"hairs"))
     for (k in 1:hairsinrow){  # Loops over individual hairs
       side <- whichside[k + hairsdone] # Assigns which side the shear calculation should be on
       if (side==-1){  # Sets start and end points of calculation based on which side 

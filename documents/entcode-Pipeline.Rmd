@@ -171,21 +171,30 @@ Specify only the number of hairs in the array after the working directory. It wi
 
 ## 5. Execution of R scripts for calculation of final values
 
-### Leakiness 
+The final values for leakiness, shear around hairs, flux through hair area, and mean velocity around hairs are calculated in R. Each script should be changed in two places before execution, the value ``n'' which is the number of simulations in the set and ``nohairs'' which is the number of hairs in the array. 
 
+After changing these values, run each script by in the top directory: 
 
-### Shear around hairs
+`> setwd(getwd())`
 
+And then for leakiness:
 
-### Flux
+`> source('src/r-scripts/R_analysis_leakiness.R')`
 
+Shear: 
 
+`> source('src/r-scripts/R_analysis_shear.R')`
 
+Flux: 
 
+`> source('src/r-scripts/R_analysis_flux.R')`
 
+and mean velocity around hairs: 
 
+`> source('src/r-scripts/R_analysis_Umean.R')`
 
-### Mean magnitude of velocity
+Final values will be saved in csv files in `results/r-script-csv/nhair_results/` where n is the number of hairs in the aray. 
+
 
 
 

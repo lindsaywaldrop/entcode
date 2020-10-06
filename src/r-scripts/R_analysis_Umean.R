@@ -7,7 +7,7 @@
 
 nohairs <- 25     # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
-n <- 83				  # number of simulations to analyze
+n <- 165				  # number of simulations to analyze
 
 Umean<-matrix(data=0,nrow=n,ncol=nohairs)
 
