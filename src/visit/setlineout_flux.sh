@@ -3,27 +3,37 @@
 WD=${1:?Please provide a top-level working directory}
 a=${2:?Provide the number of hairs in the array}
 
-# Count number of lines in files
-numlines=$(grep -c "^" "$WD"/data/lineout-files/lineout_h3-h2.txt)
+if [ "$a" == 5 ]; then
+  filename="lineout_h5-h4.txt"
+elif [ "$a" != 5 ]; then
+  filename="lineout_h3-h2.txt"
+else
+  echo "ERROR: row number unknown"
+  exit 1
+fi
+
+echo $filename
+
+numlines=$(grep -c "^" "$WD"/data/lineout-files/$filename)
 
 cd "${WD}"/results/visit/${a}hair_runs/
 
 # Clear hairline directories of curve files or make hairline directories. 
-#for i in `seq 1 $numlines`; do
-#  if [ -d "sim${i}/hairline_flux" ]; then
-#    rm sim${i}/hairline_flux/*.curve
-#  else
-#    mkdir -p sim${i}/hairline_flux/
-#  fi
-#done
+for i in `seq 1 $numlines`; do
+  if [ -d "sim${i}/hairline_flux" ]; then
+    rm sim${i}/hairline_flux/*.curve
+  else
+    mkdir -p sim${i}/hairline_flux/
+  fi
+done
 
-#for i in `seq 1 $numlines`; do
-#  if [ -d "sim${i}/Umean/" ]; then
-#    rm sim${i}/Umean/*.curve
-#  else
-#    mkdir -p sim${i}/Umean/
-#  fi
-#done
+for i in `seq 1 $numlines`; do
+  if [ -d "sim${i}/Umean/" ]; then
+    rm sim${i}/Umean/*.curve
+  else
+    mkdir -p sim${i}/Umean/
+  fi
+done
 
 cd "${WD}"/src/visit/
 
@@ -34,8 +44,8 @@ DIST=0.002
 
 
 # For loop that interates over simulations
-#for i in `seq 1 $numlines`; do
-for i in `seq 84 165`; do
+for i in `seq 1 $numlines`; do
+#for i in `seq 84 165`; do
 
   # For loop that iterates over hairs 
   for j in `seq 1 ${a}`; do

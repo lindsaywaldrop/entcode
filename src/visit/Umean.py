@@ -25,9 +25,9 @@ hairx=sys.argv[4]
 hairy=sys.argv[5]
 dist=sys.argv[6]
 
-OpenDatabase(str(WDin)+"/lag_data.visit", 0)
-AddPlot("Mesh", "hairs"+str(num)+"_vertices", 1, 1)
-DrawPlots()
+#OpenDatabase(str(WDin)+"/lag_data.visit", 0)
+#AddPlot("Mesh", "hairs"+str(num)+"_vertices", 1, 1)
+#DrawPlots()
 OpenDatabase(str(WDin)+"/dumps.visit", 0)
 AddPlot("Pseudocolor", "U_magnitude", 1, 1)
 DrawPlots()

@@ -13,3 +13,4 @@ analysis_code/*.txt
 analysis_code/visit*
 .Rproj.user
 src/matlab/matlab-tytell/.hg/*
+*visitlog*.py

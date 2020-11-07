@@ -52,7 +52,7 @@ EY=0
 
 # For loop that will write files
 for i in `seq 1 $numlines`; do
-#for i in `seq 1 1`; do
+#for i in `seq 67 67`; do
   # Sets Wo based on i
   SX=$(awk -v var="$i" 'NR==var' startx.txt)
   SY=$(awk -v var="$i" 'NR==var' starty.txt)

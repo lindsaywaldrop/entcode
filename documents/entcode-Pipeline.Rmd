@@ -20,7 +20,7 @@ This pipeline takes the following inputs:
  * IBAMR source code for rigid body constraint method. 
  * Generalized polynomial chaos (gPC) simulation set with n number of simulations (either 165, 681, or 1233) establishing parameter values for angle of array to flow, gap width to diameter ratio, and Reynolds number. 
 
-This pipeline exists for the follow outputs: 
+This pipeline produces the following outputs: 
 
  * IBAMR flow data
  * Calculated shear around hairs
@@ -41,7 +41,7 @@ To start this project, clone the project from Github using the following in comm
 
 `$ git clone https://github.com/lindsaywaldrop/entcode.git`
 
-After entering the cloned directory, save a path to your main working directory: 
+After entering the cloned directory, save a path to your top working directory: 
 
 `$ WD=$PWD` 
 
@@ -110,7 +110,7 @@ Note: these instructions are specifically for the Bridges cluster at PSC, but th
 
 There are two files in `src/bridges` that control submitting batch jobs to the Bridges cluster: `runhairs.job` and `setrunhairsjobs.sh`. `setrunhairsjobs.sh` generates a set of temporary job files and submits them via sbatch, based on `runhairs.job` as a template. 
 
-Each simulations takes between 30-40 minutes to run on Bridges as it is currently configured. However, should you wish to change parameters, lines 2 through 6 in `runhairs.job` set out options passed to SLURM during submission. 
+Each simulation takes between 30-40 minutes to run on Bridges as it is currently configured. However, should you wish to change parameters, lines 2 through 6 in `runhairs.job` set out options passed to SLURM during submission. 
 
 To run, you will need to change the following lines in `runhairs.job`:
 
