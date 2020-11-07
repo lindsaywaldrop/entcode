@@ -1,4 +1,4 @@
-function entsniff(startrun,endrun)
+function entsniff(topdir,hairNum,filenumbers,clpool)
 % entsniff.m
 %
 % Script for running code on Bridges
@@ -15,46 +15,50 @@ function entsniff(startrun,endrun)
 %	pathbase = where runs are located
 
 %Change directory
-cd('/pylon5/bi561lp/lwaldrop/shilpa/')
+cd(topdir)
 
 % Add paths to relevant matlab analysis scripts
-addpath(genpath('/pylon5/bi561lp/lwaldrop/entcode/'))
-addpath(genpath('/pylon5/bi561lp/lwaldrop/shilpa/'))
+addpath(genpath(topdir))
 
-GridSize = 4096;        %Size of the finest grid
-final_time=25000;      %Final time step to be included in data analysis
-%n=1233; %Number of simulations
+global pathbase_piv pathbase_hairdata pathbase_results GridSize final_time files files0
+GridSize = 4096;
+final_time = 30000;
+%assignin('base','GridSize',4096)        %Size of the finest grid
+%assignin('base','final_time',30000)      %Final time step to be included in data analysis
 
-pathbase1='/pylon5/bi561lp/lwaldrop/shilpa/pivdata/';
-pathbase2='/pylon5/bi561lp/lwaldrop/shilpa/pivdata/';
+j = length(filenumbers);
+for ii = 1:j
+   files{ii} = sprintf('%d', filenumbers(ii));
+   files0{ii} = sprintf('%04d', filenumbers(ii));
+end
 
-for i=startrun:endrun
-    %i=3
-tic
-    clear V Vinterp x y
-    file1=['viz_IB2d',num2str(i)];
-    path1=[pathbase1,file1];
-    
-    disp(['Simulation number: ',num2str(i)])
-    
-    %Make this the pathname for the visit data
-	path_name1 = [path1,'/visit_dump.',num2str(final_time)];
-    
-    %This reads the samrai data and interpolates it.
-    [x,y,Vinterp,V] = importsamrai(path_name1,'interpolaten',[GridSize GridSize]);
-    
-    % Loads hairdata
-    load([pathbase2,'hairinfo',num2str(i),'.mat'])
-    
-    % Saves data relevant to next step in workflow.
-    save([pathbase1,file1,'.mat'],'V','Vinterp','x','y','GridSize','final_time')
-    clear x y Vinterp V
-    
+%assignin('base','files',files)
+%assignin('base','files0',files0)
+%assignin('base','pathbase1','/pylon5/bi561lp/lwaldrop/shilpa/pivdata/')
+% Setting paths to necessary files
+pathbase_piv = strcat(topdir, '/results/ibamr/', num2str(hairNum), 'hair_runs/');
+pathbase_hairdata = strcat(topdir, '/data/csv-files/',num2str(hairNum),'_files/');
+pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair_array/');
+%save('work.mat','GridSize','final_time','files','files0','pathbase1')
+
+mycluster = parpool(clpool);
+
+parfor i = 1:length(files)
+    % i=3
+    % tic
+    disp(['Simulation number: ',files{i}])
+    disp('   ')
+
+    % Interpolates velocity fields and saves.
+    disp(['Interpolating velocity fields for ', files{i}])
+    entsniffinterp(i, files, pathbase_piv, GridSize, final_time);
+    disp('    ')
+
     % Run Shilpa's code
-    filename=sprintf('%04d',i);
-    crabs(filename)
-
-    clear filename
+    disp(['starting simulation for ', files0{i}])
+    crabs(files0{i})
     
-toc
+    cleanupent(pathbase_piv, pathbase_results)
+    
+    % timing(i)=toc
 end

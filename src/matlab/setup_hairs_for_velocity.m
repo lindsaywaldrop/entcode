@@ -1,7 +1,7 @@
 function setup_hairs_for_velocity() 
 
-global hairs_data_filename hairs_data_returnfilename hairs_data_filename_interior
-global allhairs_center shift_hairs
+global hairs_data_filename hairs_data_filename_interior
+global allhairs_center
 global dthairfactor 
 
 %NOTES: SK 2017_11_16
@@ -33,49 +33,10 @@ if (hairs_data_filename_interior.givenradius)
      end
      
  
-     
-%      for i=1:length(return_hairs)
-%         
-%         %return hairs location
-%         return_x_hairs = hairs_data_filename_interior.conversion_factor*return_hairs(i).x;
-%         return_y_hairs = hairs_data_filename_interior.conversion_factor*return_hairs(i).y;
-%         return_hairs_center(i,:) = [return_x_hairs, return_y_hairs];    
-%       
-%     end
-%     
       allhairs_center(1,:) = mean(flick_hairs_center);
-%      allhairs_center(2,:) = mean(return_hairs_center);
-%     
-%     %how much we shift the return hairs (and domain by) 
-%     shift_hairs = allhairs_center(2,:)-allhairs_center(1,:);
+
+      %     %how much we shift the return hairs (and domain by) 
 
       dthairfactor = eval(['flickdata.' hairs_data_filename_interior.radius]); 
-    
-    
-% elseif(~hairs_data_filename_interior.givenradius)
-%     
-%     for i=1:length(flick_hairs)
-%         %flick hairs location
-%         flick_x_hairs = hairs_data_filename_interior.conversion_factor*flick_hairs(i).x;
-%         flick_y_hairs = hairs_data_filename_interior.conversion_factor*flick_hairs(i).y;
-%         %as long as convex hull
-%         flick_hairs_center(i,:) = [mean(flick_x_hairs), mean(flick_y_hairs)];
-%     end
-%     
-%     for i=1:length(return_hairs)
-%         
-%         %return hairs location
-%         return_x_hairs = hairs_data_filename_interior.conversion_factor*return_hairs(i).x;
-%         return_y_hairs = hairs_data_filename_interior.conversion_factor*return_hairs(i).y;
-%         %as long as convex hull
-%         return_hairs_center(i,:) = [mean(return_x_hairs), mean(return_y_hairs)];
-%         
-%     end
-%     
-%     allhairs_center(1,:) = mean(flick_hairs_center);
-%     allhairs_center(2,:) = mean(return_hairs_center);
-%     
-%     %how much we shift the return hairs (and domain by) 
-%     shift_hairs = allhairs_center(2,:)-allhairs_center(1,:);
-%     
+        
  end

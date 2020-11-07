@@ -27,7 +27,7 @@ global return_ptindex_hairs return_hairs_c return_hairs_center
 global cplusx_dbc diffusionrhsbc_flick
 
 %setting the path so matlab can find all the functions
-addpath('./save_functions')
+% addpath('./save_functions')
  
 %read in the parameters
 run_id = filenumber
