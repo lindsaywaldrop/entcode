@@ -39,7 +39,7 @@ explicit_vel = 'piv_data';
   domainlimits = [-0.55, 0.7, -0.625, 0.625]; %in m 
 
 %only needed if explicit_vel = 'piv_data'                            
-  piv_data_filename = 'viz_IB2d1';
+  piv_data_filename = strcat('viz_IB2d',num2str(str2double(run_id)));
 %piv_data_returnfilename = 'data_being_used/simdata/marine_water/set1-return/marine-water_returndata_shilpa';
 %this information needs to hold for both data files
 %piv_data_filename_interior.filename = 'flickdata'; 
@@ -60,10 +60,10 @@ D = 2000*6.02e-6;       %caproic acid in air  - in m^2/s -> correspond to half_e
 
 %hairs  
 handle_hairs = 1; 
-hairs_data_filename = 'hairinfo1';
+hairs_data_filename = strcat('hairinfo',num2str(str2double(run_id)));
 %this information needs to hold for both data files
 hairs_data_filename_interior.filename = 'p';
-hairs_data_filename_interior.numofhairs = 18; 
+hairs_data_filename_interior.numofhairs = hairNum; 
 hairs_data_filename_interior.hairs = 'hairs'; 
 hairs_data_filename_interior.givenradius = 0.002; 
 hairs_data_filename_interior.radius = 'radius_m'; 

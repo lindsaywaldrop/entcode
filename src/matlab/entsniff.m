@@ -18,7 +18,7 @@ function entsniff(topdir,hairNum,filenumbers,clpool)
 cd(topdir)
 
 % Add paths to relevant matlab analysis scripts
-addpath(genpath(strcat(topdir,'/src/matlab')))
+% addpath(genpath(strcat(topdir,'/src/matlab')))
 
 global pathbase_piv pathbase_data pathbase_results GridSize final_time 
 global files files0 hairNum

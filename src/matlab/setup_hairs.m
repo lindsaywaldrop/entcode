@@ -16,7 +16,8 @@ global far_right_hair
 [xx,yy] = ndgrid(x,y);
 
 %hairs filename
-flickdata = load([hairs_data_filename '.mat']);  
+flickdata = load([pathbase_data,'hairinfo-files/',num2str(hairNum),...
+    'hair_files/',hairs_data_filename '.mat']);  
 % [flickdata.p] = convert_hairdata(pathbase_data,hairNum,str2double(run_id));
 
 
