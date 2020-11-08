@@ -4,12 +4,12 @@ function save_data_vel(initial,flickorreturn)
 %output: 
 %saves velocity data
 
-global run_id 
+global run_id pathbase_results
 global u v 
 
 %the default extension is .mat
 
-filename = ['postprocessing/velocity_',run_id];
+filename = [pathbase_results,'velocity_',run_id];
 
 T = evalc(['u_' flickorreturn ' = u']);
 T2 = evalc(['v_' flickorreturn ' = v']);

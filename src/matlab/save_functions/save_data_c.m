@@ -4,14 +4,14 @@ function save_data_c(initial)
 %output: 
 %saves c data
 
-global run_id pcount
+global run_id pcount pathbase_results
 global c
 
 
 T = evalc(['c_' num2str(pcount) ' = c']);
 
 %the default extension is .mat
-filename = ['postprocessing/c_',run_id];
+filename = [pathbase_results,'c_',run_id];
 
 if (initial == 1) %if this is the first time saving then create the file
   save(filename, 'c_*');

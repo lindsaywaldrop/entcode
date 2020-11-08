@@ -5,6 +5,7 @@ function [bu,bv] = read_in_velocity_data_p2(xpts,ypts,flickorreturn)
 %sets u and v based on the experimental piv data 
 %interpolating to the c grid
 
+global pathbase_piv
 global piv_data_filename piv_data_returnfilename piv_data_filename_interior 
 global xshift_piv_data yshift_piv_data
 global xlength ylength
@@ -37,7 +38,7 @@ else
 
     %filename
     if strcmp(flickorreturn,'flick') 
-        flickdata = load(['pivdata/', piv_data_filename '.mat']);
+        flickdata = load([pathbase_piv, piv_data_filename '.mat']);
         shift_comp = 1; 
     %elseif strcmp(flickorreturn,'return')
     %    load(['pivdata/', piv_data_returnfilename '.mat']) 
@@ -126,41 +127,3 @@ else
     vminus2y_piv = [vminus2y_piv_vec vminusy_piv(:,1:end-1)]; 
     
 end
-
-
-%test plots on the velocities
-% figure(1)
-% hold on
-% % plot(xpiv,ypiv,'kx')
-% % hold on
-% % plot(xpts,ypts,'ro')
-%  skip = 1; 
-% % figure(2)
-% % %sc = 0.001;
-%  quiver(xpts(1:skip:end,1:skip:end),ypts(1:skip:end,1:skip:end),bu(1:skip:end,1:skip:end),bv(1:skip:end,1:skip:end))
-%  pause
-% hold on
-% quiver(xpts(end,1:skip:end)+dx,ypts(end,1:skip:end),uplusx_piv_vec(1:skip:end),vplusx_piv_vec(1:skip:end))
-% quiver(xpts(1,1:skip:end)-dx,ypts(1,1:skip:end),uminusx_piv_vec(1:skip:end),vminusx_piv_vec(1:skip:end))
-% quiver(xpts(1:skip:end,end),ypts(1:skip:end,end)+dy,uplusy_piv_vec(1:skip:end),vplusy_piv_vec(1:skip:end))
-% quiver(xpts(1:skip:end,1),ypts(1:skip:end,1)-dy,uminusy_piv_vec(1:skip:end),vminusy_piv_vec(1:skip:end))
-
-% % figure(3) 
-% % sc = 0.001; 
-% % quiver([xpts(1,:)-dx;xpts;xpts(end,:)+dx],[ypts(1,:);ypts;ypts(end,:)],sc*[uminusx_piv_vec;bu;uplusx_piv_vec],sc*[vminusx_piv_vec;bv;vplusx_piv_vec],0)
-% % 
-% % figure(4)
-% % sc = 0.001; 
-% % quiver([xpts(:,1) xpts xpts(:,end)],[ypts(:,1)-dy ypts ypts(:,end)+dy],sc*[uminusy_piv_vec bu uplusy_piv_vec],sc*[vminusy_piv_vec bv vplusy_piv_vec],0)
-% % 
-% figure(5)
-% skip = 5; 
-% quiver(xpiv(1:skip:end,1:skip:end),ypiv(1:skip:end,1:skip:end),upiv(1:skip:end,1:skip:end),vpiv(1:skip:end,1:skip:end))
-% 
-% figure(6)
-% skip=5; 
-% quiver(xpiv(1:skip:end,1:skip:end),ypiv(1:skip:end,1:skip:end),upiv(1:skip:end,1:skip:end),0*vpiv(1:skip:end,1:skip:end))
-% 
-% figure(7)
-% skip=5; 
-% quiver(xpiv(1:skip:end,1:skip:end),ypiv(1:skip:end,1:skip:end),0*upiv(1:skip:end,1:skip:end),vpiv(1:skip:end,1:skip:end))

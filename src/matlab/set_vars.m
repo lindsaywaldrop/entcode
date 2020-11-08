@@ -1,6 +1,7 @@
 %script set_vars.m
 %initializes the variables for the program
 
+global pathbase_data hairNum
 global xlength ylength Nx Ny dx dy x y u v
 global dthairfactor dt dt_flick t_final_flick t_steps_flick t_steps
 %global dt dt_flick dt_rest dt_return t_final_flick t_final_rest t_final_return t_steps_flick t_steps_rest t_steps_return t_steps
@@ -31,20 +32,24 @@ global cplusx_dbc diffusionrhsbc_flick
  
 %read in the parameters
 run_id = filenumber
-eval(['params_' run_id]);
+cd(strcat(pathbase_data,'parameters/'))
+run odorcapture_params.m
 
+cd(strcat(pathbase_data,'hairinfo-files/',num2str(hairNum),'hair_files/'))
 %set x_length and y_length here if based on experimental data otherwise in
 %params file manually
 if strcmp(explicit_vel,'piv_data')
    if (handle_hairs)
-     setup_hairs_for_velocity()
+       disp('setup_hairs')
+        setup_hairs_for_velocity()
    end
+   disp('read_in_velocities')
    read_in_velocity_data_p1(domainlimits)
 end
 
 %initializes Nx and Ny 
-Nx = round(xlength/dx);
-Ny = round(ylength/dy);
+Nx = round(xlength/dx)
+Ny = round(ylength/dy)
 
 %should already be an int from read_in_velocity_data_p1.m
 if (abs(Nx*dx-xlength)>1e-15) || (abs(Ny*dy-ylength)>1e-15)
@@ -71,20 +76,6 @@ if exist('t_final_factor_flick','var')
 end
 t_steps_flick = ceil(t_final_flick/dt);
 dt_flick = t_final_flick/t_steps_flick;
-
-% %rest time
-% if exist('t_final_factor_rest','var')
-%     t_final_rest = dt_rest*t_final_factor_rest;
-% end
-% t_steps_rest = ceil(t_final_rest/dt_rest);
-% dt_rest = t_final_rest/t_steps_rest;
-% 
-% %return time
-% if exist('t_final_factor_return','var')
-%     t_final_return = dt*t_final_factor_return;
-% end
-% t_steps_return = ceil(t_final_return/dt);
-% dt_return = t_final_return/t_steps_return;
 
 t = 0; 
 pcount = 1; 

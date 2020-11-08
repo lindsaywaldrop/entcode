@@ -22,6 +22,12 @@ mkdir results/r-csv-files/7hair_results/
 mkdir results/r-csv-files/12hair_results/
 mkdir results/r-csv-files/18hair_results/
 mkdir results/r-csv-files/25hair_results/
+mkdir results/odorcapture/
+mkdir results/odorcapture/5hair_results/
+mkdir results/odorcapture/7hair_results/
+mkdir results/odorcapture/12hair_results/
+mkdir results/odorcapture/18hair_results/
+mkdir results/odorcapture/25hair_results/
 mkdir data/
 mkdir data/vertex-files/
 mkdir data/vertex-files/5hair_files/
@@ -35,6 +41,12 @@ mkdir data/csv-files/7hair_files/
 mkdir data/csv-files/12hair_files/
 mkdir data/csv-files/18hair_files/
 mkdir data/csv-files/25hair_files/
+mkdir data/hairinfo-files/
+mkdir data/hairinfo-files/5hair_files/
+mkdir data/hairinfo-files/7hair_files/
+mkdir data/hairinfo-files/12hair_files/
+mkdir data/hairinfo-files/18hair_files/
+mkdir data/hairinfo-files/25hair_files/
 mkdir data/lineout-files/
 mkdir data/input2d-files/
 

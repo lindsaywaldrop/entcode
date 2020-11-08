@@ -18,9 +18,10 @@ function entsniff(topdir,hairNum,filenumbers,clpool)
 cd(topdir)
 
 % Add paths to relevant matlab analysis scripts
-addpath(genpath(topdir))
+addpath(genpath(strcat(topdir,'/src/matlab')))
 
-global pathbase_piv pathbase_hairdata pathbase_results GridSize final_time files files0
+global pathbase_piv pathbase_data pathbase_results GridSize final_time 
+global files files0 hairNum
 GridSize = 4096;
 final_time = 30000;
 %assignin('base','GridSize',4096)        %Size of the finest grid
@@ -37,7 +38,7 @@ end
 %assignin('base','pathbase1','/pylon5/bi561lp/lwaldrop/shilpa/pivdata/')
 % Setting paths to necessary files
 pathbase_piv = strcat(topdir, '/results/ibamr/', num2str(hairNum), 'hair_runs/');
-pathbase_hairdata = strcat(topdir, '/data/csv-files/',num2str(hairNum),'_files/');
+pathbase_data = strcat(topdir, '/data/');
 pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair_array/');
 %save('work.mat','GridSize','final_time','files','files0','pathbase1')
 

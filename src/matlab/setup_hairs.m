@@ -1,6 +1,7 @@
 function setup_hairs() 
 
 global hairs_data_filename hairs_data_returnfilename hairs_data_filename_interior
+global pathbase_data hairNum run_id
 global xshift_piv_data yshift_piv_data
 global x y 
 global ptindex_hairs hairs_c hairs_center allhairs_center shift_hairs
@@ -15,13 +16,12 @@ global far_right_hair
 [xx,yy] = ndgrid(x,y);
 
 %hairs filename
-flickdata = load(['pivdata/' hairs_data_filename '.mat']);  
-%returndata = load(['pivdata/' hairs_data_returnfilename '.mat']);
+flickdata = load([hairs_data_filename '.mat']);  
+% [flickdata.p] = convert_hairdata(pathbase_data,hairNum,str2double(run_id));
 
 
 %loads the location of the hairs
 flick_hairs = eval(['flickdata.' hairs_data_filename_interior.filename '.' hairs_data_filename_interior.hairs]); 
-%return_hairs = eval(['returndata.' hairs_data_filename_interior.filename '.' hairs_data_filename_interior.hairs]); 
 
 %initializes the concentration absorbed by each hair
 hairs_c = struct([]);
