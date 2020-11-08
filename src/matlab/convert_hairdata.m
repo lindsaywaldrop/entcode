@@ -1,6 +1,7 @@
 function [p] = convert_hairdata(pathbase_data,hairNum,run_id)
 %
 %
+global pathbase_data hairNum run_id
 p.hdia = 0.002;
 
 hairdata = csvread(strcat(pathbase_data,'/csv-files/',num2str(hairNum),...
@@ -22,3 +23,6 @@ for h = 1:hairNum
     eval(['p.h',num2str(h),'_x = hair_temp(:,1);']);
     eval(['p.h',num2str(h),'_y = hair_temp(:,2);']);
 end
+
+save([pathbase_data,'/hairinfo-files/',num2str(hairNum),...
+    'hair_files/hairinfo',num2str(run_id),'.mat'],'p')

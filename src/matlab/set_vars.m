@@ -41,7 +41,7 @@ run odorcapture_params.m
 if strcmp(explicit_vel,'piv_data')
    if (handle_hairs)
        disp('setup_hairs')
-        setup_hairs_for_velocity()
+        setup_hairs_for_velocity(hairNum)
    end
    disp('read_in_velocities')
    read_in_velocity_data_p1(domainlimits)

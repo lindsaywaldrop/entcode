@@ -1,6 +1,6 @@
-function setup_hairs_for_velocity() 
+function setup_hairs_for_velocity(hairNum) 
 
-global hairs_data_filename hairs_data_filename_interior
+global hairs_data_filename hairs_data_filename_interior 
 global allhairs_center pathbase_piv pathbase_data
 global dthairfactor run_id hairNum
 
@@ -10,8 +10,9 @@ global dthairfactor run_id hairNum
 %ASSUMED GIVEN RADIUS OF HAIRS 
 
 %hairs filename
-% flickdata_temp = load(strcat(pathbase_data, hairs_data_filename, '.mat'));  
-[flickdata_temp.p] = convert_hairdata(pathbase_data,hairNum,str2double(run_id));
+flickdata_temp = load(strcat(pathbase_data, '/hairinfo-files/', num2str(hairNum), ...
+	'hair_files/', hairs_data_filename, '.mat'));  
+%[flickdata_temp.p] = convert_hairdata(pathbase_data,hairNum,str2double(run_id));
 flickdata = eval(['flickdata_temp.' hairs_data_filename_interior.filename]);
 %returndata = load(['pivdata/' hairs_data_returnfilename '.mat']); 
 

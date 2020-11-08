@@ -19,7 +19,7 @@ Nxcoarse = Nx; %right now set the same as Nx
    %t_final_factor_flick = 20000;
 
 %print every print_time timesteps 
-print_time = 10;  
+print_time = 500;  
  
 %if using weno for advection then need to set such that 
 %weno_eps = 1e-6*O(u^2)
