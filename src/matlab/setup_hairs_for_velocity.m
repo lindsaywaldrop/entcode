@@ -12,9 +12,7 @@ global dthairfactor run_id hairNum
 %hairs filename
 flickdata_temp = load(strcat(pathbase_data, '/hairinfo-files/', num2str(hairNum), ...
 	'hair_files/', hairs_data_filename, '.mat'));  
-%[flickdata_temp.p] = convert_hairdata(pathbase_data,hairNum,str2double(run_id));
 flickdata = eval(['flickdata_temp.' hairs_data_filename_interior.filename]);
-%returndata = load(['pivdata/' hairs_data_returnfilename '.mat']); 
 
 flickdata = modify_hair_data(flickdata,hairs_data_filename_interior.numofhairs); 
 eval([hairs_data_filename_interior.filename, '=flickdata']); 
@@ -23,7 +21,6 @@ save([pathbase_data,'hairinfo-files/',num2str(hairNum),'hair_files/',...
 
 %loads the location of the hairs
 flick_hairs = eval(['flickdata.' hairs_data_filename_interior.hairs]); 
-%return_hairs = eval(['returndata.' hairs_data_filename_interior.filename '.' hairs_data_filename_interior.hairs]); 
 
 if (hairs_data_filename_interior.givenradius)
     
@@ -37,9 +34,6 @@ if (hairs_data_filename_interior.givenradius)
      
  
       allhairs_center(1,:) = mean(flick_hairs_center);
-
-      %     %how much we shift the return hairs (and domain by) 
-
       dthairfactor = eval(['flickdata.' hairs_data_filename_interior.radius]); 
         
  end

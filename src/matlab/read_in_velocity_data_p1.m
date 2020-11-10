@@ -19,7 +19,6 @@ global allhairs_center shift_hairs
 
 %filenames
 flickdata = load([pathbase_piv piv_data_filename '.mat']);
-%returndata = load(['pivdata/' piv_data_returnfilename '.mat']);
 
 %finding the endpts for x_length and y_length (data is in m) 
 flick_xpiv = eval(['flickdata.' piv_data_filename_interior.x]);     

@@ -103,7 +103,7 @@ elseif strcmp(explicit,'piv_data')
 %             appending_vel_piv_bcs(bu,bv); 
 %         end
     
-        [bu,bv] = divergencefree(xpts,ypts,bu,bv); 
+        %[bu,bv] = divergencefree(xpts,ypts,bu,bv); 
         
 else 
     error('explicit velocity is not a valid choice!'); 

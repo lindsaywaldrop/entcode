@@ -84,11 +84,11 @@ elseif strcmp(initc,'exp_right_small') %THIS ONE
     %exp_center = 1.45;
     %c_max = 0.25; 
     
-    width = 0.1; 
+    width = 0.05; 
     %%dist_frh = 0.0125;
     %dist_frh = 0.005;
     
-    exp_center = 1.15; %far_right_hair + dist_frh + width/2; 
+	exp_center = 0.25; %far_right_hair + dist_frh + width/2; 
     c_Linf = 7; 
     c_max_constant = 0.1; 
     c_max = c_max_constant/ylength; 
@@ -176,10 +176,10 @@ elseif strcmp(initc,'exp_left')
     c = 0.25*exp((-c_Linf*((2*(xx-xlength/2+0.15)/(x2-x1))).^2));
     
 elseif strcmp(initc,'half_exp') %THIS ONE 
-    width = 0.1; 
+    width = 0.05; 
     %%dist_frh = 0.0125;
     %dist_frh = 0.005;
-    exp_center = 1.15; %far_right_hair + dist_frh + width/2; 
+    exp_center = 0.25; %far_right_hair + dist_frh + width/2; 
     c_Linf = 7; 
     c_max_constant = 0.1; 
     c_max = c_max_constant/ylength; 

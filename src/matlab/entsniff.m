@@ -45,36 +45,71 @@ pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair
 save('temp_global_variable','pathbase_data','pathbase_piv','pathbase_results',...
     'GridSize','final_time','hairNum');
 
-mycluster = parpool(clpool);
-
-parfor i = 1:length(files)
-% for i=1:length(files)
-    % i=3
-    % tic
-    disp(['Simulation number: ',files{i}])
-    disp('   ')
+if clpool == 1
     
-    % Setting up hair info files
-    if isfile([pathbase_data,'/hairinfo-files/',num2str(hairNum),...
+    for i=1:length(files)
+        % i=3
+        % tic
+        disp(['Simulation number: ',files{i}])
+        disp('   ')
+        
+        % Setting up hair info files
+        if isfile([pathbase_data,'/hairinfo-files/',num2str(hairNum),...
             'hair_files/hairinfo',num2str(i),'.mat'])==0
-        disp(['Setting up hair info files for ',files{i}])
-        convert_hairdata(pathbase_data,hairNum,i)
-    end
+             disp(['Setting up hair info files for ',files{i}])
+             convert_hairdata(pathbase_data,hairNum,i)
+        end
     
-    if isfile([pathbase_piv,'viz_IB2d',num2str(i),'.mat'])==0
-        % Interpolates velocity fields and saves.
-        disp(['Interpolating velocity fields for ', files{i}])
-        entsniffinterp(i, files, pathbase_piv, GridSize, final_time);
-        disp('    ')
-    end
+        if isfile([pathbase_piv,'viz_IB2d',num2str(i),'.mat'])==0
+            % Interpolates velocity fields and saves.
+            disp(['Interpolating velocity fields for ', files{i}])
+            entsniffinterp(i, files, pathbase_piv, GridSize, final_time);
+            disp('    ')
+        end
 
-    % Run Shilpa's code
-    disp(['starting simulation for ', files0{i}])
-    crabs(files0{i})
+        % Run Shilpa's code
+        disp(['starting simulation for ', files0{i}])
+        crabs(files0{i})
     
-    cleanupent(pathbase_piv, pathbase_results)
+        cleanupent(pathbase_piv, pathbase_results)
     
-    % timing(i)=toc
+        % timing(i)=toc
+    end
+    
+elseif clpool > 1
+    mycluster = parpool(clpool);
+    parfor i = 1:length(files)
+        % i=3
+        % tic
+        disp(['Simulation number: ',files{i}])
+        disp('   ')
+        
+        % Setting up hair info files
+        if isfile([pathbase_data,'/hairinfo-files/',num2str(hairNum),...
+            'hair_files/hairinfo',num2str(i),'.mat'])==0
+             disp(['Setting up hair info files for ',files{i}])
+             convert_hairdata(pathbase_data,hairNum,i)
+        end
+    
+        if isfile([pathbase_piv,'viz_IB2d',num2str(i),'.mat'])==0
+            % Interpolates velocity fields and saves.
+            disp(['Interpolating velocity fields for ', files{i}])
+            entsniffinterp(i, files, pathbase_piv, GridSize, final_time);
+            disp('    ')
+        end
+
+        % Run Shilpa's code
+        disp(['starting simulation for ', files0{i}])
+        crabs(files0{i})
+    
+        cleanupent(pathbase_piv, pathbase_results)
+    
+        % timing(i)=toc
+    end
+else 
+    disp('Error: Not a valid value for clpool!')
 end
 
 delete('temp_global_variable');
+
+end

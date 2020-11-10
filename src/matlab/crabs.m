@@ -14,27 +14,34 @@ set_vars
 %saving data initially
 save_data(1); 
 
+pause
 %FLICK
+disp('Saving velocity data')
+disp('  ')
 [u,v] = get_velocities(dt_flick/2,t,explicit_vel,'flick'); 
 save_data_vel(1,'flick');
+disp('Done!')
+disp(' ')
+
+disp('Starting first flick...')
 
 %time-stepping
 %could speed this up by taking out the if else statements from the for loop
 
 %advection - first step
 advect_c(dt_flick/2,'dirichlet','weno');
-
+disp('.')
 for timestep = 1:t_steps_flick
    
   %diffusion  
   %if first timestep then initialze the diffusion matrix   
   if (timestep == 1) 
       diffusion_c(dt_flick,1,diffusionrhsbc_flick);
+      disp('.')
   else
       diffusion_c(dt_flick,0,diffusionrhsbc_flick); 
   end
   concentration_absorbed_by_hairs();
-  
   %advection
   %if not at the last timestep then step with dt but if at the last
   %timestep then step only dt/2    
