@@ -55,12 +55,12 @@ if clpool == 1
         
         % Setting up hair info files
         if isfile([pathbase_data,'/hairinfo-files/',num2str(hairNum),...
-            'hair_files/hairinfo',num2str(i),'.mat'])==0
+                'hair_files/hairinfo',files{i},'.mat'])==0
              disp(['Setting up hair info files for ',files{i}])
-             convert_hairdata(pathbase_data,hairNum,i)
+             convert_hairdata(pathbase_data,hairNum,str2double(files{i}))
         end
     
-        if isfile([pathbase_piv,'viz_IB2d',num2str(i),'.mat'])==0
+        if isfile([pathbase_piv,'viz_IB2d',files{i},'.mat'])==0
             % Interpolates velocity fields and saves.
             disp(['Interpolating velocity fields for ', files{i}])
             entsniffinterp(i, files, pathbase_piv, GridSize, final_time);
@@ -71,7 +71,7 @@ if clpool == 1
         disp(['starting simulation for ', files0{i}])
         crabs(files0{i})
     
-        cleanupent(pathbase_piv, pathbase_results)
+        cleanup(pathbase_piv, pathbase_results)
     
         % timing(i)=toc
     end

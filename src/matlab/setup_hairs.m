@@ -3,7 +3,7 @@ function setup_hairs()
 global hairs_data_filename hairs_data_filename_interior
 global pathbase_data hairNum run_id
 global xshift_piv_data yshift_piv_data
-global x y 
+global x y domainlimits
 global ptindex_hairs hairs_c hairs_center allhairs_center shift_hairs
 global far_right_hair   
 
@@ -22,6 +22,13 @@ flickdata = load([pathbase_data,'hairinfo-files/',num2str(hairNum),...
 
 %loads the location of the hairs
 flick_hairs = eval(['flickdata.' hairs_data_filename_interior.filename '.' hairs_data_filename_interior.hairs]); 
+
+% Set domain limits based on hairs
+xLmin = min([flick_hairs.x]) - 0.05;
+xLmax = max([flick_hairs.x]) + 0.15;
+yLmin = min([flick_hairs.y]) - 0.05;
+yLmax = max([flick_hairs.y]) + 0.05;
+domainlimits = [xLmin, xLmax, yLmin, yLmax];
 
 %initializes the concentration absorbed by each hair
 hairs_c = struct([]);

@@ -6,7 +6,7 @@ global xlength ylength Nx Ny dx dy x y u v
 global dthairfactor dt dt_flick t_final_flick t_steps_flick t_steps
 %global dt dt_flick t_final_flick t_steps_flick t_steps
 global list_print_times t pcount print_time run_id
-global D initc
+global D initc domainlimits
 global c c_diff_matrix_l c_diff_matrix_u c_diff_RHS c_diff_matrix usegmres
 global explicit_vel piv_data_filename piv_data_filename_interior 
 global xshift_piv_data yshift_piv_data
@@ -40,7 +40,7 @@ run odorcapture_params.m
 if strcmp(explicit_vel,'piv_data')
    if (handle_hairs)
        disp('setup_hairs')
-        setup_hairs_for_velocity(hairNum)
+       setup_hairs_for_velocity(hairNum)
    end
    disp('read_in_velocities')
    read_in_velocity_data_p1(domainlimits)
@@ -104,6 +104,7 @@ fprintf('\t xlength by ylength: %4.16f by %4.16f\n',xlength,ylength);
 if (handle_hairs)
     setup_hairs()
 end
+
 
 %initialize the concentration
 initialize_c(initc)

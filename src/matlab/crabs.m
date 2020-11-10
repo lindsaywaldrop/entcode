@@ -14,7 +14,6 @@ set_vars
 %saving data initially
 save_data(1); 
 
-pause
 %FLICK
 disp('Saving velocity data')
 disp('  ')

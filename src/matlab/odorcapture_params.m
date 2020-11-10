@@ -15,11 +15,11 @@ dtfactor = 0.15;   %0.15 m/s -> max velocity in all the exp data
 %dthairfactor = 0.0045; %hair length scale in m - now set when loading hairinfo
 
 %final time (s):                 
-t_final_flick = 1; %0.1 s -> 200 s 
+t_final_flick = 20; %0.1 s -> 200 s 
    %t_final_factor_flick = 20000;
 
 %print every print_time timesteps 
-print_time = 500;  
+print_time = 100;  
  
 %if using weno for advection then need to set such that 
 %weno_eps = 1e-6*O(u^2)
@@ -36,7 +36,7 @@ explicit_vel = 'piv_data';
 %if want automatically set from piv_data then set doaminlimits = 'auto'
   %otherwise domainlimits = [xLmin, xLmax, yLmin, yLmax] in the correctly
 %converted units 
-domainlimits = [0, 0.3, -0.15, 0.22]; %in m original
+%domainlimits = [0, 0.3, -0.15, 0.22]; %in m original
 %domainlimits = 'auto'; 
 %only needed if explicit_vel = 'piv_data'                            
 piv_data_filename = strcat('viz_IB2d',num2str(str2double(run_id)));

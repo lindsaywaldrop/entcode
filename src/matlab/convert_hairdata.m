@@ -1,11 +1,12 @@
 function [p] = convert_hairdata(pathbase_data,hairNum,run_id)
 %
 %
-global pathbase_data hairNum run_id
+global pathbase_data hairNum 
 p.hdia = 0.002;
+run_number = run_id
 
 hairdata = csvread(strcat(pathbase_data,'/csv-files/',num2str(hairNum),...
-    'hair_files/hairs',num2str(run_id),'.csv'),1,0,[1 0 3 hairNum]);
+    'hair_files/hairs',num2str(run_number),'.csv'),1,0,[1 0 3 hairNum]);
 C1 = 0;
 C2 = 1;
 numPoints = hairdata(1,2);

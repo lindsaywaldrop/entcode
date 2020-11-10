@@ -2,7 +2,7 @@ function setup_hairs_for_velocity(hairNum)
 
 global hairs_data_filename hairs_data_filename_interior 
 global allhairs_center pathbase_piv pathbase_data
-global dthairfactor run_id hairNum
+global dthairfactor run_id hairNum domainlimits
 
 %NOTES: SK 2017_11_16
 %COMMENTED ALL RETURN HAIR STUFF OUT 
@@ -20,7 +20,14 @@ save([pathbase_data,'hairinfo-files/',num2str(hairNum),'hair_files/',...
     hairs_data_filename '.mat'],hairs_data_filename_interior.filename); 
 
 %loads the location of the hairs
-flick_hairs = eval(['flickdata.' hairs_data_filename_interior.hairs]); 
+flick_hairs = eval(['flickdata.' hairs_data_filename_interior.hairs])
+
+% Set domain limits based on hairs
+xLmin = min([flick_hairs.x]) - 0.05;
+xLmax = max([flick_hairs.x]) + 0.15;
+yLmin = min([flick_hairs.y]) - 0.05;
+yLmax = max([flick_hairs.y]) + 0.05;
+domainlimits = [xLmin, xLmax, yLmin, yLmax];
 
 if (hairs_data_filename_interior.givenradius)
     
