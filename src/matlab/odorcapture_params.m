@@ -15,7 +15,7 @@ dtfactor = 0.15;   %0.15 m/s -> max velocity in all the exp data
 %dthairfactor = 0.0045; %hair length scale in m - now set when loading hairinfo
 
 %final time (s):                 
-t_final_flick = 20; %0.1 s -> 200 s 
+t_final_flick = 5; %0.1 s -> 200 s 
    %t_final_factor_flick = 20000;
 
 %print every print_time timesteps 
@@ -36,6 +36,8 @@ explicit_vel = 'piv_data';
 %if want automatically set from piv_data then set doaminlimits = 'auto'
   %otherwise domainlimits = [xLmin, xLmax, yLmin, yLmax] in the correctly
 %converted units 
+% Note: domain limits are now defined in setup_hairs() and
+% setup_hairs_for_velocity()
 %domainlimits = [0, 0.3, -0.15, 0.22]; %in m original
 %domainlimits = 'auto'; 
 %only needed if explicit_vel = 'piv_data'                            

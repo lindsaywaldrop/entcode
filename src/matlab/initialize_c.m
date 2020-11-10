@@ -137,7 +137,7 @@ elseif strcmp(initc,'exp_right_small_smdom') %THIS ONE
     %%dist_frh = 0.0125;
     %dist_frh = 0.005;
     
-    exp_center = 0.6; %far_right_hair + dist_frh + width/2; 
+    exp_center = far_right_hair+width/2; %far_right_hair + dist_frh + width/2; 
     c_Linf = 7; 
     c_max_constant = 0.1; 
     c_max = c_max_constant/ylength; 
@@ -179,7 +179,7 @@ elseif strcmp(initc,'half_exp') %THIS ONE
     width = 0.05; 
     %%dist_frh = 0.0125;
     %dist_frh = 0.005;
-    exp_center = 0.25; %far_right_hair + dist_frh + width/2; 
+    exp_center = far_right_hair+width/2; %far_right_hair + dist_frh + width/2; 
     c_Linf = 7; 
     c_max_constant = 0.1; 
     c_max = c_max_constant/ylength; 
