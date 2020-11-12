@@ -52,6 +52,7 @@ mkdir data/input2d-files/
 
 cd "$WD"/src/ibamr
 echo "Compiling main2d..."
+make clean
 make main2d
 mv main2d "$WD"/bin
 rm *.o stamp-2d
