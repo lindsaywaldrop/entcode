@@ -12,10 +12,10 @@ set -x
 i=119
 
 # Set hair number of array
-a=25
+a=18
 
 # Set path 
-WD="/pylon5/bi561lp/lwaldrop/entcode/"
+WD="/pylon5/bi561lp/lwaldrop/entcode"
 
 # move to working directory
 cd "${WD}"/bin
@@ -32,7 +32,7 @@ mpirun -n $SLURM_NTASKS ./main2d input2d${i}
 rm input2d${i} hairs${i}.vertex
 
 # check and zip finished simulation
-cd "$WD"/results/runs/
+cd "$WD"/results/ibamr/runs/
 if test -d viz_IB2d${i}/lag_data.cycle_030000; then
     zip -r viz_IB2d${i}.zip viz_IB2d${i}/
 else 
