@@ -11,11 +11,11 @@ function read_in_velocity_data_p1(dl)
 %COMMENTED ALL RETURN STUFF OUT 
 
 global xlength ylength Nx Ny dx dy pathbase_piv
-global piv_data_filename piv_data_filename_interior piv_data_returnfilename
+global piv_data_filename piv_data_filename_interior
 global xshift_piv_data yshift_piv_data
 global Nxcoarse 
-global allhairs_center shift_hairs 
 
+strcat(pathbase_piv,piv_data_filename,'.mat')
 
 %filenames
 flickdata = load([pathbase_piv piv_data_filename '.mat']);

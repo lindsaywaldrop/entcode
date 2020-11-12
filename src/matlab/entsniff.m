@@ -1,4 +1,4 @@
-function entsniff(topdir,hairNum,filenumbers,clpool)
+function entsniff(topdir,hairNum,fluid,filenumbers,clpool)
 % entsniff.m
 %
 % Script for running code on Bridges
@@ -21,7 +21,7 @@ cd(topdir)
 addpath(genpath(strcat(topdir,'/src/matlab')))
 
 global pathbase_piv pathbase_data pathbase_results GridSize final_time 
-global files files0 hairNum
+global files files0 hairNum fluid
 GridSize = 4096;
 final_time = 30000;
 %assignin('base','GridSize',4096)        %Size of the finest grid
@@ -43,7 +43,7 @@ pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair
 %save('work.mat','GridSize','final_time','files','files0','pathbase1')
 
 save('temp_global_variable','pathbase_data','pathbase_piv','pathbase_results',...
-    'GridSize','final_time','hairNum');
+    'GridSize','final_time','hairNum','fluid');
 
 if clpool == 1
     
@@ -71,7 +71,7 @@ if clpool == 1
         disp(['starting simulation for ', files0{i}])
         crabs(files0{i})
     
-        cleanup(pathbase_piv, pathbase_results)
+        cleanup()
     
         % timing(i)=toc
     end
@@ -86,12 +86,12 @@ elseif clpool > 1
         
         % Setting up hair info files
         if isfile([pathbase_data,'/hairinfo-files/',num2str(hairNum),...
-            'hair_files/hairinfo',num2str(i),'.mat'])==0
+            'hair_files/hairinfo',files{i},'.mat'])==0
              disp(['Setting up hair info files for ',files{i}])
              convert_hairdata(pathbase_data,hairNum,i)
         end
     
-        if isfile([pathbase_piv,'viz_IB2d',num2str(i),'.mat'])==0
+        if isfile([pathbase_piv,'viz_IB2d',files{i},'.mat'])==0
             % Interpolates velocity fields and saves.
             disp(['Interpolating velocity fields for ', files{i}])
             entsniffinterp(i, files, pathbase_piv, GridSize, final_time);
@@ -102,7 +102,7 @@ elseif clpool > 1
         disp(['starting simulation for ', files0{i}])
         crabs(files0{i})
     
-        cleanupent(pathbase_piv, pathbase_results)
+        cleanup()
     
         % timing(i)=toc
     end
@@ -110,6 +110,6 @@ else
     disp('Error: Not a valid value for clpool!')
 end
 
-delete('temp_global_variable');
+delete('temp_global_variable.mat');
 
 end

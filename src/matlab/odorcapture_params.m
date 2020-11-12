@@ -14,20 +14,9 @@ Nxcoarse = Nx; %right now set the same as Nx
 dtfactor = 0.15;   %0.15 m/s -> max velocity in all the exp data
 %dthairfactor = 0.0045; %hair length scale in m - now set when loading hairinfo
 
-%final time (s):                 
-t_final_flick = 5; %0.1 s -> 200 s 
-   %t_final_factor_flick = 20000;
-
-%print every print_time timesteps 
-print_time = 100;  
- 
 %if using weno for advection then need to set such that 
 %weno_eps = 1e-6*O(u^2)
 weno_eps = 1e-6;
-
-%initializing the bulk surfactants
-initc = 'exp_right_small';
-%initc = 'half_exp';
 
 %parameters
 explicit_vel = 'piv_data';  
@@ -54,11 +43,36 @@ piv_data_filename_interior.forcedivfree = 0;
 
 %diffusion solver 
 usegmres = 0; %0 if LU decomposition and 1 if gmres iterative solver
-                            
-%diffusion coefficient (m^2/s)
-D = 2000*7.84e-10;     %caproic acid in water - in m^2/s -> corresponds to exp_right_small IC 
-%D = 2000*6.02e-6;       %caproic acid in air  - in m^2/s -> correspond to half_exp IC 
-%D = 5e-4;        %testing
+                     
+
+if strcmp(fluid,'air')
+	%initializing the bulk surfactants
+	initc = 'half_exp';
+	%diffusion coefficient (m^2/s)	
+	D = 2000*6.02e-6;       %caproic acid in air  - in m^2/s -> correspond to half_exp IC 
+	%print every print_time timesteps 
+	print_time = 500;  
+	%final time (s):                 
+	t_final_flick = 3; %0.1 s -> 200 s 
+	%t_final_factor_flick = 20000;
+
+elseif strcmp(fluid,'water')
+	%initializing the bulk surfactants
+	initc = 'exp_right_small';
+	%diffusion coefficient (m^2/s)
+	D = 2000*7.84e-10;     %caproic acid in water - in m^2/s -> corresponds to exp_right_small IC 
+	%print every print_time timesteps 
+	print_time = 100;  
+	%final time (s):                 
+	t_final_flick = 12; %0.1 s -> 200 s 
+   %t_final_factor_flick = 20000;
+else 
+	disp('unknown fluid type')
+	return
+end
+
+disp(['Running in ',fluid,' with D=', num2str(D), 'for ', num2str(t_final_flick),' s.'])
+disp(' ')
 
 %hairs  
 handle_hairs = 1; 

@@ -1,7 +1,7 @@
 %script set_vars.m
 %initializes the variables for the program
 
-global pathbase_data hairNum
+global pathbase_data hairNum fluid pathbase_piv piv_data_filename
 global xlength ylength Nx Ny dx dy x y u v
 global dthairfactor dt dt_flick t_final_flick t_steps_flick t_steps
 %global dt dt_flick t_final_flick t_steps_flick t_steps

@@ -4,7 +4,7 @@ function crabs(filenumber)
 %output: 
 %main file - calls all the timestepping steps for this program
 global pathbase_data pathbase_piv pathbase_results hairNum
-global GridSize final_time
+global GridSize final_time fluid
 
 if isempty(pathbase_data)
     load('temp_global_variable');
