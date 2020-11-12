@@ -22,10 +22,9 @@ addpath(genpath(strcat(topdir,'/src/matlab')))
 
 global pathbase_piv pathbase_data pathbase_results GridSize final_time 
 global files files0 hairNum fluid
+
 GridSize = 4096;
 final_time = 30000;
-%assignin('base','GridSize',4096)        %Size of the finest grid
-%assignin('base','final_time',30000)      %Final time step to be included in data analysis
 
 j = length(filenumbers);
 for ii = 1:j
@@ -33,14 +32,10 @@ for ii = 1:j
    files0{ii} = sprintf('%04d', filenumbers(ii));
 end
 
-%assignin('base','files',files)
-%assignin('base','files0',files0)
-%assignin('base','pathbase1','/pylon5/bi561lp/lwaldrop/shilpa/pivdata/')
 % Setting paths to necessary files
 pathbase_piv = strcat(topdir, '/results/ibamr/', num2str(hairNum), 'hair_runs/');
 pathbase_data = strcat(topdir, '/data/');
-pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair_array/');
-%save('work.mat','GridSize','final_time','files','files0','pathbase1')
+pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair_array/',fluid);
 
 save('temp_global_variable','pathbase_data','pathbase_piv','pathbase_results',...
     'GridSize','final_time','hairNum','fluid');

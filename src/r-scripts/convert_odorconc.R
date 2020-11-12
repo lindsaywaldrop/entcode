@@ -45,13 +45,13 @@ convert_ibamr <- function(run_id,t,hairno) {
 }
 
 
-run_id="0004"
-hairno<-18
+run_id="0020"
+hairno<-25
 hair.conc <- convert_odorconc(run_id,hairno)
 all.data<-convert_ibamr(run_id,1,hairno)
 max_fill<-max(all.data$c)
 hair.points <- as.data.frame(t(hair.conc$hairs.positions))
-conc.timedata<-readMat(paste("./results/odorcapture/18hair_array/c_",run_id,".mat",sep = ""))
+conc.timedata<-readMat(paste("./results/odorcapture/",hairno,"hair_array/c_",run_id,".mat",sep = ""))
 for (i in 1:20){
   all.data$c<- as.vector(conc.timedata[[i]])
   png(filename=paste("conc_",run_id,"_",i,".png",sep=""))
@@ -68,11 +68,12 @@ ggplot(all.data, aes(x=x,y=y,fill=w)) + geom_tile() + scale_fill_viridis() +
 
 
 hair.conc <- convert_odorconc(run_id,hairno)
-row.cols<-viridis(4,option="C")
+row.cols<-viridis(5,option="C")
 cols <- c(rep(row.cols[1],3),
           rep(row.cols[2],4),
           rep(row.cols[3],5),
-          rep(row.cols[4],6))
+          rep(row.cols[4],6),
+          rep(row.cols[5],7))
 plot(hair.conc$conc.data[,1],
      xlab="time",ylab="Odorant", pch=19,col=cols[1],type='l',
      ylim=range(hair.conc$conc.data))
