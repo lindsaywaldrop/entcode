@@ -35,7 +35,7 @@ end
 % Setting paths to necessary files
 pathbase_piv = strcat(topdir, '/results/ibamr/', num2str(hairNum), 'hair_runs/');
 pathbase_data = strcat(topdir, '/data/');
-pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair_array/',fluid);
+pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair_array/',fluid,'/');
 
 save('temp_global_variable','pathbase_data','pathbase_piv','pathbase_results',...
     'GridSize','final_time','hairNum','fluid');
