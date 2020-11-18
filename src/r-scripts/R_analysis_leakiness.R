@@ -26,7 +26,7 @@ if(nohairs == 25){
 rundir <- paste(nohairs, "hair_runs/", sep = "")   # Constructs hair directory
 speed <- 0.06      	 	 # free fluid speed, m/s
 sample <- 5000			 # sampling rate
-leakiness <- matrix(data = 0, nrow = n, ncol = rowno)	# Allocates space for leakiness calculation
+leakiness <- matrix(data = NA, nrow = n, ncol = rowno)	# Allocates space for leakiness calculation
 
 #### Main Loop for Calculations ####
 for (j in 1:n){		# Main loop over simulations
@@ -57,12 +57,19 @@ leaknames <- as.character(rep(0, rowno)) # Allocates space for names
 for (i in 1:rowno) leaknames[i] <- paste("row", i, sep = "") # Assigns name for each hair
 names(leakiness2) <- leaknames # Assigns all names to data frame
 
-# Saves data!
-write.table(leakiness2, file = 
-              paste("./results/r-csv-files/", nohairs, "hair_results/leakiness_", 
+#### Checking and Saving Data ####
+complete<-as.numeric(sum(is.na(leakiness2)))
+message("~.*^*~Completeness check~*^*~.~\n",
+        "Number of NAs: ",complete)
+if (complete==0){
+  message("Set complete. Saving now!")
+  write.table(leakiness2, file = 
+                 paste("./results/r-csv-files/", nohairs, "hair_results/leakiness_", 
                     n, "_", Sys.Date(), ".csv", sep = ""),
             sep = ",",row.names = FALSE)
-
+} else {
+  message("Set not complete, did not save")
+}
 # Quits R
 #quit(save="no")
 #################################################################################################################

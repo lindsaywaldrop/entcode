@@ -13,7 +13,7 @@ rundir <- paste(nohairs, "hair_runs/", sep = "") # Constructs hair directory
 duration <- 0.03   	 	 # duration of simulation, s
 dist <- 0.002          # diameter of each hair, m
 
-flux <- matrix(data = 0, nrow = n, ncol = nohairs)
+flux <- matrix(data = NA, nrow = n, ncol = nohairs)
 norm <- data.frame(x = c(1, 0, -1, 0), y = c(0, -1, 0, 1))
 
 for (j in 1:n){		# Main loop over simulations
@@ -49,6 +49,14 @@ for (i in 1:nohairs) fluxnames[i] <- paste("hair", i, sep = "") # Assigns name f
 flux2 <- as.data.frame(flux)
 names(flux2) <- fluxnames
 
-# Saves flux values
-write.table(flux2, file = paste("./results/r-csv-files/", nohairs, "hair_results/flux_", n,
+#### Checking and Saving Data ####
+complete<-as.numeric(sum(is.na(flux2)))
+message("~.*^*~Completeness check~*^*~.~\n",
+        "Number of NAs: ",complete)
+if (complete==0){
+  message("Set complete. Saving now!")
+  write.table(flux2, file = paste("./results/r-csv-files/", nohairs, "hair_results/flux_", n,
                                 "_", Sys.Date(), ".csv", sep = ""), sep = ",")
+} else {
+  message("Set not complete, did not save")
+}
