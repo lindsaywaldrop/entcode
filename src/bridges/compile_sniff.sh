@@ -23,11 +23,16 @@ mkdir results/r-csv-files/12hair_results/
 mkdir results/r-csv-files/18hair_results/
 mkdir results/r-csv-files/25hair_results/
 mkdir results/odorcapture/
-mkdir results/odorcapture/5hair_results/
-mkdir results/odorcapture/7hair_results/
-mkdir results/odorcapture/12hair_results/
-mkdir results/odorcapture/18hair_results/
-mkdir results/odorcapture/25hair_results/
+mkdir -p results/odorcapture/5hair_array/air/
+mkdir -p results/odorcapture/5hair_array/water/
+mkdir -p results/odorcapture/7hair_array/air/
+mkdir -p results/odorcapture/7hair_array/water/
+mkdir -p results/odorcapture/12hair_array/air/
+mkdir -p results/odorcapture/12hair_array/water/
+mkdir -p results/odorcapture/18hair_array/air/
+mkdir -p results/odorcapture/18hair_array/water/
+mkdir -p results/odorcapture/25hair_array/air/
+mkdir -p results/odorcapture/25hair_array/water/
 mkdir data/
 mkdir data/vertex-files/
 mkdir data/vertex-files/5hair_files/

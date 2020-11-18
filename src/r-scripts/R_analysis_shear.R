@@ -41,7 +41,7 @@ if(nohairs == 5){
                -1,  0,  0,  0,  0,  0,  1 ) # row 5
 }
 
-shear_hair <- matrix(data = 0, nrow = n, ncol = nohairs)	# Allocates space for shear calculations
+shear_hair <- matrix(data = NA, nrow = n, ncol = nohairs)	# Allocates space for shear calculations
 
 #### Main Loop for Calculations ####
 for (j in 1:n){		# Main loop over simulations
@@ -103,11 +103,19 @@ shearnames <- as.character(rep(0, nohairs)) # Allocates space for names
 for (i in 1:nohairs) shearnames[i] <- paste("hair", i, sep = "") # Assigns name for each hair
 names(shear_hair2) <- shearnames # Assigns all names to data frame
 
-# Save data!
-write.table(shear_hair2, file=paste("./results/r-csv-files/", nohairs, 
+#### Checking and Saving Data ####
+complete<-as.numeric(sum(is.na(shear_hair2)))
+message("~.*^*~Completeness check~*^*~.~\n",
+        "Number of NAs: ",complete)
+if (complete==0){
+  message("Set complete. Saving now!")
+  write.table(shear_hair2, file=paste("./results/r-csv-files/", nohairs, 
                                    "hair_results/shearhairs_", n, "_", Sys.Date(), 
                                    ".csv", sep = ""),
             sep = ",")
+} else {
+  message("Set not complete, did not save")
+}
 # Quits R
 #quit(save="no")
 #################################################################################################################

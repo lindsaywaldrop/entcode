@@ -9,7 +9,7 @@ nohairs <- 18     # Total number of hairs in the array.
 # Options: "3", "5", "7", "12", "18", "25"
 n <- 165				  # number of simulations to analyze
 
-Umean<-matrix(data=0,nrow=n,ncol=nohairs)
+Umean<-matrix(data=NA,nrow=n,ncol=nohairs)
 
 for (j in 1:n){		# Main loop over simulations
 	print(paste("Simulation: ",j,sep=""))					# Prints simulation number 
@@ -29,9 +29,16 @@ Umeannames <- as.character(rep(0, nohairs)) # Allocates space for names
 for (i in 1:nohairs) Umeannames[i] <- paste("hair", i, sep = "") # Assigns name for each hair
 names(Umean2) <- Umeannames # Assigns all names to data frame
 
-# Saves leakiness values
-write.table(Umean2, file = paste("./results/r-csv-files/", nohairs, 
+#### Checking and Saving Data ####
+complete<-as.numeric(sum(is.na(Umean2)))
+message("~.*^*~Completeness check~*^*~.~\n",
+        "Number of NAs: ",complete)
+if (complete==0){
+  message("Set complete. Saving now!")
+  write.table(Umean2, file = paste("./results/r-csv-files/", nohairs, 
                                  "hair_results/Umean_", n, "_", Sys.Date(), 
                                  ".csv", sep = ""), 
             sep = ",")
-
+} else {
+  message("Set not complete, did not save")
+}
