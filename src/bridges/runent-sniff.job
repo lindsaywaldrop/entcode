@@ -2,7 +2,7 @@
 # SBATCH -p RM
 # SBATCH -t 12:00:00
 # SBATCH -N 1
-# SBATCH --ntasks-per-node=1
+# SBATCH --ntasks-per-node=8
 # SBATCH --mail-type=ALL
 
 # echo commands to stdout
@@ -31,5 +31,5 @@ cd "${WD}"/src/matlab
 module load matlab
 
 # run matlab program
-matlab -r "entsniff(${MatWD},$array,${fluid},$a:$b,1);exit"
+matlab -r "entsniff(${MatWD},$array,${fluid},$a:$b,8);exit"
 
