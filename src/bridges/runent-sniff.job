@@ -12,7 +12,7 @@ set -x
 array=18
 
 # Fluid
-fluid="water"
+fluid=\'water\'
 
 # First number
 a=1
@@ -21,7 +21,8 @@ a=1
 b=1
 
 # Set path 
-WD="/pylon5/bi561lp/lwaldrop/entcode"
+WD=/pylon5/bi561lp/lwaldrop/entcode
+MatWD=\'$WD\'
 
 # move to working directory
 cd "${WD}"/src/matlab
@@ -30,5 +31,5 @@ cd "${WD}"/src/matlab
 module load matlab
 
 # run matlab program
-matlab -r "entsniff(\"${WD}\",$array,\"${fluid}\",$a:$b,1);exit"
+matlab -r "entsniff(${MatWD},$array,${fluid},$a:$b,1);exit"
 
