@@ -15,7 +15,7 @@ dtfactor = 0.15;   %0.15 m/s -> max velocity in all the exp data
 %dthairfactor = 0.0045; %hair length scale in m - now set when loading hairinfo
 
 if isempty(pathbase_data)
-load('temp_global_variable');
+    load(strcat(topdir,'/src/matlab/temp_global_variable.mat'));
 end
 
 %if using weno for advection then need to set such that 

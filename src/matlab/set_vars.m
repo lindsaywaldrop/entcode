@@ -33,10 +33,6 @@ global cplusx_dbc diffusionrhsbc_flick
 run_id = filenumber
 run odorcapture_params.m
 
-if isempty(pathbase_data)
-   load('temp_global_variable');
-end
-
 %cd(strcat(pathbase_data,'hairinfo-files/',num2str(hairNum),'hair_files/'))
 %set x_length and y_length here if based on experimental data otherwise in
 %params file manually

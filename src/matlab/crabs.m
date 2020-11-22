@@ -1,13 +1,13 @@
-function crabs(filenumber)
+function crabs(topdir,filenumber)
 %function crabs.m 
 %input: filenumber - string
 %output: 
 %main file - calls all the timestepping steps for this program
-global pathbase_data pathbase_piv pathbase_results hairNum
+global topdir pathbase_data pathbase_piv pathbase_results hairNum
 global GridSize final_time fluid
 
 if isempty(pathbase_data)
-    load('temp_global_variable');
+    load(strcat(topdir,'/src/matlab/temp_global_variable.mat'));
 end
 %initialize
 set_vars
