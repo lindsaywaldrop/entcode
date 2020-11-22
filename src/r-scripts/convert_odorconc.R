@@ -3,9 +3,9 @@ library(viridis)
 library(R.matlab)
 library(png)
 
-convert_odorconc <- function(run_id,hairno) {
+convert_odorconc <- function(run_id,fluid,hairno) {
   require(R.matlab)
-  data<-readMat(paste("./results/odorcapture/",hairno,"hair_array/hairs_c_",run_id,".mat", sep = ""))
+  data<-readMat(paste("./results/odorcapture/",hairno,"hair_array/",fluid,"/hairs_c_",run_id,".mat", sep = ""))
   steps.number <- length(data) - 2
   hairs.number <- length(data$hairs.center[, 1])
   conc.data <- matrix(NA, ncol = hairs.number, nrow = steps.number)
@@ -30,11 +30,11 @@ magnitude <- function(u,v) {
   it <- replace(it, is.na(it), 0)
 }
 
-convert_ibamr <- function(run_id,t,hairno) {
+convert_ibamr <- function(run_id,fluid,t,hairno) {
   require(R.matlab)
-  loc.data<-readMat(paste("./results/odorcapture/",hairno,"hair_array/initdata_",run_id,".mat",sep = ""))
-  ibamr.data<-readMat(paste("./results/odorcapture/",hairno,"hair_array/velocity_",run_id,".mat", sep = ""))
-  conc.timedata<-readMat(paste("./results/odorcapture/",hairno,"hair_array/c_",run_id,".mat",sep = ""))
+  loc.data<-readMat(paste("./results/odorcapture/",hairno,"hair_array/",fluid,"/initdata_",run_id,".mat",sep = ""))
+  ibamr.data<-readMat(paste("./results/odorcapture/",hairno,"hair_array/",fluid,"/velocity_",run_id,".mat", sep = ""))
+  conc.timedata<-readMat(paste("./results/odorcapture/",hairno,"hair_array/",fluid,"/c_",run_id,".mat",sep = ""))
   u <- as.vector(ibamr.data$u.flick)
   v <- as.vector(ibamr.data$v.flick)
   x <- as.vector(matrix(loc.data$x, nrow = nrow(loc.data$x), ncol = nrow(loc.data$y)))
@@ -45,13 +45,14 @@ convert_ibamr <- function(run_id,t,hairno) {
 }
 
 
-run_id="0020"
+run_id="0001"
+fluid<-"water"
 hairno<-25
-hair.conc <- convert_odorconc(run_id,hairno)
-all.data<-convert_ibamr(run_id,1,hairno)
+hair.conc <- convert_odorconc(run_id,fluid,hairno)
+all.data<-convert_ibamr(run_id,fluid,1,hairno)
 max_fill<-max(all.data$c)
 hair.points <- as.data.frame(t(hair.conc$hairs.positions))
-conc.timedata<-readMat(paste("./results/odorcapture/",hairno,"hair_array/c_",run_id,".mat",sep = ""))
+conc.timedata<-readMat(paste("./results/odorcapture/",hairno,"hair_array/",fluid,"/c_",run_id,".mat",sep = ""))
 for (i in 1:20){
   all.data$c<- as.vector(conc.timedata[[i]])
   png(filename=paste("conc_",run_id,"_",i,".png",sep=""))
@@ -67,7 +68,7 @@ ggplot(all.data, aes(x=x,y=y,fill=w)) + geom_tile() + scale_fill_viridis() +
 
 
 
-hair.conc <- convert_odorconc(run_id,hairno)
+hair.conc <- convert_odorconc(run_id,fluid,hairno)
 row.cols<-viridis(5,option="C")
 cols <- c(rep(row.cols[1],3),
           rep(row.cols[2],4),
