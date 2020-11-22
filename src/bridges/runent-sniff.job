@@ -1,15 +1,16 @@
 #!/bin/bash
-# SBATCH -p RM
 # SBATCH -t 12:00:00
+# SBATCH -p RM
 # SBATCH -N 1
-# SBATCH --ntasks-per-node=8
-# SBATCH --mail-type=ALL
+# SBATCH --ntasks-per-node 8
+# SBATCH --mail-type ALL
+# SBATCH -C EGRESS
 
 # echo commands to stdout
 set -x 
 
 # Number of hairs in the array
-array=18
+array=25
 
 # Fluid
 fluid=\'water\'
@@ -33,3 +34,4 @@ module load matlab
 # run matlab program
 matlab -r "entsniff(${MatWD},$array,${fluid},$a:$b,8);exit"
 
+wait

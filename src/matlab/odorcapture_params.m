@@ -14,6 +14,10 @@ Nxcoarse = Nx; %right now set the same as Nx
 dtfactor = 0.15;   %0.15 m/s -> max velocity in all the exp data
 %dthairfactor = 0.0045; %hair length scale in m - now set when loading hairinfo
 
+if isempty(pathbase_data)
+load('temp_global_variable');
+end
+
 %if using weno for advection then need to set such that 
 %weno_eps = 1e-6*O(u^2)
 weno_eps = 1e-6;

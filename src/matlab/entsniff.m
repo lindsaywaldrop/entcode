@@ -33,11 +33,12 @@ for ii = 1:j
 end
 
 % Setting paths to necessary files
-pathbase_piv = strcat(topdir, '/results/ibamr/', num2str(hairNum), 'hair_runs/');
-pathbase_data = strcat(topdir, '/data/');
-pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair_array/',fluid,'/');
+pathbase_piv = strcat(topdir, '/results/ibamr/', num2str(hairNum), 'hair_runs/')
+pathbase_data = strcat(topdir, '/data/')
+pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair_array/',fluid,'/')
+fluid
 
-save('temp_global_variable','pathbase_data','pathbase_piv','pathbase_results',...
+save(strcat(topdir,'/src/matlab/','temp_global_variable.mat'),'pathbase_data','pathbase_piv','pathbase_results',...
     'GridSize','final_time','hairNum','fluid');
 
 if clpool == 1
@@ -49,13 +50,13 @@ if clpool == 1
         disp('   ')
         
         % Setting up hair info files
-        if isfile([pathbase_data,'/hairinfo-files/',num2str(hairNum),...
-                'hair_files/hairinfo',files{i},'.mat'])==0
+        if isfile(strcat(pathbase_data,'/hairinfo-files/',num2str(hairNum),...
+                'hair_files/hairinfo',files{i},'.mat'))==0
              disp(['Setting up hair info files for ',files{i}])
              convert_hairdata(pathbase_data,hairNum,str2double(files{i}))
         end
     
-        if isfile([pathbase_piv,'viz_IB2d',files{i},'.mat'])==0
+        if isfile(strcat(pathbase_piv,'viz_IB2d',files{i},'.mat'))==0
             % Interpolates velocity fields and saves.
             disp(['Interpolating velocity fields for ', files{i}])
             entsniffinterp(i, files, pathbase_piv, GridSize, final_time);
@@ -73,6 +74,7 @@ if clpool == 1
     
 elseif clpool > 1
     mycluster = parpool(clpool);
+addAttachedFiles(mycluster,{strcat(topdir,'/src/matlab/','temp_global_variable.mat')})
     parfor i = 1:length(files)
         % i=3
         % tic
@@ -80,13 +82,13 @@ elseif clpool > 1
         disp('   ')
         
         % Setting up hair info files
-        if isfile([pathbase_data,'/hairinfo-files/',num2str(hairNum),...
-            'hair_files/hairinfo',files{i},'.mat'])==0
+        if isfile(strcat(pathbase_data,'/hairinfo-files/',num2str(hairNum),...
+			 'hair_files/hairinfo',files{i},'.mat'))==0
              disp(['Setting up hair info files for ',files{i}])
-             convert_hairdata(pathbase_data,hairNum,i)
+             convert_hairdata(pathbase_data,hairNum,str2double(files{i}))
         end
     
-        if isfile([pathbase_piv,'viz_IB2d',files{i},'.mat'])==0
+        if isfile(strcat(pathbase_piv,'viz_IB2d',files{i},'.mat'))==0
             % Interpolates velocity fields and saves.
             disp(['Interpolating velocity fields for ', files{i}])
             entsniffinterp(i, files, pathbase_piv, GridSize, final_time);
@@ -105,6 +107,6 @@ else
     disp('Error: Not a valid value for clpool!')
 end
 
-delete('temp_global_variable.mat');
+delete('src/matlab/temp_global_variable.mat');
 
 end

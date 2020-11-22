@@ -27,12 +27,15 @@ global ptindex_hairs hairs_c hairs_center allhairs_center shift_hairs far_right_
 global cplusx_dbc diffusionrhsbc_flick
 
 %setting the path so matlab can find all the functions
-% addpath('./save_functions's)
+% addpath('./save_functions')
  
 %read in the parameters
 run_id = filenumber
 run odorcapture_params.m
 
+if isempty(pathbase_data)
+   load('temp_global_variable');
+end
 
 %cd(strcat(pathbase_data,'hairinfo-files/',num2str(hairNum),'hair_files/'))
 %set x_length and y_length here if based on experimental data otherwise in
