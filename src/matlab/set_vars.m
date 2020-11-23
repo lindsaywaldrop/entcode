@@ -42,7 +42,7 @@ if strcmp(explicit_vel,'piv_data')
        setup_hairs_for_velocity(hairNum)
    end
    disp('read_in_velocities')
-   read_in_velocity_data_p1(domainlimits)
+   read_in_velocity_data_p1(pathbase_piv,domainlimits)
 end
 
 %initializes Nx and Ny 

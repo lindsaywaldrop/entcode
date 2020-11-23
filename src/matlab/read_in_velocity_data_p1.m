@@ -1,4 +1,4 @@
-function read_in_velocity_data_p1(dl)
+function read_in_velocity_data_p1(pathbase_piv,dl)
 %function read_in_velocity_data_p1.m 
 %input: 
 %output: 
