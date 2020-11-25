@@ -1,11 +1,11 @@
-function concentration_absorbed_by_hairs()
+function [simulation] = concentration_absorbed_by_hairs(simulation)
 
-global ptindex_hairs hairs_c
-global c 
+%global ptindex_hairs hairs_c
+%global c 
  
-for i=1:length(ptindex_hairs)
+for i=1:length(simulation.ptindex_hairs)
     %tracking how much concentration is absorbed by each point in each hair
-    hairs_c{i} = hairs_c{i} + c(ptindex_hairs{i});
+    simulation.hairs_c{i} = simulation.hairs_c{i} + simulation.c(simulation.ptindex_hairs{i});
     %setting the concentration inside the hairs = 0
-    c(ptindex_hairs{i}) = 0; 
+    simulation.c(simulation.ptindex_hairs{i}) = 0; 
 end

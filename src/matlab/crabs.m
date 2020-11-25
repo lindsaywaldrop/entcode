@@ -1,24 +1,29 @@
-function crabs(topdir,filenumber)
+function crabs(paths, parameters, filenumber)
 %function crabs.m 
 %input: filenumber - string
 %output: 
 %main file - calls all the timestepping steps for this program
-global topdir pathbase_data pathbase_piv pathbase_results hairNum
-global GridSize final_time fluid
+%global topdir pathbase_data pathbase_piv pathbase_results hairNum
+%global GridSize final_time fluid
 
 if isempty(pathbase_data)
-    load(strcat(topdir,'/src/matlab/temp_global_variable.mat'));
+    load(strcat(paths.topdir,'/src/matlab/temp_global_variable.mat'));
 end
+
 %initialize
-set_vars
+simulation = struct([]);
+
+% Setting parameters and simulation set up
+set_vars 
+
 %saving data initially
-save_data(1); 
+save_data(paths, parameters, simulation, 1); 
 
 %FLICK
 disp('Saving velocity data')
 disp('  ')
-[u,v] = get_velocities(dt_flick/2,t,explicit_vel,'flick'); 
-save_data_vel(1,'flick');
+[u,v] = get_velocities(parameters.dt_flick/2,t,explicit_vel,'flick'); 
+save_data_vel(1, 'flick');
 disp('Done!')
 disp(' ')
 
@@ -28,47 +33,50 @@ disp('Starting first flick...')
 %could speed this up by taking out the if else statements from the for loop
 
 %advection - first step
-advect_c(dt_flick/2,'dirichlet','weno');
+[simulation] = advect_c(parameters.dt_flick/2, 'dirichlet', 'weno', ...
+												parameters, simulation, velocities);
 disp('.')
-for timestep = 1:t_steps_flick
+for timestep = 1:parameters.t_steps_flick
    
   %diffusion  
   %if first timestep then initialze the diffusion matrix   
   if (timestep == 1) 
-      diffusion_c(dt_flick,1,diffusionrhsbc_flick);
+      [simulation] = diffusion_c(parameters.dt_flick, 1, parameters.diffusionrhsbc_flick, parameters, simulation);
       disp('.')
   else
-      diffusion_c(dt_flick,0,diffusionrhsbc_flick); 
+      [simulation] = diffusion_c(parameters.dt_flick, 0, parameters.diffusionrhsbc_flick, parameters, simulation); 
   end
-  concentration_absorbed_by_hairs();
+  [simulation] = concentration_absorbed_by_hairs(simulation);
   %advection
   %if not at the last timestep then step with dt but if at the last
   %timestep then step only dt/2    
-  if (timestep ~= t_steps_flick)
-     advect_c(dt_flick,'dirichlet','weno');
-  elseif (timestep == t_steps_flick) 
-     advect_c(dt_flick/2,'dirichlet','weno');
+  if (timestep ~= parameters.t_steps_flick)
+     [simulation] = advect_c(parameters.dt_flick,'dirichlet','weno', ...
+												parameters, simulation, velocities);
+  elseif (timestep == parameters.t_steps_flick) 
+     [simulation] = advect_c(parameters.dt_flick/2,'dirichlet','weno',  ...
+												parameters, simulation, velocities);
   end
   
-  t = t + dt_flick; 
-  t_steps = t_steps + 1; 
+  simulation.t = simulation.t + parameters.dt_flick; 
+  simulation.t_steps = simulation.t_steps + 1; 
   
   %saving data
-  if (mod(t_steps,print_time)==0) 
-    pcount = pcount + 1; 
+  if (mod(simulation.t_steps, simulation.print_time)==0) 
+    simulation.pcount = simulation.pcount + 1; 
     save_data(0);     
-    list_print_times(pcount) = t; 
-    fprintf('printing %g %g \n',t,pcount)
+    list_print_times(simulation.pcount) = simulation.t; 
+    fprintf('printing %g %g \n',simulation.t, simulation.pcount)
   end
 
 end
 
 
 %saving data finally
-pcount = pcount+1;  
+simulation.pcount = simulation.pcount+1;  
 save_data(0); 
-list_print_times(pcount) = t; 
-fprintf('printing %g %g \n',t,pcount)
+list_print_times(simulation.pcount) = t; 
+fprintf('printing %g %g \n', simulation.t, simulation.pcount)
 save_printdata(); 
 cleanup(); 
  

@@ -1,4 +1,4 @@
-function val_minus = evaluate_minus(val,NNx,NNy,bc,xory,varargin)
+function val_minus = evaluate_minus(val, NNx, NNy, bc, xory, varargin)
 
 
 if (xory == 1) %we are evaluating in the x-direction 

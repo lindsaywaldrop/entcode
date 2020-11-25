@@ -1,4 +1,4 @@
-function val_plus = evaluate_plus(val,NNx,NNy,bc,xory,varargin)
+function val_plus = evaluate_plus(val, NNx, NNy, bc, xory, varargin)
 
 if (xory==1) % we are working in the x-direction
   i1 = 1;

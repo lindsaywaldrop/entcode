@@ -1,14 +1,14 @@
-function save_data_c(initial)
+function save_data_c(paths, simulation, initial)
 %function save_data_c.m 
 %input: initial - if this is the first time data is being saved 
 %output: 
 %saves c data
 
-global run_id pcount pathbase_results
-global c
+%global run_id pcount pathbase_results
+%global c
 
 
-T = evalc(['c_' num2str(pcount) ' = c']);
+T = evalc(['c_' num2str(pcount) ' = simulation.c']);
 
 %the default extension is .mat
 filename = [pathbase_results,'c_',run_id];

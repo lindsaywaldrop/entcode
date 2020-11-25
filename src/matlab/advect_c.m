@@ -1,14 +1,14 @@
-function advect_C(delt,bc,method)
+function [simulation] = advect_C(delt, bc, method, parameters, simulation, velocities)
 
-global dx dy c u v
-global uplusx_piv uminusx_piv uplusy_piv uminusy_piv
-global vplusx_piv vminusx_piv vplusy_piv vminusy_piv
-global uplus2x_piv uminus2x_piv vplus2y_piv vminus2y_piv
-global cplusx_dbc
+%global dx dy c u v
+%global uplusx_piv uminusx_piv uplusy_piv uminusy_piv
+%global vplusx_piv vminusx_piv vplusy_piv vminusy_piv
+%global uplus2x_piv uminus2x_piv vplus2y_piv vminus2y_piv
+%global cplusx_dbc
 
-NNx = size(c);
+NNx = size(simulation.c);
 NNx = NNx(1);
-NNy = size(c);
+NNy = size(simulation.c);
 NNy = NNy(2); 
 
 %boundary conditions
@@ -17,90 +17,70 @@ if strcmp(bc,'dirichlet')
     %Dirichlet boundary conditions for c
     if strcmp(method,'upwind')
         
-        uplusx = uplusx_piv;
-        uminusx = uminusx_piv;
-        vplusy = vplusy_piv;
-        vminusy = vminusy_piv;
+        uplusx = velocities.uplusx_piv;
+        uminusx = velocities.uminusx_piv;
+        vplusy = velocities.vplusy_piv;
+        vminusy = velocities.vminusy_piv;
         
-        cplusx = evaluate_plus(c,NNx,NNy,'dirichlet',1,1,u,cplusx_dbc);
-        cminusx = evaluate_minus(c,NNx,NNy,'dirichlet',1,1,u);
-        cplusy = evaluate_plus(c,NNx,NNy,'dirichlet',0,1,v);
-        cminusy = evaluate_minus(c,NNx,NNy,'dirichlet',0,1,v);
+        cplusx = evaluate_plus(simulation.c, NNx, NNy, 'dirichlet', 1, 1, velocities.u, parameters.cplusx_dbc);
+        cminusx = evaluate_minus(simulation.c, NNx, NNy, 'dirichlet', 1, 1, velocities.u);
+        cplusy = evaluate_plus(simulation.c, NNx, NNy, 'dirichlet', 0, 1, velocities.v);
+        cminusy = evaluate_minus(simulation.c, NNx, NNy, 'dirichlet', 0, 1, velocities.v);
         
     elseif strcmp(method,'LaxWendroff')
         %NEEDS FIXING
         %needed for Lax-Wendroff
         %cplusxplusy
-        cplusxplusy(1:NNx-1,1:NNy-1)=c(2:NNx,2:NNy);
-        cplusxplusy(NNx,1:NNy-1)=0;
-        cplusxplusy(NNx,NNy)=0;
-        cplusxplusy(1:NNx-1,NNy)=0;
+        cplusxplusy(1:NNx-1, 1:NNy-1) = simulation.c(2:NNx,2:NNy);
+        cplusxplusy(NNx, 1:NNy-1) = 0;
+        cplusxplusy(NNx, NNy) = 0;
+        cplusxplusy(1:NNx-1, NNy) = 0;
         %cplusxminusy
-        cplusxminusy(1:NNx-1,2:NNy)=c(2:NNx,1:NNy-1);
-        cplusxminusy(NNx,2:NNy)=0;
-        cplusxminusy(NNx,1)=0;
-        cplusxminusy(1:NNx-1,1)=0;
+        cplusxminusy(1:NNx-1, 2:NNy) = simulation.c(2:NNx,1:NNy-1);
+        cplusxminusy(NNx, 2:NNy) = 0;
+        cplusxminusy(NNx, 1) = 0;
+        cplusxminusy(1:NNx-1, 1) = 0;
         %cminusxplusy
-        cminusxplusy(2:NNx,1:NNy-1)=c(1:NNx-1,2:NNy);
-        cminusxplusy(1,1:NNy-1)=0;
-        cminusxplusy(1,NNy)=0;
-        cminusxplusy(2:NNx,NNy)=0;
+        cminusxplusy(2:NNx, 1:NNy-1) = simulation.c(1:NNx-1,2:NNy);
+        cminusxplusy(1, 1:NNy-1) = 0;
+        cminusxplusy(1, NNy) = 0;
+        cminusxplusy(2:NNx, NNy) = 0;
         %cminusxminusy
-        cminusxminusy(2:NNx,2:NNy)=c(1:NNx-1,1:NNy-1);
-        cminusxminusy(1,2:NNy)=0;
-        cminusxminusy(1,1)=0;
-        cminusxminusy(2:NNx,1)=0;
+        cminusxminusy(2:NNx, 2:NNy) = simulation.c(1:NNx-1,1:NNy-1);
+        cminusxminusy(1, 2:NNy) = 0;
+        cminusxminusy(1, 1) = 0;
+        cminusxminusy(2:NNx, 1) = 0;
 
         %boundary conditions on u and v using extrapolation based on piv data
-        uplusx = uplusx_piv;
-        uminusx = uminusx_piv;
-        vplusx = vplusx_piv;
-        vminusx = vminusx_piv;
-        uplusy = uplusy_piv;
-        uminusy = uminusy_piv;
-        vplusy = vplusy_piv;
-        vminusy = vminusy_piv;
+        uplusx = velocities.uplusx_piv;
+        uminusx = velocities.uminusx_piv;
+        vplusx = velocities.vplusx_piv;
+        vminusx = velocities.vminusx_piv;
+        uplusy = velocities.uplusy_piv;
+        uminusy = velocities.uminusy_piv;
+        vplusy = velocities.vplusy_piv;
+        vminusy = velocities.vminusy_piv;
         
     elseif strcmp(method,'weno')
         %needed for WENO 
-        uplusx = uplusx_piv;
-        uminusx = uminusx_piv;
-        uplus2x = uplus2x_piv;
-        uminus2x = uminus2x_piv;
-        vplusy = vplusy_piv;
-        vplus2y = vplus2y_piv;
-        vminusy = vminusy_piv;
-        vminus2y = vminus2y_piv;
+        uplusx = velocities.uplusx_piv;
+        uminusx = velocities.uminusx_piv;
+        uplus2x = velocities.uplus2x_piv;
+        uminus2x = velocities.uminus2x_piv;
+        vplusy = velocities.vplusy_piv;
+        vplus2y = velocities.vplus2y_piv;
+        vminusy = velocities.vminusy_piv;
+        vminus2y = velocities.vminus2y_piv;
         
-        %boundary conditions on u and v using extrapolation based on piv
-        %data - setting certain values to be large - DOES NOT WORK
-        %uplusx_temp = evaluate_plus(u,NNx,NNy,'dirichlet',1,1,u);
-        %uplusx = max(uplusx_piv,uplusx_temp);
-        %uminusx_temp = evaluate_minus(u,NNx,NNy,'dirichlet',1,1,u);
-        %uminusx = max(uminusx_piv,uminusx_temp); 
-        %uplus2x_temp = evaluate_plus(uplusx,NNx,NNy,'dirichlet',1,2,u);
-        %uplus2x = max(uplus2x_piv,uplus2x_temp);
-        %uminus2x_temp = evaluate_minus(uminusx,NNx,NNy,'dirichlet',1,2,u);
-        %uminus2x = max(uminus2x_piv,uminus2x_temp);
+        cplusx = evaluate_plus(simulation.c, NNx, NNy, 'dirichlet', 1, 1, velocities.uplusx_piv, parameters.cplusx_dbc);
+        cminusx = evaluate_minus(simulation.c, NNx, NNy, 'dirichlet', 1, 1, velocities.uminusx_piv);
+        cplusy = evaluate_plus(simulation.c, NNx, NNy, 'dirichlet', 0, 1, velocities.vplusy_piv);
+        cminusy = evaluate_minus(simulation.c, NNx, NNy, 'dirichlet', 0, 1, velocities.vminusy_piv);
         
-        %vplusy_temp = evaluate_plus(v,NNx,NNy,'dirichlet',0,1,v);
-        %vplusy = max(vplusy_piv,vplusy_temp); 
-        %vminusy_temp = evaluate_minus(v,NNx,NNy,'dirichlet',0,1,v);
-        %vminusy = max(vminusy_piv,vminusy_temp); 
-        %vplus2y_temp = evaluate_plus(vplusy,NNx,NNy,'dirichlet',0,2,v);
-        %vplus2y = max(vplus2y_piv,vplus2y_temp); 
-        %vminus2y_temp = evaluate_minus(vminusy,NNx,NNy,'dirichlet',0,2,v);
-        %vminus2y = max(vminus2y_piv,vminus2y_temp); 
-    
-        cplusx = evaluate_plus(c,NNx,NNy,'dirichlet',1,1,uplusx,cplusx_dbc);
-        cminusx = evaluate_minus(c,NNx,NNy,'dirichlet',1,1,uminusx);
-        cplusy = evaluate_plus(c,NNx,NNy,'dirichlet',0,1,vplusy);
-        cminusy = evaluate_minus(c,NNx,NNy,'dirichlet',0,1,vminusy);
-        
-        cplus2x = evaluate_plus(cplusx,NNx,NNy,'dirichlet',1,2,uplus2x,cplusx_dbc);
-        cminus2x = evaluate_minus(cminusx,NNx,NNy,'dirichlet',1,2,uminus2x);
-        cplus2y = evaluate_plus(cplusy,NNx,NNy,'dirichlet',0,2,vplus2y);
-        cminus2y = evaluate_minus(cminusy,NNx,NNy,'dirichlet',0,2,vminus2y);
+        cplus2x = evaluate_plus(cplusx, NNx, NNy, 'dirichlet', 1, 2, velocities.uplus2x_piv, parameters.cplusx_dbc);
+        cminus2x = evaluate_minus(cminusx, NNx, NNy, 'dirichlet', 1, 2, velocities.uminus2x_piv);
+        cplus2y = evaluate_plus(cplusy, NNx, NNy, 'dirichlet', 0, 2, velocities.vplus2y_piv);
+        cminus2y = evaluate_minus(cminusy, NNx, NNy, 'dirichlet', 0, 2, velocities.vminus2y_piv);
                
     end
     
@@ -112,70 +92,70 @@ elseif strcmp(bc,'periodic_noflux')
     %unext = u;
     %vnext = v; 
     
-    cplusx = evaluate_plus(c,NNx,NNy,'periodic',1); 
-    cminusx = evaluate_minus(c,NNx,NNy,'periodic',1); 
-    cplusy = evaluate_plus(c,NNx,NNy,'noflux',0);
-    cminusy = evaluate_minus(c,NNx,NNy,'noflux',0);
+    cplusx = evaluate_plus(simulation.c, NNx, NNy, 'periodic', 1); 
+    cminusx = evaluate_minus(simulation.c, NNx, NNy, 'periodic', 1); 
+    cplusy = evaluate_plus(simulation.c, NNx, NNy, 'noflux', 0);
+    cminusy = evaluate_minus(simulation.c, NNx, NNy, 'noflux', 0);
 
     if strcmp(method,'LaxWendroff')
         %needed for Lax-Wendroff    
-        cplusxplusy(1:NNx-1,1:NNy-1)=c(2:NNx,2:NNy);
-        cplusxplusy(NNx,1:NNy-1)=c(1,2:NNy);
-        cplusxplusy(NNx,NNy)=c(1,NNy-1);
-        cplusxplusy(1:NNx-1,NNy)=c(2:NNx,NNy-1);
+        cplusxplusy(1:NNx-1, 1:NNy-1) = simulation.c(2:NNx, 2:NNy);
+        cplusxplusy(NNx, 1:NNy-1) =s imulation.c(1, 2:NNy);
+        cplusxplusy(NNx, NNy) = simulation.c(1, NNy-1);
+        cplusxplusy(1:NNx-1, NNy) = simulation.c(2:NNx, NNy-1);
 
-        cplusxminusy(1:NNx-1,2:NNy)=c(2:NNx,1:NNy-1);
-        cplusxminusy(NNx,2:NNy)=c(1,1:NNy-1);
-        cplusxminusy(NNx,1)=c(1,2);
-        cplusxminusy(1:NNx-1,1)=c(2:NNx,2);
+        cplusxminusy(1:NNx-1, 2:NNy) = simulation.c(2:NNx, 1:NNy-1);
+        cplusxminusy(NNx, 2:NNy) = simulation.c(1, 1:NNy-1);
+        cplusxminusy(NNx, 1) = simulation.c(1, 2);
+        cplusxminusy(1:NNx-1, 1) = simulation.c(2:NNx, 2);
 
-        cminusxplusy(2:NNx,1:NNy-1)=c(1:NNx-1,2:NNy);
-        cminusxplusy(1,1:NNy-1)=c(NNx,2:NNy);
-        cminusxplusy(1,NNy)=c(NNx,NNy-1);
-        cminusxplusy(2:NNx,NNy)=c(1:NNx-1,NNy-1);
+        cminusxplusy(2:NNx, 1:NNy-1) = simulation.c(1:NNx-1, 2:NNy);
+        cminusxplusy(1, 1:NNy-1) = simulation.c(NNx, 2:NNy);
+        cminusxplusy(1, NNy) = simulation.c(NNx, NNy-1);
+        cminusxplusy(2:NNx, NNy) = simulation.c(1:NNx-1, NNy-1);
 
-        cminusxminusy(2:NNx,2:NNy)=c(1:NNx-1,1:NNy-1);
-        cminusxminusy(1,2:NNy)=c(NNx,1:NNy-1);
-        cminusxminusy(1,1)=c(NNx,2);
-        cminusxminusy(2:NNx,1)=c(1:NNx-1,2);
+        cminusxminusy(2:NNx, 2:NNy) = simulation.c(1:NNx-1, 1:NNy-1);
+        cminusxminusy(1, 2:NNy) = simulation.c(NNx, 1:NNy-1);
+        cminusxminusy(1, 1) = simulation.c(NNx, 2);
+        cminusxminusy(2:NNx, 1) = simulation.c(1:NNx-1, 2);
  
-        uplusx = evaluate_plus(u,NNx,NNy,'periodic',1);
-        uminusx = evaluate_minus(u,NNx,NNy,'periodic',1);
-        vplusx = evaluate_plus(v,NNx,NNy,'periodic',1);
-        vminusx = evaluate_minus(v,NNx,NNy,'periodic',1);
+        uplusx = evaluate_plus(velocities.u, NNx, NNy, 'periodic', 1);
+        uminusx = evaluate_minus(velocities.u, NNx, NNy, 'periodic', 1);
+        vplusx = evaluate_plus(velocities.v, NNx, NNy, 'periodic', 1);
+        vminusx = evaluate_minus(velocities.v, NNx, NNy, 'periodic', 1);
 
         %IS THIS CORRECT? 
-        vplusy(:,1:NNy-1)=v(:,2:NNy);
-        vplusy(:,NNy)=-v(:,NNy-1);                
-        vminusy(:,2:NNy)=v(:,1:NNy-1);
-        vminusy(:,1)=-v(:,2);
+        vplusy(:, 1:NNy-1) = velocities.v(:, 2:NNy);
+        vplusy(:, NNy) = -velocities.v(:, NNy-1);                
+        vminusy(:, 2:NNy)=v(:, 1:NNy-1);
+        vminusy(:, 1)= -velocities.v(:, 2);
 
-        uplusy = evaluate_plus(u,NNx,NNy,'noflux',0);
-        uminusy = evaluate_minus(u,NNx,NNy,'noflux',0);  
+        uplusy = evaluate_plus(velocities.u, NNx, NNy, 'noflux', 0);
+        uminusy = evaluate_minus(velocities.u, NNx, NNy, 'noflux', 0);  
         
     elseif strcmp(method,'weno')
         %needed for WENO 
         
         %boundary conditions on u and v using extrapolation based on piv
         %data - should be something different if not constant velocity
-        uplusx = uplusx_piv;
-        uminusx = uminusx_piv;
-        uplus2x = uplus2x_piv;
-        uminus2x = uminus2x_piv;
-        vplusx = vplusx_piv;
-        vminusx = vminusx_piv;
-        uplusy = uplusy_piv;
-        uminusy = uminusy_piv;
-        vplusy = vplusy_piv;
-        vminusy = vminusy_piv;
-        vplus2y = vplus2y_piv;
-        vminus2y = vminus2y_piv;
+        uplusx = velocities.uplusx_piv;
+        uminusx = velocities.uminusx_piv;
+        uplus2x = velocities.uplus2x_piv;
+        uminus2x = velocities.uminus2x_piv;
+        vplusx = velocities.vplusx_piv;
+        vminusx = velocities.vminusx_piv;
+        uplusy = velocities.uplusy_piv;
+        uminusy = velocities.uminusy_piv;
+        vplusy = velocities.vplusy_piv;
+        vminusy = velocities.vminusy_piv;
+        vplus2y = velocities.vplus2y_piv;
+        vminus2y = velocities.vminus2y_piv;
     
-        cplus2x = evaluate_plus(cplusx,NNx,NNy,'periodic',1); 
-        cminus2x = evaluate_minus(cminusx,NNx,NNy,'periodic',1); 
+        cplus2x = evaluate_plus(cplusx, NNx, NNy, 'periodic', 1); 
+        cminus2x = evaluate_minus(cminusx, NNx, NNy, 'periodic', 1); 
         %not correct if c is not constant in y direction 
-        cplus2y = evaluate_plus(cplusy,NNx,NNy,'noflux',0);
-        cminus2y = evaluate_minus(cminusy,NNx,NNy,'noflux',0);
+        cplus2y = evaluate_plus(cplusy, NNx, NNy, 'noflux', 0);
+        cminus2y = evaluate_minus(cminusy, NNx, NNy, 'noflux', 0);
                
     end
     
@@ -189,19 +169,19 @@ if strcmp(method,'LaxWendroff')
     %buildup near the wall - maybe do some kind of extrapolation of c
     %instead...
     %DOES NOT SOLVE THE CONSERVATIVE FORM OF THE EQUATIONS
-    c_advx = (-delt*u.*(cplusx-cminusx)/2/dx)...
-        +(delt^2*u.*(((uplusx-uminusx)/2/dx).*((cplusx-cminusx)/2/dx))/2)...
-        +(delt^2*u.*(u.*(cplusx-2*c+cminusx)/dx^2)/2);
+    c_advx = (-delt*velocities.u.*(cplusx-cminusx)/2/parameters.dx)...
+        +(delt^2*velocities.u.*(((uplusx-uminusx)/2/parameters.dx).*((cplusx-cminusx)/2/parameters.dx))/2)...
+        +(delt^2*velocities.u.*(velocities.u.*(cplusx-2*c+cminusx)/parameters.dx^2)/2);
     
-    c_advy = (-delt*v.*(cplusy-cminusy)/2/dy)...
-        +(delt^2*v.*(((vplusy-vminusy)/2/dy).*((cplusy-cminusy)/2/dy))/2)...
-        +(delt^2*v.*(v.*(cplusy-2*c+cminusy)/dy^2)/2);
+    c_advy = (-delt*velocities.v.*(cplusy-cminusy)/2/parameters.dy)...
+        +(delt^2*velocities.v.*(((vplusy-vminusy)/2/parameters.dy).*((cplusy-cminusy)/2/parameters.dy))/2)...
+        +(delt^2*velocities.v.*(velocities.v.*(cplusy-2*c+cminusy)/parameters.dy^2)/2);
     
-    c_advxy = (delt^2*u.*(((vplusx-vminusx)/2/dx).*((cplusy-cminusy)/2/dy))/2)...
-        +(delt^2*v.*(((uplusy-uminusy)/2/dy).*((cplusx-cminusx)/2/dx))/2)...
-        +(delt^2*u.*v.*(cplusxplusy-cplusxminusy-cminusxplusy+cminusxminusy)/4/dx/dy);
+    c_advxy = (delt^2*velocities.u.*(((vplusx-vminusx)/2/parameters.dx).*((cplusy-cminusy)/2/parameters.dy))/2)...
+        +(delt^2*velocities.v.*(((uplusy-uminusy)/2/parameters.dy).*((cplusx-cminusx)/2/parameters.dx))/2)...
+        +(delt^2*velocities.u.*velocities.v.*(cplusxplusy-cplusxminusy-cminusxplusy+cminusxminusy)/4/parameters.dx/parameters.dy);
     
-    c=c+c_advx+c_advy+c_advxy;
+    simulation.c = simulation.c + c_advx + c_advy + c_advxy;
     
     %former version
     % %using a second order method (Lax-Wendroff)                                               
@@ -225,27 +205,34 @@ elseif strcmp(method,'upwind')
     %c_advx = -delt*max(u,0).*(c-cminusx)/dx-delt*min(u,0).*(cplusx-c)/dx;
     %c_advy = -delt*max(v,0).*(c-cminusy)/dy-delt*min(v,0).*(cplusy-c)/dy;
 
-    c_advx = -delt*(u>0).*(u.*c-uminusx.*cminusx)/dx-delt*(u<0).*(uplusx.*cplusx-u.*c)/dx;
-    c_advy = -delt*(v>0).*(v.*c-vminusy.*cminusy)/dy-delt*(v<0).*(vplusy.*cplusy-v.*c)/dy;
+    c_advx = -delt*(velocities.u>0).*(velocities.u.*simulation.c-uminusx.*cminusx)/...
+    		parameters.dx-delt*(velocities.u<0).*(uplusx.*cplusx-velocities.u.*simulation.c)/parameters.dx;
+    c_advy = -delt*(velocities.v>0).*(velocities.v.*simulation.c-vminusy.*cminusy)/...
+    		parameters.dy-delt*(velocities.v<0).*(vplusy.*cplusy-velocities.v.*simulation.c)/parameters.dy;
     
-    c = c+c_advx+c_advy;
+    simulation.c = simulation.c + c_advx+c_advy;
+    
 elseif strcmp(method,'weno')
     %WENO with k=2 from Shu 1997
     
     %timestepping - TVD RK3 from Shu 1997
     
-    c1 = c + delt*wenoflux(c,u,v,uplusx,uminusx,uplus2x,uminus2x,vplusy,vminusy,vplus2y,vminus2y,cplusx,cminusx,cplusy,cminusy,cplus2x,cminus2x,cplus2y,cminus2y);
+    c1 = simulation.c + delt*wenoflux(parameters, simulation.c, velocities.u, velocities.v,...
+    									uplusx,uminusx,uplus2x,uminus2x,...
+    									vplusy,vminusy,vplus2y,vminus2y,cplusx,...
+    									cminusx,cplusy,cminusy,cplus2x,cminus2x,...
+    									cplus2y,cminus2y);
     
     %setting boundary conditions for c1
     %DIRICHLET
-    cplusx = evaluate_plus(c1,NNx,NNy,'dirichlet',1,1,uplusx,cplusx_dbc);
-    cminusx = evaluate_minus(c1,NNx,NNy,'dirichlet',1,1,uminusx);
-    cplusy = evaluate_plus(c1,NNx,NNy,'dirichlet',0,1,vplusy);
-    cminusy = evaluate_minus(c1,NNx,NNy,'dirichlet',0,1,vminusy);
-    cplus2x = evaluate_plus(cplusx,NNx,NNy,'dirichlet',1,2,uplus2x,cplusx_dbc);
-    cminus2x = evaluate_minus(cminusx,NNx,NNy,'dirichlet',1,2,uminus2x);
-    cplus2y = evaluate_plus(cplusy,NNx,NNy,'dirichlet',0,2,vplus2y);
-    cminus2y = evaluate_minus(cminusy,NNx,NNy,'dirichlet',0,2,vminus2y);
+    cplusx = evaluate_plus(c1, NNx, NNy, 'dirichlet', 1, 1, uplusx, parameters.cplusx_dbc);
+    cminusx = evaluate_minus(c1, NNx, NNy, 'dirichlet', 1, 1, uminusx);
+    cplusy = evaluate_plus(c1, NNx, NNy, 'dirichlet', 0, 1, vplusy);
+    cminusy = evaluate_minus(c1, NNx, NNy, 'dirichlet', 0, 1, vminusy);
+    cplus2x = evaluate_plus(cplusx, NNx, NNy, 'dirichlet', 1, 2, uplus2x, parameters.cplusx_dbc);
+    cminus2x = evaluate_minus(cminusx, NNx, NNy, 'dirichlet', 1, 2, uminus2x);
+    cplus2y = evaluate_plus(cplusy, NNx, NNy, 'dirichlet', 0, 2, vplus2y);
+    cminus2y = evaluate_minus(cminusy, NNx, NNy, 'dirichlet', 0, 2, vminus2y);
     
     %not correct if c is not constant in y direction
     %PERIODIC/NOFLUX
@@ -258,18 +245,21 @@ elseif strcmp(method,'weno')
     %cplus2y = evaluate_plus(cplusy,NNx,NNy,'noflux',0);
     %cminus2y = evaluate_minus(cminusy,NNx,NNy,'noflux',0);
     
-    c2 = 3*c/4 + c1/4 + delt*wenoflux(c1,u,v,uplusx,uminusx,uplus2x,uminus2x,vplusy,vminusy,vplus2y,vminus2y,cplusx,cminusx,cplusy,cminusy,cplus2x,cminus2x,cplus2y,cminus2y)/4;
+    c2 = 3*simulation.c/4 + c1/4 + delt*wenoflux(parameters, c1, velocities.u, velocities.v, uplusx,...
+    												uminusx, uplus2x, uminus2x, vplusy, vminusy,... 
+    												vplus2y, vminus2y, cplusx, cminusx, cplusy,... 
+    												cminusy, cplus2x, cminus2x, cplus2y, cminus2y)/4;
     
     %setting boundary conditions for c2
     %DIRICHLET
-    cplusx = evaluate_plus(c2,NNx,NNy,'dirichlet',1,1,uplusx,cplusx_dbc);
-    cminusx = evaluate_minus(c2,NNx,NNy,'dirichlet',1,1,uminusx);
-    cplusy = evaluate_plus(c2,NNx,NNy,'dirichlet',0,1,vplusy);
-    cminusy = evaluate_minus(c2,NNx,NNy,'dirichlet',0,1,vminusy);
-    cplus2x = evaluate_plus(cplusx,NNx,NNy,'dirichlet',1,2,uplus2x,cplusx_dbc);
-    cminus2x = evaluate_minus(cminusx,NNx,NNy,'dirichlet',1,2,uminus2x);
-    cplus2y = evaluate_plus(cplusy,NNx,NNy,'dirichlet',0,2,vplus2y);
-    cminus2y = evaluate_minus(cminusy,NNx,NNy,'dirichlet',0,2,vminus2y);
+    cplusx = evaluate_plus( c2, NNx, NNy, 'dirichlet', 1, 1, uplusx, parameters.cplusx_dbc);
+    cminusx = evaluate_minus(c2, NNx, NNy, 'dirichlet', 1, 1, uminusx);
+    cplusy = evaluate_plus(c2, NNx, NNy, 'dirichlet', 0, 1, vplusy);
+    cminusy = evaluate_minus(c2, NNx, NNy, 'dirichlet', 0, 1, vminusy);
+    cplus2x = evaluate_plus(cplusx, NNx, NNy, 'dirichlet', 1, 2, uplus2x, parameters.cplusx_dbc);
+    cminus2x = evaluate_minus(cminusx, NNx, NNy, 'dirichlet', 1, 2, uminus2x);
+    cplus2y = evaluate_plus(cplusy, NNx, NNy, 'dirichlet', 0, 2, vplus2y);
+    cminus2y = evaluate_minus(cminusy, NNx, NNy, 'dirichlet', 0, 2, vminus2y);
 
     %not correct if c is not constant in y direction
     %PERIODIC/NOFLUX
@@ -282,7 +272,10 @@ elseif strcmp(method,'weno')
     %cplus2y = evaluate_plus(cplusy,NNx,NNy,'noflux',0);
     %cminus2y = evaluate_minus(cminusy,NNx,NNy,'noflux',0);
     
-    c = c/3 + 2*c2/3 + 2*delt*wenoflux(c2,u,v,uplusx,uminusx,uplus2x,uminus2x,vplusy,vminusy,vplus2y,vminus2y,cplusx,cminusx,cplusy,cminusy,cplus2x,cminus2x,cplus2y,cminus2y)/3;
+    simulation.c = simulation.c/3 + 2*c2/3 + 2*delt*...
+    				wenoflux(c2, velocities.u, velocities.v, uplusx, uminusx, uplus2x,...
+    				uminus2x, vplusy, vminusy, vplus2y, vminus2y, cplusx, cminusx,...
+    				cplusy, cminusy, cplus2x, cminus2x, cplus2y, cminus2y)/3;
   
 
     %c = c + delt*wenoflux(c,u,v,uplusx,uminusx,uplus2x,uminus2x,vplusy,vminusy,vplus2y,vminus2y,cplusx,cminusx,cplusy,cminusy,cplus2x,cminus2x,cplus2y,cminus2y);
@@ -292,13 +285,15 @@ else
 end
 
 
-function [f] = wenoflux(cc,uu,vv,uuplusx,uuminusx,uuplus2x,uuminus2x,vvplusy,vvminusy,vvplus2y,vvminus2y,ccplusx,ccminusx,ccplusy,ccminusy,ccplus2x,ccminus2x,ccplus2y,ccminus2y)
+function [f] = wenoflux(parameters, cc, uu, vv, uuplusx, uuminusx, uuplus2x, uuminus2x, ...
+						vvplusy, vvminusy, vvplus2y, vvminus2y, ccplusx, ccminusx, ccplusy,...
+						ccminusy, ccplus2x, ccminus2x, ccplus2y, ccminus2y)
 %takes care of spatial derivatives for weno
 
 %Note - uu,vv,uuplus,uuminus,vvplus,and vvminus should not be changing
 %over time
 
-global dx dy weno_eps
+%global dx parameters.dy weno_eps
 
 NNx = size(cc);
 NNx = NNx(1);
@@ -328,7 +323,7 @@ fyhalf1plus(:,1) = vvminusy(:,1).*ccminusy(:,1)/2 + vv(:,1).*cc(:,1)/2;
 fyhalf1plus(:,2:NNy+1) = vv.*cc/2 + vvplusy.*ccplusy/2;
 
 %weights
-epsilon = weno_eps; 
+epsilon = parameters.weno_eps; 
 
 d0 = 2/3; 
 d1 = 1/3;
@@ -386,8 +381,8 @@ ahalfy(:,2:NNy+1) = betay0minus(:,2:end)./(ccplusy-cc);
 fxhalf = (ahalfx >= 0).*fxhalfminus + (ahalfx < 0).*fxhalfplus;
 fyhalf =  (ahalfy >= 0).*fyhalfminus + (ahalfy < 0).*fyhalfplus;
 
-fx = (fxhalf(1:end-1,:) - fxhalf(2:end,:))/dx;
-fy = (fyhalf(:,1:end-1) - fyhalf(:,2:end))/dy;
+fx = (fxhalf(1:end-1,:) - fxhalf(2:end,:))/parameters.dx;
+fy = (fyhalf(:,1:end-1) - fyhalf(:,2:end))/parameters.dy;
 
 f = fx+fy;  
 

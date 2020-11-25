@@ -1,23 +1,23 @@
-function initialize_c(initc)
+[parameters, simulation] = function initialize_c(paths, parameters, simulation)
 %function initialize_c.m 
 %input: initc - string stating which initialization is desired
 %output: 
 %sets c initially
 
-global c x y xlength ylength
-global far_right_hair
-global cplusx_dbc diffusionrhsbc_flick
+%global c x y xlength ylength
+%global far_right_hair
+%global cplusx_dbc diffusionrhsbc_flick
 
-[xx,yy] = ndgrid(x,y);
+[xx,yy] = ndgrid(simulation.x, simulation.y);
 
 
-if strcmp(initc,'constant')
+if strcmp(parameters.initc,'constant')
     %constant
-    c = xx*0+0.5;
-elseif strcmp(initc,'constant_patch')
+    simulation.c = xx*0+0.5;
+elseif strcmp(parameters.initc,'constant_patch')
     %constant_patch - ISSUES WITH DISCONTINUITIES
-    c = ((xx >= 1.25)&(xx <= 1.75))*0.5;
-elseif strcmp(initc,'constant_patch_with_smoothing')
+    simulation.c = ((xx >= 1.25)&(xx <= 1.75))*0.5;
+elseif strcmp(parameters.initc,'constant_patch_with_smoothing')
     %constant patch with smoothing  
     %exponential smoothing - NEEDS FIXING
     %x1 = 1.25; 
@@ -34,10 +34,10 @@ elseif strcmp(initc,'constant_patch_with_smoothing')
     c_m = 0.5;
     xxl = (xx-x1)/c_eps;
     xxr = -(xx-x2)/c_eps;
-    c = ((xx >= x1+c_eps)&(xx <= x2-c_eps))*c_m + ...
+    simulation.c = ((xx >= x1+c_eps)&(xx <= x2-c_eps))*c_m + ...
         ((xx > x1-c_eps)&(xx < x1+c_eps)).*c_m.*(1/2+(1/64)*(105*xxl - 175*xxl.^3 + 147*xxl.^5 - 45*xxl.^7)) + ...
         ((xx > x2-c_eps)&(xx < x2+c_eps)).*c_m.*(1/2+(1/64)*(105*xxr - 175*xxr.^3 + 147*xxr.^5 - 45*xxr.^7));
-elseif strcmp(initc,'constant_patch_with_smoothing_tanh')
+elseif strcmp(parameters.initc,'constant_patch_with_smoothing_tanh')
     %x1 = 0.7; 
     %x2 = 1.7;
     %c_eps = 0.4;
@@ -54,29 +54,29 @@ elseif strcmp(initc,'constant_patch_with_smoothing_tanh')
     %c = ((xx >= x1+c_eps)&(xx <= x2-c_eps))*c_m + ...
     %    ((xx > x1-c_eps)&(xx < x1+c_eps)).*c_m.*((1/2).*tanh(xxl)+(1/2))+...
     %    ((xx > x2-c_eps)&(xx < x2+c_eps)).*c_m.*((1/2).*tanh(xxr)+(1/2));
-    c = ((xx >= x1-c_eps)&(xx <= x1+c_eps)).*c_m.*((1/2).*tanh(xxl)+(1/2))+...
+    simulation.c = ((xx >= x1-c_eps)&(xx <= x1+c_eps)).*c_m.*((1/2).*tanh(xxl)+(1/2))+...
         ((xx > x2-c_eps)&(xx <= x2+c_eps)).*c_m.*((1/2).*tanh(xxr)+(1/2));
-elseif strcmp(initc,'cos_patch')  
+elseif strcmp(parameters.initc,'cos_patch')  
     %cosine patch - ISSUES WITH DISCONTINUITIES
-    c = ((xx >= 1.25)&(xx <= 1.75)).*((cos((xx-3/2)*4*pi)+1)*(1/4));
-elseif strcmp(initc,'cos')
-    c = (cos(xx*2*pi/xlength)+1)*(1/4);
-elseif strcmp(initc,'exp')
+    simulation.c = ((xx >= 1.25)&(xx <= 1.75)).*((cos((xx-3/2)*4*pi)+1)*(1/4));
+elseif strcmp(parameters.initc,'cos')
+    simulation.c = (cos(xx*2*pi/parameters.xlength)+1)*(1/4);
+elseif strcmp(parameters.initc,'exp')
     x1 = 0.2; 
     x2 = 1.4;
     %c_Linf = 4; %upwind advection convg test values
     c_Linf = 4; %weno advection convg test values
     %c_Linf = 10; %diffusion convg test values 
     %c = exp((-c_Linf*((2*(xx-x1)/(x2-x1)-1)).^2)); %upwind and diffusion convg test values
-    c = 0.25*exp((-c_Linf*((2*(xx-xlength/2)/(x2-x1))).^2));
+    simuation.c = 0.25*exp((-c_Linf*((2*(xx-xlength/2)/(x2-x1))).^2));
     %y1 = 0.2;
     %y2 = 1.2; 
     %c = 0.25*exp((-c_Linf*((2*(yy-ylength/2)/(y2-y1))).^2));
-elseif strcmp(initc,'exp_right')
+elseif strcmp(parameters.initc,'exp_right')
     x1 = 0.2; 
     x2 = 1.4;
     c_Linf = 4; 
-    c = 1*exp((-c_Linf*((2*(xx-xlength/2-0.55)/(x2-x1))).^2));
+    simulation.c = 1*exp((-c_Linf*((2*(xx-parameters.xlength/2-0.55)/(x2-x1))).^2));
 elseif strcmp(initc,'exp_right_small') %THIS ONE 
     %NOTE THAT THIS IS NOW THE SAME FOR SMALL AND LARGE CASES 
     %width = 1.2;
@@ -88,21 +88,21 @@ elseif strcmp(initc,'exp_right_small') %THIS ONE
     %%dist_frh = 0.0125;
     %dist_frh = 0.005;
     
-    if far_right_hair <= 0.005990
+    if parameters.far_right_hair <= 0.005990
     	exp_center = 0.005990+width/2; %far_right_hair + dist_frh + width/2; 
     else
-		exp_center = far_right_hair+width/2; %far_right_hair + dist_frh + width/2; 
+		exp_center = parameters.far_right_hair+width/2; %far_right_hair + dist_frh + width/2; 
 	end
     c_Linf = 7; 
     c_max_constant = 0.1; 
-    c_max = c_max_constant/ylength; 
+    parameters.c_max = c_max_constant/parameters.ylength; 
     
-    c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));
-    c_max
-    max(max(c))
+    simulation.c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*parameters.c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));
+    parameters.c_max
+    max(max(parameters.c))
     
-    cplusx_dbc = 0; 
-    diffusionrhsbc_flick = 'noflux'; 
+    parameters.cplusx_dbc = 0; 
+    parameters.diffusionrhsbc_flick = 'noflux'; 
 elseif strcmp(initc,'exp_right_small_v2') %THIS ONE 
     %NOTE THAT THIS IS NOW THE SAME FOR SMALL AND LARGE CASES 
     %width = 1.2;
@@ -115,20 +115,20 @@ elseif strcmp(initc,'exp_right_small_v2') %THIS ONE
     %%dist_frh = 0.0125;
     %dist_frh = 0.005;
     
-    exp_center = far_right_hair+width/2; %far_right_hair + dist_frh + width/2; 
+    exp_center = parameters.far_right_hair+width/2; %far_right_hair + dist_frh + width/2; 
     c_Linf = 7; 
     c_max_constant = 0.1; 
     aa = sqrt(pi)*erf(sqrt(c_Linf))/4/sqrt(c_Linf);
     bb = xlength_air-exp_center+0.06*20;
     %c_max = (c_max_constant/ylength)*(bb/0.1/aa+1)/2/2;
-    c_max = (c_max_constant/ylength)*(bb/0.1/aa+1)/2;
+    parameters.c_max = (c_max_constant/parameters.ylength)*(bb/0.1/aa+1)/2;
     
-    c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));
-    c_max
-    max(max(c))
+    simulation.c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*parameters.c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));
+    parameters.c_max
+    max(max(simulation.c))
     
-    cplusx_dbc = 0; 
-    diffusionrhsbc_flick = 'noflux'; 
+    parameters.cplusx_dbc = 0; 
+    parameters.diffusionrhsbc_flick = 'noflux'; 
     
 elseif strcmp(initc,'exp_right_small_smdom') %THIS ONE 
     %NOTE THAT THIS IS NOW THE SAME FOR SMALL AND LARGE CASES 
@@ -141,19 +141,19 @@ elseif strcmp(initc,'exp_right_small_smdom') %THIS ONE
     %%dist_frh = 0.0125;
     %dist_frh = 0.005;
     
-    exp_center = far_right_hair+width/2; %far_right_hair + dist_frh + width/2; 
+    exp_center = parameters.far_right_hair+width/2; %far_right_hair + dist_frh + width/2; 
     c_Linf = 7; 
     c_max_constant = 0.1; 
-    c_max = c_max_constant/ylength; 
+    parameters.c_max = c_max_constant/parameters.ylength; 
     
-    c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));
-    c_max
-    max(max(c))
+    simulation.c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*parameters.c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));
+    parameters.c_max
+    max(max(simulation.c))
     
-    cplusx_dbc = 0; 
-    diffusionrhsbc_flick = 'noflux'; 
+    parameters.cplusx_dbc = 0; 
+    parameters.diffusionrhsbc_flick = 'noflux'; 
     
-elseif strcmp(initc,'exp_right_large') %THIS ONE - NOT USING THIS ONE  
+elseif strcmp(parameters.initc,'exp_right_large') %THIS ONE - NOT USING THIS ONE  
     %width = 0.12;
     %c_Linf = 7; 
     %exp_center = 0.145;
@@ -161,43 +161,43 @@ elseif strcmp(initc,'exp_right_large') %THIS ONE - NOT USING THIS ONE
     
     width = 0.1; 
     dist_frh = 0.0125;
-    exp_center = far_right_hair + dist_frh + width/2; 
+    exp_center = parameters.far_right_hair + dist_frh + width/2; 
     c_Linf = 7; 
     c_max_constant = 0.1; 
-    c_max = c_max_constant/ylength; 
+    parameters.c_max = c_max_constant/ylength; 
     
-    c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));  
-    c_max
-    max(max(c))
+    simulation.c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*parameters.c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));  
+    parameters.c_max
+    max(max(simulation.c))
     
-    cplusx_dbc = 0;
-    diffusionrhsbc_flick = 'noflux'; 
+    parameters.cplusx_dbc = 0;
+    parameters.diffusionrhsbc_flick = 'noflux'; 
     
-elseif strcmp(initc,'exp_left')
+elseif strcmp(parameters.initc,'exp_left')
     x1 = 0.2; 
     x2 = 1.4;
     c_Linf = 4; 
-    c = 0.25*exp((-c_Linf*((2*(xx-xlength/2+0.15)/(x2-x1))).^2));
+    c = 0.25*exp((-c_Linf*((2*(xx-parameters.xlength/2+0.15)/(x2-x1))).^2));
     
-elseif strcmp(initc,'half_exp') %THIS ONE 
+elseif strcmp(parameters.initc,'half_exp') %THIS ONE 
     width = 0.05; 
     %%dist_frh = 0.0125;
     %dist_frh = 0.005;
-     if far_right_hair <= 0.005990
+    if parameters.far_right_hair <= 0.005990
     	exp_center = 0.005990+width/2; %far_right_hair + dist_frh + width/2; 
     else
-		exp_center = far_right_hair+width/2; %far_right_hair + dist_frh + width/2; 
+		exp_center = parameters.far_right_hair+width/2; %far_right_hair + dist_frh + width/2; 
 	end
     c_Linf = 7; 
     c_max_constant = 0.1; 
-    c_max = c_max_constant/ylength; 
+    parameters.c_max = c_max_constant/ylength; 
     
-    c = (((xx >= exp_center-width/2)&(xx <= exp_center)).*c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2))) + (xx>exp_center).*c_max;    
-    c_max
-    max(max(c))
+    simulation.c = (((xx >= exp_center-width/2)&(xx <= exp_center)).*parameters.c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2))) + (xx>exp_center).*parameters.c_max;    
+    parameters.c_max
+    max(max(simulation.c))
     
-    cplusx_dbc = c_max; 
-    diffusionrhsbc_flick = 'dirichlet'; 
+    parameters.cplusx_dbc = c_max; 
+    parameters.diffusionrhsbc_flick = 'dirichlet'; 
     
 else
     error('initc is not a valid choice!');
