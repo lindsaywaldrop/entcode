@@ -1,4 +1,4 @@
-function save_data_vel(initial,flickorreturn, paths, parameters, velocities)
+function save_data_vel(initial, flickorreturn, paths, parameters, velocities)
 %function save_data_vel.m 
 %input: 
 %output: 

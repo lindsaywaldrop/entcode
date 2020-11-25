@@ -47,7 +47,7 @@ for timestep = 1:parameters.t_steps_flick
       [simulation] = diffusion_c(parameters.dt_flick, 0, parameters.diffusionrhsbc_flick, parameters, simulation); 
   end
   [simulation] = concentration_absorbed_by_hairs(simulation);
-  %advection
+  %advection 
   %if not at the last timestep then step with dt but if at the last
   %timestep then step only dt/2    
   if (timestep ~= parameters.t_steps_flick)
@@ -64,8 +64,8 @@ for timestep = 1:parameters.t_steps_flick
   %saving data
   if (mod(simulation.t_steps, simulation.print_time)==0) 
     simulation.pcount = simulation.pcount + 1; 
-    save_data(0);     
-    list_print_times(simulation.pcount) = simulation.t; 
+    save_data(paths, parameters, simulation, 0);     
+    simulation.list_print_times(simulation.pcount) = simulation.t; 
     fprintf('printing %g %g \n',simulation.t, simulation.pcount)
   end
 
@@ -74,9 +74,8 @@ end
 
 %saving data finally
 simulation.pcount = simulation.pcount+1;  
-save_data(0); 
-list_print_times(simulation.pcount) = t; 
+save_data(paths, parameters, simulation, 0);     
+simulation.list_print_times(simulation.pcount) = simulation.t; 
 fprintf('printing %g %g \n', simulation.t, simulation.pcount)
 save_printdata(); 
-cleanup(); 
  

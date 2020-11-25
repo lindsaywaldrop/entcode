@@ -8,5 +8,5 @@ if (initial == 1)
   save_initdata(paths, parameters, simulation); 
 end
 
-save_data_c(paths, simulation, initial); 
-save_data_hairs_c(paths, simulation, initial);
+save_data_c(paths, parameters, simulation, initial); 
+save_data_hairs_c(paths, parameters, simulation, initial);

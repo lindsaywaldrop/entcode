@@ -112,7 +112,6 @@ elseif clpool > 1
         disp(['starting simulation for ', files0{i}])
         crabs(paths, parameters, files0{i})
     
-        cleanup()
     
         % timing(i)=toc
     end
