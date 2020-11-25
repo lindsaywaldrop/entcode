@@ -30,7 +30,7 @@
 % addpath('./save_functions')
  
 %read in the parameters
-parameters.run_id = filenumber
+parameters.run_id = filenumber;
 simulation.run_id = parameters.run_id;
 
 run odorcapture_params.m
@@ -48,8 +48,8 @@ if strcmp(parameters.explicit_vel,'piv_data')
 end
 
 %initializes Nx and Ny 
-parameters.Nx = round(parameters.xlength/parameters.dx)
-parameters.Ny = round(parameters.ylength/parameters.dy)
+parameters.Nx = round(parameters.xlength/parameters.dx);
+parameters.Ny = round(parameters.ylength/parameters.dy);
 
 %should already be an int from read_in_velocity_data_p1.m
 if (abs(parameters.Nx*parameters.dx-parameters.xlength)>1e-15) || (abs(parameters.Ny*parameters.dy-parameters.ylength)>1e-15)
@@ -57,15 +57,15 @@ if (abs(parameters.Nx*parameters.dx-parameters.xlength)>1e-15) || (abs(parameter
 end
 
 %initialize x and y 
-simulation.x(1:Nx+1,1)=(0:parameters.Nx)*parameters.dx; 
-simulation.y(1:Ny+1,1)=(0:parameters.Ny)*parameters.dy; 
+simulation.x(1:parameters.Nx+1,1)=(0:parameters.Nx)*parameters.dx; 
+simulation.y(1:parameters.Ny+1,1)=(0:parameters.Ny)*parameters.dy; 
 %for periodic/noflux bc 
 %x(1:Nx,1)=(0:Nx-1)*dx; 
 %y(1:Ny+1,1)=(0:Ny)*dy; 
 
 %initializing time stepping variables
 parameters.dt = min(0.9*parameters.dx/parameters.dtfactor, parameters.dthairfactor^2/4/parameters.D); 
-if exist('dtmultiplier')
+if exist('parameters.dtmultiplier')
     parameters.dt = parameters.dtmultiplier*parameters.dt; 
 end
 %dt_rest = min(0.9*dx,dthairfactor^2/4/D); 
@@ -83,8 +83,8 @@ simulation.list_print_times = 0;
 simulation.t_steps = 0; 
 
 %initialize u and v 
-simulation.u = zeros(Nx+1,Ny+1);
-simulation.v = zeros(Nx+1,Ny+1); 
+simulation.u = zeros(parameters.Nx+1,parameters.Ny+1);
+simulation.v = zeros(parameters.Nx+1,parameters.Ny+1); 
 %for periodic/noflux bc
 %u = zeros(Nx,Ny+1);
 %v = zeros(Nx,Ny+1); 
@@ -102,11 +102,11 @@ fprintf('\t final times: flick: %4.16f\n', parameters.t_final_flick);
 fprintf('\t number of tsteps: flick: %d\n',parameters.t_steps_flick);
 fprintf('\t xlength by ylength: %4.16f by %4.16f\n',parameters.xlength,parameters.ylength); 
 
-if (handle_hairs)
-    [parameters, simulation] = setup_hairs(paths, parameters, simulation) 
+if (parameters.handle_hairs)
+    [parameters, simulation] = setup_hairs(paths, parameters, simulation); 
 end
 
 
 %initialize the concentration
-[parameters, simulation] = initialize_c(paths, parameters, simulation)
+[parameters, simulation] = initialize_c(paths, parameters, simulation);
 

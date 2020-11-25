@@ -34,13 +34,11 @@ for ii = 1:j
 end
 
 % Setting paths to necessary files
-paths.pathbase_piv = strcat(topdir, '/results/ibamr/', num2str(hairNum), 'hair_runs/')
-paths.pathbase_data = strcat(topdir, '/data/')
-paths.pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair_array/',fluid,'/')
-parameters.fluid = fluid
+paths.pathbase_piv = strcat(topdir, '/results/ibamr/', num2str(hairNum), 'hair_runs/');
+paths.pathbase_data = strcat(topdir, '/data/');
+paths.pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair_array/',fluid,'/');
+parameters.fluid = fluid;
 parameters.hairNum = hairNum;
-
-save(strcat(paths.topdir, '/src/matlab/', 'temp_global_variable.mat'), 'paths', 'parameters');
 
 if clpool == 1
     
@@ -71,11 +69,8 @@ if clpool == 1
 
         % Run Shilpa's code
         disp(['starting simulation for ', files0{i}])
-        crabs(paths.topdir, parameters, files0{i})
-    
-        cleanup()
-    
-        % timing(i)=toc
+        crabs(paths, parameters, files0{i})
+        
     end
     
 elseif clpool > 1
@@ -90,7 +85,7 @@ elseif clpool > 1
         
         % Setting up hair info files
         if isfile(strcat(paths.pathbase_data, '/hairinfo-files/', num2str(parameters.hairNum),...
-						 'hair_files/hairinfo', files{i},'.mat')) == 0
+			 	'hair_files/hairinfo', files{i}, '.mat')) == 0
 			 delete(strcat(paths.pathbase_data, '/hairinfo-files/', num2str(parameters.hairNum),...
 			 		'hair_files/hairinfo', files{i}, '.mat'))
 		end
@@ -107,18 +102,13 @@ elseif clpool > 1
         entsniffinterp(i, files, paths.pathbase_piv, parameters.GridSize, parameters.final_time);
         disp('    ')
 
-
         % Run Shilpa's code
         disp(['starting simulation for ', files0{i}])
         crabs(paths, parameters, files0{i})
-    
-    
-        % timing(i)=toc
+        
     end
 else 
     disp('Error: Not a valid value for clpool!')
 end
-
-delete 'src/matlab/temp_global_variable.mat'
 
 end

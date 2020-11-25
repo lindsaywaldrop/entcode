@@ -15,23 +15,23 @@ function [velocities] = read_in_velocity_data_p2(xpts, ypts, flickorreturn, path
 %global dx dy
 
 if strcmp(flickorreturn,'rest')
-    bu = xpts*0;
-    bv = ypts*0;  
+    velocities.u = xpts*0;
+    velocities.v = ypts*0;  
     
-    uplusx_piv = bu;
-    uplus2x_piv = bu;
-    uminusx_piv = bu;
-    uminus2x_piv = bu;
-    uplusy_piv = bu;
-    uminusy_piv = bu;
+    uplusx_piv = velocities.u;
+    uplus2x_piv = velocities.u;
+    uminusx_piv = velocities.u;
+    uminus2x_piv = velocities.u;
+    uplusy_piv = velocities.u;
+    uminusy_piv = velocities.u;
 
 
-    vplusx_piv = bv;
-    vminusx_piv = bv;
-    vplusy_piv = bv;
-    vplus2y_piv = bv;
-    vminusy_piv = bv;
-    vminus2y_piv = bv;
+    vplusx_piv = velocities.v;
+    vminusx_piv = velocities.v;
+    vplusy_piv = velocities.v;
+    vplus2y_piv = velocities.v;
+    vminusy_piv = velocities.v;
+    vminus2y_piv = velocities.v;
     
 else
 
@@ -110,19 +110,19 @@ else
     %vminusy_piv_vec = interp2(xpts',ypts',bv',xpts(:,1),ypts(:,1)-parameters.dy,'spline');
 
 
-    velocities.uplusx_piv = [bu(2:end,:);uplusx_piv_vec];
-    velocities.uplus2x_piv = [uplusx_piv(2:end,:);uplus2x_piv_vec];
-    velocities.uminusx_piv = [uminusx_piv_vec;bu(1:end-1,:)];
-    velocities.uminus2x_piv = [uminus2x_piv_vec;uminusx_piv(1:end-1,:)];
-    velocities.uplusy_piv = [bu(:,2:end) uplusy_piv_vec];
-    velocities.uminusy_piv = [uminusy_piv_vec bu(:,1:end-1)]; 
+    velocities.uplusx_piv = [velocities.u(2:end,:);uplusx_piv_vec];
+    velocities.uplus2x_piv = [velocities.uplusx_piv(2:end,:);uplus2x_piv_vec];
+    velocities.uminusx_piv = [uminusx_piv_vec;velocities.u(1:end-1,:)];
+    velocities.uminus2x_piv = [uminus2x_piv_vec;velocities.uminusx_piv(1:end-1,:)];
+    velocities.uplusy_piv = [velocities.u(:,2:end) uplusy_piv_vec];
+    velocities.uminusy_piv = [uminusy_piv_vec velocities.u(:,1:end-1)]; 
 
 
-    velocities.vplusx_piv = [bv(2:end,:);vplusx_piv_vec];
-    velocities.vminusx_piv = [vminusx_piv_vec;bv(1:end-1,:)];
-    velocities.vplusy_piv = [bv(:,2:end) vplusy_piv_vec];
+    velocities.vplusx_piv = [velocities.v(2:end,:);vplusx_piv_vec];
+    velocities.vminusx_piv = [vminusx_piv_vec;velocities.v(1:end-1,:)];
+    velocities.vplusy_piv = [velocities.v(:,2:end) vplusy_piv_vec];
     velocities.vplus2y_piv = [velocities.vplusy_piv(:,2:end) vplus2y_piv_vec];
-    velocities.vminusy_piv = [vminusy_piv_vec bv(:,1:end-1)]; 
+    velocities.vminusy_piv = [vminusy_piv_vec velocities.v(:,1:end-1)]; 
     velocities.vminus2y_piv = [vminus2y_piv_vec velocities.vminusy_piv(:,1:end-1)]; 
     
 end

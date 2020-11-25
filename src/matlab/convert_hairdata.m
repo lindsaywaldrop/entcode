@@ -1,7 +1,7 @@
 function [p] = convert_hairdata(pathbase_data,hairNum,run_id)
 %
 %
-global pathbase_data hairNum 
+%global pathbase_data hairNum 
 p.hdia = 0.002;
 run_number = run_id
 

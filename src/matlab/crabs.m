@@ -6,12 +6,12 @@ function crabs(paths, parameters, filenumber)
 %global topdir pathbase_data pathbase_piv pathbase_results hairNum
 %global GridSize final_time fluid
 
-if isempty(pathbase_data)
-    load(strcat(paths.topdir,'/src/matlab/temp_global_variable.mat'));
-end
+%if isempty(paths.pathbase_data)
+%    load(strcat(paths.topdir,'/src/matlab/temp_global_variable.mat'));
+%end
 
 %initialize
-simulation = struct([]);
+%simulation = struct([]);
 
 % Setting parameters and simulation set up
 set_vars 
@@ -20,10 +20,10 @@ set_vars
 save_data(paths, parameters, simulation, 1); 
 
 %FLICK
-disp('Saving velocity data')
+disp('Creating and saving velocity data')
 disp('  ')
-[u,v] = get_velocities(parameters.dt_flick/2,t,explicit_vel,'flick'); 
-save_data_vel(1, 'flick');
+[velocities] = get_velocities(parameters.dt_flick/2,simulation.t,parameters.explicit_vel,'flick', paths, parameters, simulation);
+save_data_vel(1, 'flick', paths, parameters, velocities);
 disp('Done!')
 disp(' ')
 
@@ -62,7 +62,7 @@ for timestep = 1:parameters.t_steps_flick
   simulation.t_steps = simulation.t_steps + 1; 
   
   %saving data
-  if (mod(simulation.t_steps, simulation.print_time)==0) 
+  if (mod(simulation.t_steps, parameters.print_time)==0) 
     simulation.pcount = simulation.pcount + 1; 
     save_data(paths, parameters, simulation, 0);     
     simulation.list_print_times(simulation.pcount) = simulation.t; 
@@ -77,5 +77,5 @@ simulation.pcount = simulation.pcount+1;
 save_data(paths, parameters, simulation, 0);     
 simulation.list_print_times(simulation.pcount) = simulation.t; 
 fprintf('printing %g %g \n', simulation.t, simulation.pcount)
-save_printdata(); 
+save_printdata(paths, parameters, simulation); 
  

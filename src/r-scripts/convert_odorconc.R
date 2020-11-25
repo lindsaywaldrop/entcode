@@ -32,7 +32,7 @@ magnitude <- function(u,v) {
 
 convert_ibamr <- function(run_id,fluid,t,hairno) {
   require(R.matlab)
-  loc.data<-readMat(paste("./results/odorcapture/",hairno,"hair_array/",fluid,"/initdata_",run_id,".mat",sep = ""))
+  sim.data<-readMat(paste("./results/odorcapture/",hairno,"hair_array/",fluid,"/simdata_",run_id,".mat",sep = ""))
   ibamr.data<-readMat(paste("./results/odorcapture/",hairno,"hair_array/",fluid,"/velocity_",run_id,".mat", sep = ""))
   conc.timedata<-readMat(paste("./results/odorcapture/",hairno,"hair_array/",fluid,"/c_",run_id,".mat",sep = ""))
   u <- as.vector(ibamr.data$u.flick)

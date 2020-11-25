@@ -6,7 +6,7 @@ function [simulation] = diffusion_c(delt, initial, diffusionrhsbc, parameters, s
 
 NNx = size(simulation.c);
 NNx = NNx(1);
-NNy = size(simulatino.c);
+NNy = size(simulation.c);
 NNy = NNy(2);
 
 if strcmp(diffusionrhsbc, 'dirichlet') 
@@ -45,10 +45,12 @@ elseif strcmp(diffusionrhsbc, 'noflux')
 %no flux bcs on rhs wall 
     if (initial)
         %make the diffusion matrix    
-        'making diffusion matrix'
-        [simulation.c_diff_matrix, simulation.c_diff_matrix_u] = make_c_diffusion_matrix_noflux_noflux(delt, simulation);
+        disp('making diffusion matrix')
+        [c_diff_matrix, c_diff_matrix_u] = make_c_diffusion_matrix_noflux_noflux(delt, parameters, simulation);
         %[c_diff_matrix] = make_c_diffusion_matrix_noflux_noflux(delt);
-        'done making diffuion matrix' 
+        simulation.c_diff_matrix = c_diff_matrix;
+        simulation.c_diff_matrix_u = c_diff_matrix_u;
+        disp('done making diffuion matrix')
     end
     %c_diff_matrix_l = c_diff_matrix_u';
 
@@ -72,7 +74,7 @@ elseif strcmp(diffusionrhsbc, 'noflux')
     for i = 1:NNx
       for j = 1:NNy
         simulation.c_diff_RHS(i+(j-1)*NNx,1)=(parameters.D*delt*(cplusx(i,j)-2*simulation.c(i,j)+cminusx(i,j))/parameters.dx^2/2)+ ...
-            (parameters.D*delt*(cplusy(i,j)-2*c(i,j)+cminusy(i,j))/parameters.dy^2/2)+simulation.c(i,j);
+            (parameters.D*delt*(cplusy(i,j)-2*simulation.c(i,j)+cminusy(i,j))/parameters.dy^2/2)+simulation.c(i,j);
         previous_c_vector(i+(j-1)*NNx,1) = simulation.c(i,j); 
       end 
     end 
@@ -87,7 +89,7 @@ elseif strcmp(diffusionrhsbc, 'noflux')
 end
 
 
-if (usegmres) 
+if (parameters.usegmres) 
     %GMRES
     c_vector = gmres(simulation.c_diff_matrix, simulation.c_diff_RHS, [], 1e-12, 1000, [], [], previous_c_vector);
 else
@@ -100,7 +102,7 @@ for j = 1:NNy
   simulation.c(:,j) = c_vector((j-1)*NNx+1:j*NNx);
 end 
 
-function [simulation.c_diffusion_matrix_l, simulation.c_diffusion_matrix_u] = make_c_diffusion_matrix_periodic_noflux(delt, simulation)
+function [c_diffusion_matrix_l, c_diffusion_matrix_u] = make_c_diffusion_matrix_periodic_noflux(delt, simulation)
     
 %global dx parameters.dy c parameters.D usegmres
 
@@ -154,7 +156,7 @@ simulation.c_diffusion_matrix = C_dm_diag + C_dm_upper + C_dm_lower;
 %might be able to use cholesky....see below
 [simulation.c_diffusion_matrix_l, simulation.c_diffusion_matrix_u] = lu(simulation.c_diffusion_matrix);
 
-function [c_diffusion_matrix,c_diffusion_matrix_u] = make_c_diffusion_matrix_noflux_noflux(delt, simulation)
+function [c_diffusion_matrix,c_diffusion_matrix_u] = make_c_diffusion_matrix_noflux_noflux(delt, parameters, simulation)
 %function [c_diffusion_matrix] = make_c_diffusion_matrix_noflux_noflux(delt)
 
 %global dx parameters.dy c parameters.D usegmres
@@ -195,8 +197,8 @@ end
 C_dm_upper = spdiags(BU, NNx, NNx*NNy, NNx*NNy);
 C_dm_lower = spdiags(BL, -NNx, NNx*NNy, NNx*NNy); 
 
-simulation.c_diffusion_matrix = C_dm_diag + C_dm_upper + C_dm_lower; 
-simulation.c_diffusion_matrix_u = 0; 
+c_diffusion_matrix = C_dm_diag + C_dm_upper + C_dm_lower; 
+c_diffusion_matrix_u = 0; 
 
 %spmd 
 %    c_diffusion_matrix_parallel=codistributed(full(c_diffusion_matrix));
@@ -205,13 +207,13 @@ simulation.c_diffusion_matrix_u = 0;
 %    c_diffusion_matrix_u=gather(c_diffusion_matrix_u_parallel); 
 %end
 
-if (~usegmres) 
-    'conducting lu'
+if (~parameters.usegmres) 
+    disp('conducting lu')
     [simulation.c_diffusion_matrix, simulation.c_diffusion_matrix_u] = lu(simulation.c_diffusion_matrix);
-    'done conducting lu' 
+    disp('done conducting lu')
 end
 
-function [simulation.c_diffusion_matrix, simulation.c_diffusion_matrix_u] = make_c_diffusion_matrix_noflux_noflux_dirichlet(delt, simulation)
+function [c_diffusion_matrix, c_diffusion_matrix_u] = make_c_diffusion_matrix_noflux_noflux_dirichlet(delt, simulation)
 %function [c_diffusion_matrix] = make_c_diffusion_matrix_noflux_noflux(delt)
 
 %global parameters.dx parameters.dy c parameters.D usegmres
@@ -253,8 +255,8 @@ end
 C_dm_upper = spdiags(BU, NNx, NNx*NNy, NNx*NNy);
 C_dm_lower = spdiags(BL ,-NNx, NNx*NNy, NNx*NNy); 
 
-simulation.c_diffusion_matrix = C_dm_diag + C_dm_upper + C_dm_lower; 
-simulation.c_diffusion_matrix_u = 0; 
+c_diffusion_matrix = C_dm_diag + C_dm_upper + C_dm_lower; 
+c_diffusion_matrix_u = 0; 
 
 %spmd 
 %    c_diffusion_matrix_parallel=codistributed(full(c_diffusion_matrix));
@@ -267,7 +269,7 @@ if (~usegmres)
     [simulation.c_diffusion_matrix, simulation.c_diffusion_matrix_u] = lu(simulation.c_diffusion_matrix);
 end
 
-function [simulation.c_diffusion_matrix_u] = make_c_diffusion_matrix_dirichlet_dirichlet(delt, simulation)
+function [c_diffusion_matrix_u] = make_c_diffusion_matrix_dirichlet_dirichlet(delt, simulation)
     
 %global parameters.dx parameters.dy c parameters.D
 
@@ -304,7 +306,7 @@ end
 C_dm_upper = spdiags(BU, NNx, NNx*NNy, NNx*NNy);
 C_dm_lower = spdiags(BL, -NNx, NNx*NNy, NNx*NNy); 
 
-simulation.c_diffusion_matrix = C_dm_diag + C_dm_upper + C_dm_lower; 
+c_diffusion_matrix = C_dm_diag + C_dm_upper + C_dm_lower; 
 
 %spmd 
 %    c_diffusion_matrix_parallel=codistributed(full(c_diffusion_matrix));
@@ -312,5 +314,5 @@ simulation.c_diffusion_matrix = C_dm_diag + C_dm_upper + C_dm_lower;
 %    c_diffusion_matrix_l=gather(c_diffusion_matrix_l_parallel);
 %    c_diffusion_matrix_u=gather(c_diffusion_matrix_u_parallel); 
 %end
-[simulation.c_diffusion_matrix_u] = chol(simulation.c_diffusion_matrix);
+[c_diffusion_matrix_u] = chol(simulation.c_diffusion_matrix);
 

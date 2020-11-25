@@ -1,4 +1,4 @@
-[parameters, simulation] = function setup_hairs_for_velocity(paths, parameters) 
+function [parameters, simulation] = setup_hairs_for_velocity(paths, parameters) 
 
 %global hairs_data_filename hairs_data_filename_interior 
 %global allhairs_center pathbase_piv pathbase_data

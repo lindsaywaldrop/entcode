@@ -1,4 +1,4 @@
-function [simulation] = advect_C(delt, bc, method, parameters, simulation, velocities)
+function [simulation] = advect_c(delt, bc, method, parameters, simulation, velocities)
 
 %global dx dy c u v
 %global uplusx_piv uminusx_piv uplusy_piv uminusy_piv
@@ -100,7 +100,7 @@ elseif strcmp(bc,'periodic_noflux')
     if strcmp(method,'LaxWendroff')
         %needed for Lax-Wendroff    
         cplusxplusy(1:NNx-1, 1:NNy-1) = simulation.c(2:NNx, 2:NNy);
-        cplusxplusy(NNx, 1:NNy-1) =s imulation.c(1, 2:NNy);
+        cplusxplusy(NNx, 1:NNy-1) =simulation.c(1, 2:NNy);
         cplusxplusy(NNx, NNy) = simulation.c(1, NNy-1);
         cplusxplusy(1:NNx-1, NNy) = simulation.c(2:NNx, NNy-1);
 
@@ -273,7 +273,7 @@ elseif strcmp(method,'weno')
     %cminus2y = evaluate_minus(cminusy,NNx,NNy,'noflux',0);
     
     simulation.c = simulation.c/3 + 2*c2/3 + 2*delt*...
-    				wenoflux(c2, velocities.u, velocities.v, uplusx, uminusx, uplus2x,...
+    				wenoflux(parameters, c2, velocities.u, velocities.v, uplusx, uminusx, uplus2x,...
     				uminus2x, vplusy, vminusy, vplus2y, vminus2y, cplusx, cminusx,...
     				cplusy, cminusy, cplus2x, cminus2x, cplus2y, cminus2y)/3;
   

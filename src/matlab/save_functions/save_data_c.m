@@ -8,7 +8,7 @@ function save_data_c(paths, parameters, simulation, initial)
 %global c
 
 
-T = evalc(['c_' num2str(pcount) ' = simulation.c']);
+T = evalc(['c_' num2str(simulation.pcount) ' = simulation.c']);
 
 %the default extension is .mat
 filename = [paths.pathbase_results,'c_', parameters.run_id];

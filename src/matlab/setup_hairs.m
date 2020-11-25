@@ -1,4 +1,4 @@
-[parameters, simulation] = function setup_hairs(paths, parameters, simulation) 
+function [parameters, simulation] = setup_hairs(paths, parameters, simulation) 
 
 %global hairs_data_filename hairs_data_filename_interior
 %global pathbase_data hairNum run_id

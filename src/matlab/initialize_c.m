@@ -1,4 +1,4 @@
-[parameters, simulation] = function initialize_c(paths, parameters, simulation)
+function [parameters, simulation] = initialize_c(paths, parameters, simulation)
 %function initialize_c.m 
 %input: initc - string stating which initialization is desired
 %output: 
@@ -77,7 +77,7 @@ elseif strcmp(parameters.initc,'exp_right')
     x2 = 1.4;
     c_Linf = 4; 
     simulation.c = 1*exp((-c_Linf*((2*(xx-parameters.xlength/2-0.55)/(x2-x1))).^2));
-elseif strcmp(initc,'exp_right_small') %THIS ONE 
+elseif strcmp(parameters.initc,'exp_right_small') %THIS ONE 
     %NOTE THAT THIS IS NOW THE SAME FOR SMALL AND LARGE CASES 
     %width = 1.2;
     %c_Linf = 7; 
@@ -99,11 +99,11 @@ elseif strcmp(initc,'exp_right_small') %THIS ONE
     
     simulation.c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*parameters.c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));
     parameters.c_max
-    max(max(parameters.c))
+    max(max(simulation.c))
     
     parameters.cplusx_dbc = 0; 
     parameters.diffusionrhsbc_flick = 'noflux'; 
-elseif strcmp(initc,'exp_right_small_v2') %THIS ONE 
+elseif strcmp(parameters.initc,'exp_right_small_v2') %THIS ONE 
     %NOTE THAT THIS IS NOW THE SAME FOR SMALL AND LARGE CASES 
     %width = 1.2;
     %c_Linf = 7; 
@@ -130,7 +130,7 @@ elseif strcmp(initc,'exp_right_small_v2') %THIS ONE
     parameters.cplusx_dbc = 0; 
     parameters.diffusionrhsbc_flick = 'noflux'; 
     
-elseif strcmp(initc,'exp_right_small_smdom') %THIS ONE 
+elseif strcmp(parameters.initc,'exp_right_small_smdom') %THIS ONE 
     %NOTE THAT THIS IS NOW THE SAME FOR SMALL AND LARGE CASES 
     %width = 1.2;
     %c_Linf = 7; 

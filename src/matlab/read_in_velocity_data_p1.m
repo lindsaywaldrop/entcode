@@ -1,4 +1,4 @@
-[parameters, simulation] = function read_in_velocity_data_p1(paths, parameters, simulation)
+function [parameters, simulation] = read_in_velocity_data_p1(paths, parameters, simulation)
 %function read_in_velocity_data_p1.m 
 %input: 
 %output: 
@@ -49,8 +49,8 @@ coarsedy = coarsedx;
 parameters.Nycoarse = floor(ylength/coarsedy);
 parameters.Nycoarse_shift = coarsedy*(ylength/coarsedy - floor(ylength/coarsedy))/2;
 
-parameters.dx = xlength/Nx;
-parameters.dy = dx;
+parameters.dx = xlength/parameters.Nx;
+parameters.dy = parameters.dx;
 
 %minus 4 allows for extrap for weno2
 parameters.xlength = (parameters.Nxcoarse-4)*coarsedx;
