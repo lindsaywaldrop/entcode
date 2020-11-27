@@ -164,7 +164,7 @@ elseif strcmp(parameters.initc,'exp_right_large') %THIS ONE - NOT USING THIS ONE
     exp_center = parameters.far_right_hair + dist_frh + width/2; 
     c_Linf = 7; 
     c_max_constant = 0.1; 
-    parameters.c_max = c_max_constant/ylength; 
+    parameters.c_max = c_max_constant/parameters.ylength; 
     
     simulation.c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*parameters.c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));  
     parameters.c_max
@@ -190,13 +190,13 @@ elseif strcmp(parameters.initc,'half_exp') %THIS ONE
 	end
     c_Linf = 7; 
     c_max_constant = 0.1; 
-    parameters.c_max = c_max_constant/ylength; 
+    parameters.c_max = c_max_constant/parameters.ylength; 
     
     simulation.c = (((xx >= exp_center-width/2)&(xx <= exp_center)).*parameters.c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2))) + (xx>exp_center).*parameters.c_max;    
     parameters.c_max
     max(max(simulation.c))
     
-    parameters.cplusx_dbc = c_max; 
+    parameters.cplusx_dbc = parameters.c_max; 
     parameters.diffusionrhsbc_flick = 'dirichlet'; 
     
 else

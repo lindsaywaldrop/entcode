@@ -1,5 +1,5 @@
 #!/bin/bash
-# SBATCH -t 12:00:00
+# SBATCH -t 30:00:00
 # SBATCH -p RM
 # SBATCH -N 1
 # SBATCH --ntasks-per-node 8
@@ -10,10 +10,10 @@
 set -x 
 
 # Number of hairs in the array
-array=25
+array=18
 
 # Fluid
-fluid=\'water\'
+fluid=\'air\'
 
 # First number
 a=1
