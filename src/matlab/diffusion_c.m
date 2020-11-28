@@ -13,7 +13,7 @@ if strcmp(diffusionrhsbc, 'dirichlet')
 %dirichlet boundary conditions on rhs wall
      if (initial)
         %make the diffusion matrix    
-        [simulation.c_diff_matrix, simulation.c_diff_matrix_u] = make_c_diffusion_matrix_noflux_noflux_dirichlet(delt, simulation);
+	   [simulation.c_diff_matrix, simulation.c_diff_matrix_u] = make_c_diffusion_matrix_noflux_noflux_dirichlet(delt, parameters, simulation);
      end
     
     %setting the RHS                                                                          
@@ -35,9 +35,9 @@ if strcmp(diffusionrhsbc, 'dirichlet')
     
     i=NNx; 
     for j=1:NNy
-        simulation.c_diff_RHS(i+(j-1)*NNx, 1) = (parameters.D*delt*(cplusx(i, j)-2*c(i, j)+cminusx(i, j))/parameters.dx^2/2)+ ...
+        simulation.c_diff_RHS(i+(j-1)*NNx, 1) = (parameters.D*delt*(cplusx(i, j)-2*simulation.c(i, j)+cminusx(i, j))/parameters.dx^2/2)+ ...
             (parameters.D*delt*(cplusy(i, j)-2*simulation.c(i, j)+cminusy(i, j))/parameters.dy^2/2)+simulation.c(i, j)+ ...
-            (parameters.D*delt*cplusx_dbc/parameters.dx^2/2);
+            (parameters.D*delt*parameters.cplusx_dbc/parameters.dx^2/2);
         previous_c_vector(i+(j-1)*NNx,1) = simulation.c(i,j); 
     end 
     
@@ -54,7 +54,7 @@ elseif strcmp(diffusionrhsbc, 'noflux')
     end
     %c_diff_matrix_l = c_diff_matrix_u';
 
-    %setting the RHS                                                                          
+    %setting the RHS'                                                                          
     cplusx = evaluate_plus(simulation.c, NNx, NNy, 'noflux', 1); 
     cminusx = evaluate_minus(simulation.c, NNx, NNy, 'noflux', 1); 
     cplusy = evaluate_plus(simulation.c, NNx, NNy, 'noflux', 0);
@@ -213,7 +213,7 @@ if (~parameters.usegmres)
     disp('done conducting lu')
 end
 
-function [c_diffusion_matrix, c_diffusion_matrix_u] = make_c_diffusion_matrix_noflux_noflux_dirichlet(delt, simulation)
+function [c_diffusion_matrix, c_diffusion_matrix_u] = make_c_diffusion_matrix_noflux_noflux_dirichlet(delt, parameters, simulation)
 %function [c_diffusion_matrix] = make_c_diffusion_matrix_noflux_noflux(delt)
 
 %global parameters.dx parameters.dy c parameters.D usegmres
@@ -265,7 +265,7 @@ c_diffusion_matrix_u = 0;
 %    c_diffusion_matrix_u=gather(c_diffusion_matrix_u_parallel); 
 %end
 
-if (~usegmres) 
+if (~parameters.usegmres) 
     [simulation.c_diffusion_matrix, simulation.c_diffusion_matrix_u] = lu(simulation.c_diffusion_matrix);
 end
 
