@@ -144,7 +144,7 @@ end
 C_dm_upper = spdiags(BU, NNx, NNx*NNy, NNx*NNy);
 C_dm_lower = spdiags(BL, -NNx, NNx*NNy, NNx*NNy); 
 
-simulation.c_diffusion_matrix = C_dm_diag + C_dm_upper + C_dm_lower; 
+c_diffusion_matrix = C_dm_diag + C_dm_upper + C_dm_lower; 
 
 %spmd 
 %    c_diffusion_matrix_parallel=codistributed(full(c_diffusion_matrix));
@@ -154,7 +154,7 @@ simulation.c_diffusion_matrix = C_dm_diag + C_dm_upper + C_dm_lower;
 %end
 
 %might be able to use cholesky....see below
-[simulation.c_diffusion_matrix_l, simulation.c_diffusion_matrix_u] = lu(simulation.c_diffusion_matrix);
+[c_diffusion_matrix_l, c_diffusion_matrix_u] = lu(c_diffusion_matrix);
 
 function [c_diffusion_matrix,c_diffusion_matrix_u] = make_c_diffusion_matrix_noflux_noflux(delt, parameters, simulation)
 %function [c_diffusion_matrix] = make_c_diffusion_matrix_noflux_noflux(delt)
@@ -170,7 +170,7 @@ NNx = NNx(1);
 NNy = size(simulation.c);
 NNy = NNy(2); 
 
-simulation.c_diffusion_matrix = []; %sparse(NNx*NNy, NNx*NNy);
+c_diffusion_matrix = []; %sparse(NNx*NNy, NNx*NNy);
 
 A = sparse(NNx, NNx); 
 
@@ -209,7 +209,7 @@ c_diffusion_matrix_u = 0;
 
 if (~parameters.usegmres) 
     disp('conducting lu')
-    [simulation.c_diffusion_matrix, simulation.c_diffusion_matrix_u] = lu(simulation.c_diffusion_matrix);
+    [c_diffusion_matrix, c_diffusion_matrix_u] = lu(c_diffusion_matrix);
     disp('done conducting lu')
 end
 
@@ -228,7 +228,7 @@ NNx = NNx(1);
 NNy = size(simulation.c);
 NNy = NNy(2); 
 
-simulation.c_diffusion_matrix = []; %sparse(NNx*NNy,NNx*NNy);
+c_diffusion_matrix = []; %sparse(NNx*NNy,NNx*NNy);
 
 A = sparse(NNx, NNx); 
 
@@ -266,7 +266,7 @@ c_diffusion_matrix_u = 0;
 %end
 
 if (~parameters.usegmres) 
-    [simulation.c_diffusion_matrix, simulation.c_diffusion_matrix_u] = lu(simulation.c_diffusion_matrix);
+    [c_diffusion_matrix, c_diffusion_matrix_u] = lu(c_diffusion_matrix);
 end
 
 function [c_diffusion_matrix_u] = make_c_diffusion_matrix_dirichlet_dirichlet(delt, simulation)
@@ -281,7 +281,7 @@ NNx = NNx(1);
 NNy = size(simulation.c);
 NNy = NNy(2); 
 
-simulation.c_diffusion_matrix = []; %sparse(NNx*NNy,NNx*NNy);
+c_diffusion_matrix = []; %sparse(NNx*NNy,NNx*NNy);
 
 A = sparse(NNx, NNx); 
 
@@ -314,5 +314,5 @@ c_diffusion_matrix = C_dm_diag + C_dm_upper + C_dm_lower;
 %    c_diffusion_matrix_l=gather(c_diffusion_matrix_l_parallel);
 %    c_diffusion_matrix_u=gather(c_diffusion_matrix_u_parallel); 
 %end
-[c_diffusion_matrix_u] = chol(simulation.c_diffusion_matrix);
+[c_diffusion_matrix_u] = chol(c_diffusion_matrix);
 

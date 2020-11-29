@@ -222,7 +222,7 @@ elseif strcmp(method,'weno')
     									vplusy,vminusy,vplus2y,vminus2y,cplusx,...
     									cminusx,cplusy,cminusy,cplus2x,cminus2x,...
     									cplus2y,cminus2y);
-    
+                                    
     %setting boundary conditions for c1
     %DIRICHLET
     cplusx = evaluate_plus(c1, NNx, NNy, 'dirichlet', 1, 1, uplusx, parameters.cplusx_dbc);
@@ -252,7 +252,7 @@ elseif strcmp(method,'weno')
     
     %setting boundary conditions for c2
     %DIRICHLET
-    cplusx = evaluate_plus( c2, NNx, NNy, 'dirichlet', 1, 1, uplusx, parameters.cplusx_dbc);
+    cplusx = evaluate_plus(c2, NNx, NNy, 'dirichlet', 1, 1, uplusx, parameters.cplusx_dbc);
     cminusx = evaluate_minus(c2, NNx, NNy, 'dirichlet', 1, 1, uminusx);
     cplusy = evaluate_plus(c2, NNx, NNy, 'dirichlet', 0, 1, vplusy);
     cminusy = evaluate_minus(c2, NNx, NNy, 'dirichlet', 0, 1, vminusy);
