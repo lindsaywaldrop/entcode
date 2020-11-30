@@ -1,0 +1,77 @@
+---
+title: "Dr. Waldrop's Notebook"
+output: html_notebook
+---
+
+# Some initial plotting
+
+## 25-hair array
+
+Loading data and shaping data frame:
+```{r echo=TRUE, message=TRUE, warning=TRUE}
+library(ggplot2) # for ggplots
+library(reshape2) # for melt()
+library(viridis) # for the viridis color palette
+# parameter values
+parameters<-read.csv("../data/parameters/allpara_165.txt", header=FALSE, sep = "\t")
+names(parameters)<-c("angle","gap","Re")
+# 25-hair array
+nohairs<-25
+waterdata.25 <- read.csv("../results/r-csv-files/25hair_results/totalconc_165_2020-11-29.csv")
+waterdata.25 <- data.frame(parameters,waterdata.25)
+waterhairs25<-data.frame(parameters,waterdata.25[,2:(1+nohairs)])
+waterhairs25.melted<-melt(waterhairs25,id.vars = c("angle","gap","Re"))
+# 18-hair array
+nohairs<-18
+alldata.18 <- read.csv("../results/r-csv-files/18hair_results/totalconc_165_2020-11-29.csv")
+hairs18<-data.frame(parameters,alldata.18[,2:(1+nohairs)])
+hairs18.melted<-melt(hairs18,id.vars = c("angle","gap","Re"))
+```
+
+## Hair plots
+
+### 25-hair array
+
+Plot Reynolds number versus odor concentration captured:
+```{r echo=FALSE}
+ggplot(hairs25.melted, aes(Re,value,color=variable))+geom_point()+scale_color_viridis(discrete=TRUE)
+```
+
+Plot gap-to-diameter ratio against value: 
+```{r echo=FALSE}
+ggplot(hairs25.melted, aes(gap,value,color=variable))+geom_point()+scale_color_viridis(discrete=TRUE)
+```
+
+
+Plot angle versus value:
+```{r echo=FALSE}
+ggplot(hairs25.melted, aes(angle,value,color=variable))+geom_point()+scale_color_viridis(discrete=TRUE)
+```
+
+## Total Concentration Plots
+
+Total concentration for gap-to-diameter ratio versus odor captured as color: 
+```{r echo=FALSE}
+ggplot(alldata.25, aes(gap,total.conc,color=total.conc))+geom_point()+scale_color_viridis()
+```
+
+Total concentration for Re versus odor captured as color: 
+```{r echo=FALSE}
+ggplot(alldata.25, aes(Re,total.conc,color=total.conc))+geom_point()+scale_color_viridis()
+```
+
+Total concentration for gap-to-diameter ratio versus odor captured as color: 
+```{r echo=FALSE}
+ggplot(alldata.25, aes(angle,total.conc,color=total.conc))+geom_point()+scale_color_viridis()
+```
+
+
+## 18-hair array
+
+
+### Hair plots
+
+Plot Reynolds number versus odor concentration captured:
+```{r echo=FALSE}
+ggplot(hairs18.melted, aes(Re,value,color=variable))+geom_point()+scale_color_viridis(discrete=TRUE)
+```

@@ -32,7 +32,7 @@ The pipeline has the following components:
  2. The generation of input files necessary for IBAMR (vertex files, input2d files) and data analysis in VisIt (csv files, lineout files) for the gPC simulation set.
  3. The execution of IBAMR simulations for the gPC simulation set. 
  4. The execution of VisIt data analysis to extract fluid speed information from each IBAMR simulation. 
- 5. The execution of R scripts for calculation of final values. 
+ 5. The execution of Matlab code for advection-diffusion model.
  6. The generation of figures for publication from analyzed data.
 
 ## 1. Cloning from Github, establishing directories, and compiling IBAMR code
@@ -180,7 +180,7 @@ To check that VisIt provided a complete data set for R to do final calculations,
 where the first argument is the top working directory, the second is the number of hairs in the array, and the third is the number of simulations to check. This script will provide a list of files in the flux, hairline (leakiness), and Umean that are missing so you can check individual simulations and rerun as necessary. 
 
 
-## 5. Execution of R scripts for calculation of final values
+### Execution of R scripts for calculation of final flow values
 
 The final values for leakiness, shear around hairs, flux through hair area, and mean velocity around hairs are calculated in R. Each script should be changed in two places before execution, the value ``n'' which is the number of simulations in the set and ``nohairs'' which is the number of hairs in the array. 
 
@@ -204,13 +204,48 @@ and mean velocity around hairs:
 
 `> source('src/r-scripts/R_analysis_Umean.R')`
 
-Final values will be saved in csv files in `results/r-script-csv/nhair_results/` where n is the number of hairs in the aray. 
+Final values will be saved in csv files in `results/r-script-csv/nhair_results/` where n is the number of hairs in the array. 
 
+## 5. The execution of Matlab code for advection-diffusion model
 
+As a part of the full model, there is a set of scripts and functions that run a advection-diffusion model of odor capture in Matlab. These scripts are straightforward to run on an HPC resource, included here are instructions for running these on Bridges. 
 
+### Checking for IBAMR simulation set completeness and correct file structure
 
+If you have not already done so, check for the presence of all IBAMR viz_IB2d files by running the following script located in `src/visit`:
 
- 
+`$ sh checkruns.sh "$WD" 25 165`
+
+Any missing simulations should be rerun and placed in the correct directories. 
+
+Matlab will rely on a standard file structure in order to create and save data. These should be in the format: `$WD/resultsodorcapture/{num}hair_array/{fluid}` where `{num}` should be replaced with the number of hairs in the array and `{fluid}` should be replaced with the fluid you are running the simulation in, either air or water. If these directories don't exist, create them before running the Matlab code. 
+
+### Running Matlab simulations in parallel
+
+Matlab simulations are run on the RM partition in Bridges due to memory constraints. They are run using Matlab's `parloop` parallelization. Each RM node can support 8 simulations at a time, as the code is set up to execute 8 simulations for each job on Bridges. 
+
+In order to set these up, you will need to change the run job file. Navigate to the `src/bridges` folder and enter the `runent-sniff.job` file and change the following lines: 
+ - Line 13: array should equal the number of hairs in your array
+ - Line 16: fluid should equal the fluid which you wish to simulate. (Be sure to leave the slashes and back ticks alone, they are important the way they are!)
+ - Line 25: change the path to your entcode directory
+
+To submit a job, use the following: 
+
+`sh setrunent.sh 1 165`
+
+Jobs will be submitted to Bridges in sets of 8 per job ID. If you enter a non-multiple of 8, the remainder will be submitted as its own job. 
+
+### Running final R code to calculate values
+
+First, check to see if all hair concentration files are present in the necessary directory before running the R code:
+
+``for i in `seq -f "%04g" 1 165`;do if [ ! -f hairs_c_${i}.mat ]; then echo "File ${i} not found"; fi; done``
+
+The R script in `src/r-scripts` can be run either on your own machine (after downloading the resulting mat files in the form `hairs_c_*.mat`) or on Bridges. To do so, simply open R and source the script: 
+
+`source('src/r-scripts/R_analysis_totalodor.R')`
+
+A csv file will all results will be deposited in `results/r-csv-files/`. 
 
 
 
