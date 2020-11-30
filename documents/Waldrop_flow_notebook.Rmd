@@ -1,0 +1,55 @@
+---
+title: "Dr. Waldrop's Fluid-flow Notebook"
+output: html_notebook
+fig_width: 6
+---
+
+# Some initial plotting of fluid flow
+
+## Flux 
+Loading data and setting up data frames:
+```{r echo=TRUE}
+library(ggplot2) # for ggplots
+library(reshape2) # for melt()
+library(viridis) # for the viridis color palette
+# parameter values
+parameters<-read.csv("../data/parameters/allpara_165.txt", header=FALSE, sep = "\t")
+names(parameters)<-c("angle","gap","Re")
+# 25-hair array
+flux25 <- read.csv("../results/r-csv-files/25hair_results/flux_165_2020-11-21.csv")
+columns25<-colnames(flux25)
+flux25 <- data.frame(parameters, rep("25hair",length=length(flux25[,1])), flux25)
+colnames(flux25) <- c(colnames(parameters),"array",columns25)
+flux25.melted <- melt(flux25, id.vars = c("angle","gap","Re","array"))
+# 18-hair array
+flux18 <- read.csv("../results/r-csv-files/18hair_results/flux_165_2020-11-18.csv")
+columns18<-colnames(flux18)
+flux18 <- data.frame(parameters, rep("18hair",length=length(flux18[,1])), flux18, 
+                     rep(NA,length=length(flux18[,1])), rep(NA,length=length(flux18[,1])), 
+                     rep(NA,length=length(flux18[,1])), rep(NA,length=length(flux18[,1])), 
+                     rep(NA,length=length(flux18[,1])), rep(NA,length=length(flux18[,1])),
+                     rep(NA,length=length(flux18[,1])))
+colnames(flux18) <- c(colnames(parameters),"array",columns25)
+flux18.melted <- melt(flux18, id.vars = c("angle","gap","Re","array"))
+# Combined
+allflux <- rbind(flux18,flux25)
+allflux.melted <- melt(allflux, id.vars = c("angle","gap","Re","array"))
+```
+
+
+Plot Flux for each hair and both arrays: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(allflux.melted, aes(variable, value, color = array)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, option = "C") + 
+  xlab(" ") + ylab("Flux") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
+```
+
+
+## Shear
+
+## Umean
+
+## Leakiness
+
+

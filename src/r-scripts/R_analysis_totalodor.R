@@ -10,7 +10,7 @@ library(stringr)
 library(data.table)
 
 ####  Parameters  ####
-hairno <- 25  # Total number of hairs in the array. 
+hairno <- 18  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 n <- 165				  # number of simulations to analyze
 fluid <- "water"  # fluid of simulation, options: air, water
