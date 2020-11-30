@@ -1,0 +1,167 @@
+---
+title: "Dr. Waldrop's Odor-capture Notebook"
+output: html_notebook
+fig_width: 6
+---
+
+# Some initial plotting for the water condition
+
+Loading data and shaping data frame:
+```{r echo=TRUE, message=TRUE, warning=FALSE}
+library(ggplot2) # for ggplots
+library(reshape2) # for melt()
+library(viridis) # for the viridis color palette
+# parameter values
+parameters<-read.csv("../data/parameters/allpara_165.txt", header=FALSE, sep = "\t")
+names(parameters)<-c("angle","gap","Re")
+# 25-hair array
+nohairs<-25
+waterdata.25 <- read.csv("../results/r-csv-files/25hair_results/totalconc_165_2020-11-29.csv")
+waterdata.25 <- data.frame(parameters,waterdata.25)
+waterhairs25<-data.frame(parameters,waterdata.25[,5:(4+nohairs)])
+waterhairs25.melted<-melt(waterhairs25,id.vars = c("angle","gap","Re"))
+# 18-hair array
+nohairs<-18
+waterdata.18 <- read.csv("../results/r-csv-files/18hair_results/totalconc_165_2020-11-30.csv")
+waterdata.18 <- data.frame(parameters,waterdata.18)
+waterhairs18<-data.frame(parameters,waterdata.18[,5:(4+nohairs)])
+waterhairs18.melted<-melt(waterhairs18, id.vars = c("angle","gap","Re"))
+```
+
+## Hair plots
+
+## 18-hair array
+Plot Reynolds number versus odor concentration captured:
+```{r echo=FALSE}
+ggplot(waterhairs18.melted, aes(Re,value,color=variable)) +
+  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
+  xlab("Reynolds number") + ylab("Odor conc captured per hair") + 
+  guides(color=guide_legend(ncol=2))
+```
+Plot gap-to-diameter ratio against value: 
+```{r echo=FALSE}
+ggplot(waterhairs18.melted, aes(gap, value, color = variable)) +
+  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
+  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") + 
+  guides(color=guide_legend(ncol=2))
+```
+
+Plot angle versus value:
+```{r echo=FALSE}
+ggplot(waterhairs18.melted, aes(angle, value, color = variable)) +
+  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
+  xlab("Angle of array to flow") + ylab("Odor conc captured per hair") + 
+  guides(color=guide_legend(ncol=2))
+```
+
+
+## 25-hair array
+
+
+Plot Reynolds number versus odor concentration captured:
+```{r echo=FALSE}
+ggplot(waterhairs25.melted, aes(Re,value,color=variable)) +
+  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE) + 
+  xlab("Reynolds number") + ylab("Odor conc captured per hair") 
+```
+
+Plot gap-to-diameter ratio against value: 
+```{r echo=FALSE}
+ggplot(waterhairs25.melted, aes(gap,value,color=variable)) +
+  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") 
+```
+
+
+Plot angle versus value:
+```{r echo=FALSE}
+ggplot(waterhairs25.melted, aes(angle, value, color = variable)) +
+  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE) + 
+  xlab("Angle of array to flow") + ylab("Odor conc captured per hair") 
+  
+```
+## Individual Row Plots
+
+Setup data frames: 
+```{r}
+rowdata18 <- data.frame(parameters, rep("18hair",length = length(waterdata.18$row1)), 
+                        waterdata.18$row1, waterdata.18$row2, waterdata.18$row3, 
+                        waterdata.18$row4, rep(NA, length = length(waterdata.18$row1)))
+names(rowdata18) <- c(names(parameters),"array","row1","row2","row3","row4","row5")
+rowdata25 <- data.frame(parameters, rep("25hair",length = length(waterdata.25$row1)), 
+                        waterdata.25$row1, waterdata.25$row2, waterdata.25$row3, 
+                        waterdata.25$row4, waterdata.25$row5)
+names(rowdata25) <- c(names(parameters),"array","row1","row2","row3","row4","row5")
+rowdata.water <- rbind(rowdata18,rowdata25)
+rowdatawater.melted <- melt(rowdata.water, id.vars = c("angle","gap","Re","array"))
+```
+
+Plot row number versus value for both values:
+```{r echo=FALSE, warning=FALSE}
+ggplot(rowdatawater.melted, aes(variable, value, color = array)) +
+  geom_point() + scale_color_viridis(name = "Array", discrete = TRUE) + 
+  xlab("Row of array") + ylab("Odor conc captured per row") 
+```
+
+Plot gap-to-diameter ratio against value: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(rowdatawater.melted, aes(gap,value,color=variable, shape=array)) +
+  geom_point(size=2) + scale_color_viridis(name = "Row number", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") 
+```
+Plot gap-to-diameter ratio against value for just 18-hair array: 
+```{r echo=FALSE, warning=FALSE}
+subset18.rowdatawater <- rowdatawater.melted[rowdatawater.melted$array == "18hair",]
+ggplot(subset18.rowdatawater, aes(gap,value,color=variable)) +
+  geom_point(size=2) + scale_color_viridis(name = "Row number", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") 
+```
+
+Plot gap-to-diameter ratio against value for just 25-hair array: 
+```{r echo=FALSE, warning=FALSE}
+subset25.rowdatawater <- rowdatawater.melted[rowdatawater.melted$array == "25hair",]
+ggplot(subset25.rowdatawater, aes(gap,value,color=variable)) +
+  geom_point(size=2) + scale_color_viridis(name = "Row number", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") 
+```
+Plot Reynolds number against value for just 18-hair array: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset18.rowdatawater, aes(Re,value,color=variable)) +
+  geom_point(size=2) + scale_color_viridis(name = "Row number", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") 
+```
+
+Plot Reynolds number against value for just 25-hair array: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset25.rowdatawater, aes(Re,value,color=variable)) +
+  geom_point(size=2) + scale_color_viridis(name = "Row number", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") 
+```
+
+## Total Concentration Plots
+
+Setup data frames: 
+```{r echo=TRUE}
+botharrays.totalconc <- data.frame(parameters, waterdata.18$total.conc, waterdata.25$total.conc)
+colnames(botharrays.totalconc)<- c(colnames(parameters),"18hairs","25hairs")
+botharraysconc.melted <- melt(botharrays.totalconc, id.vars = c("angle","gap","Re"))
+```
+
+Total concentration for gap-to-diameter ratio versus odor captured, arrays as colors: 
+```{r echo=FALSE}
+ggplot(botharraysconc.melted, aes(gap, value, color = variable)) +
+  geom_point() + scale_color_viridis(discrete = TRUE)
+```
+
+Total concentration for Re versus odor captured, arrays as colors: 
+```{r echo=FALSE}
+ggplot(botharraysconc.melted, aes(Re, value, color = variable)) +
+  geom_point() + scale_color_viridis(discrete = TRUE)
+```
+
+Total concentration for angle versus odor captured, arrays as color: 
+```{r echo=FALSE}
+ggplot(botharraysconc.melted, aes(angle, value, color = variable)) +
+  geom_point() + scale_color_viridis(discrete = TRUE)
+```
+
