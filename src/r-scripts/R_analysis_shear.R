@@ -5,9 +5,12 @@
 ###
 #################################################################################################################
 
-nohairs <- 18     # Total number of hairs in the array. 
+#### Parameters ####
+nohairs <- 25     # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 n <- 165				  # number of simulations to analyze
+
+# Parameters that should not change
 rundir <- paste(nohairs, "hair_runs/", sep = "")   # Constructs hair directory
 hair_dia <- 0.002   	 	 # diameter of each hair, m
 sample <- 5000			     # sampling rate
@@ -43,6 +46,10 @@ if(nohairs == 5){
 
 shear_hair <- matrix(data = NA, nrow = n, ncol = nohairs)	# Allocates space for shear calculations
 
+# Loading parameter file
+parameters <- read.table(paste("./data/parameters/allpara_", n, ".txt", sep = ""), sep = "\t")
+parameter_names <- c("angle", "gap", "Re")
+
 #### Main Loop for Calculations ####
 for (j in 1:n){		# Main loop over simulations
   print(paste("Simulation: ", j, sep = ""))		# Prints simulation number 
@@ -76,9 +83,9 @@ for (j in 1:n){		# Main loop over simulations
       hairsinrow <- 7
       hairsdone <- 18
     } else{
-      print("Unknown configuration")
+      stop("Unknown configuration")
     }
-    print(paste("Row",arrayrow,"with",hairsinrow,"hairs"))
+    #print(paste("Row",arrayrow,"with",hairsinrow,"hairs"))
     for (k in 1:hairsinrow){  # Loops over individual hairs
       side <- whichside[k + hairsdone] # Assigns which side the shear calculation should be on
       if (side==-1){  # Sets start and end points of calculation based on which side 
@@ -98,10 +105,10 @@ for (j in 1:n){		# Main loop over simulations
 } # ends main loop
 
 #### Final Data Processing and Saving ####
-shear_hair2 <- data.frame(shear_hair)  # Turns matrix into data frame
+shear_hair2 <- data.frame(parameters, shear_hair)  # Turns matrix into data frame
 shearnames <- as.character(rep(0, nohairs)) # Allocates space for names 
 for (i in 1:nohairs) shearnames[i] <- paste("hair", i, sep = "") # Assigns name for each hair
-names(shear_hair2) <- shearnames # Assigns all names to data frame
+names(shear_hair2) <- c(parameter_names, shearnames) # Assigns all names to data frame
 
 #### Checking and Saving Data ####
 complete<-as.numeric(sum(is.na(shear_hair2)))
@@ -112,12 +119,11 @@ if (complete==0){
   write.table(shear_hair2, file=paste("./results/r-csv-files/", nohairs, 
                                    "hair_results/shearhairs_", n, "_", Sys.Date(), 
                                    ".csv", sep = ""),
-            sep = ",")
+            sep = ",", row.names = FALSE)
 } else {
   message("Set not complete, did not save")
 }
-# Quits R
-#quit(save="no")
+
 #################################################################################################################
 
 

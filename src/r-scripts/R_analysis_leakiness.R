@@ -5,9 +5,13 @@
 ###
 #################################################################################################################
 
-nohairs <- 18     # Total number of hairs in the array. 
+nohairs <- 25     # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 n <- 165				  # number of simulations to analyze
+
+# Loading parameter file
+parameters <- read.table(paste("./data/parameters/allpara_", n, ".txt", sep = ""), sep = "\t")
+parameter_names <- c("angle", "gap", "Re")
 
 # Assigns total number of rows in the array.
 if(nohairs == 25){ 
@@ -21,8 +25,8 @@ if(nohairs == 25){
 }else {
   rowno <- 1
 }
-#disp(paste(nohairs,"hairs in",rowno, "rows"))
 
+# Other parameters that should not change
 rundir <- paste(nohairs, "hair_runs/", sep = "")   # Constructs hair directory
 speed <- 0.06      	 	 # free fluid speed, m/s
 sample <- 5000			 # sampling rate
@@ -52,10 +56,10 @@ for (j in 1:n){		# Main loop over simulations
 #plot(leakiness,ylim=c(0,1))		# Plots final values of leakiness for each simulation
 
 # Sets up leakiness values in data frame
-leakiness2 <- data.frame(leakiness)
+leakiness2 <- data.frame(parameters, leakiness)
 leaknames <- as.character(rep(0, rowno)) # Allocates space for names 
 for (i in 1:rowno) leaknames[i] <- paste("row", i, sep = "") # Assigns name for each hair
-names(leakiness2) <- leaknames # Assigns all names to data frame
+names(leakiness2) <- c(parameter_names, leaknames) # Assigns all names to data frame
 
 #### Checking and Saving Data ####
 complete<-as.numeric(sum(is.na(leakiness2)))
@@ -66,7 +70,7 @@ if (complete==0){
   write.table(leakiness2, file = 
                  paste("./results/r-csv-files/", nohairs, "hair_results/leakiness_", 
                     n, "_", Sys.Date(), ".csv", sep = ""),
-            sep = ",",row.names = FALSE)
+            sep = ",", row.names = FALSE)
 } else {
   message("Set not complete, did not save")
 }

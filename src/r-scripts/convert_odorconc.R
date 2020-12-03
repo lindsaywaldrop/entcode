@@ -45,9 +45,9 @@ convert_ibamr <- function(run_id,fluid,t,hairno) {
 }
 
 
-run_id="0111"
-fluid<-"water"
-hairno<-25
+run_id="0058"
+fluid<-"air"
+hairno<-18
 hair.conc <- convert_odorconc(run_id,fluid,hairno)
 all.data<-convert_ibamr(run_id,fluid,1,hairno)
 max_fill<-max(all.data$c)
@@ -81,4 +81,4 @@ plot(hair.conc$conc.data[,1],
 for (i in 2:length(hair.conc$conc.data[1,])){
   lines(hair.conc$conc.data[,i],pch=19,col=cols[i])
 }
-conc.byrow
+
