@@ -4,16 +4,28 @@
 ### Total odorant captured calculation
 ###
 #################################################################################################################
-# Libraries
-library(R.matlab)
-library(stringr)
-library(data.table)
 
 ####  Parameters  ####
 hairno <- 18  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 n <- 165				  # number of simulations to analyze
-fluid <- "water"  # fluid of simulation, options: air, water
+fluid <- "air"  # fluid of simulation, options: air, water
+
+
+#### Libraries ####
+packages <- c("R.matlab", "stringr", "data.table")
+
+package.check <- lapply(
+  packages,
+  FUN <- function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE, repos='http://cran.us.r-project.org')
+      library(x, character.only = TRUE)
+    }
+  }
+)
+
+
 
 ####  Function Definitions  ####
 convert_odorconc <- function(run_id,fluid,hairno) {
@@ -39,6 +51,10 @@ convert_odorconc <- function(run_id,fluid,hairno) {
 }
 
 ####  Running analysis  ####
+
+# Loading parameter file
+parameters <- read.table(paste("./data/parameters/allpara_", n, ".txt", sep = ""), sep = "\t")
+colnames(parameters) <- c("angle", "gap", "Re")
 
 # Assigns total number of rows in the array.
 if(hairno == 25){ 
@@ -79,9 +95,9 @@ for(i in 1:n){
       }else if(j >= 8 && j < 13){
         totals.rows[i,3] <- sum(hair.conc[["conc.data"]][last.timestep,8:12])
       }else if(j >= 13 && j < 19){
-        totals.rows[i,4] <- sum(hair.conc[["conc.data"]][last.timestep,13:18])
+        totals.rows[i, 4] <- sum(hair.conc[["conc.data"]][last.timestep, 13:18])
       }else if(j >= 19 && j <= 25){
-        totals.rows[i,5] <- sum(hair.conc[["conc.data"]][last.timestep,19:25])
+        totals.rows[i, 5] <- sum(hair.conc[["conc.data"]][last.timestep, 19:25])
       } else {
         message("?? Unknown hair number")
       }
@@ -94,7 +110,7 @@ colnames(totals.hairs) <- colnames(hair.conc[["hairs.positions"]])
 leaknames <- as.character(rep(0, rowno)) # Allocates space for names 
 for (i in 1:rowno) leaknames[i] <- paste("row", i, sep = "") # Assigns name for each hair
 colnames(totals.rows) <- leaknames
-conctotals<-data.frame(total.conc,totals.hairs,totals.rows)
+conctotals<-data.frame(parameters, total.conc, totals.hairs, totals.rows)
 
 #### Checking and Saving Data ####
 complete<-as.numeric(sum(is.na(conctotals)))
@@ -103,9 +119,9 @@ message("~.*^*~Completeness check~*^*~.~\n",
 if (complete==0){
   message("Set complete. Saving now!")
   write.table(conctotals, file = paste("./results/r-csv-files/", hairno, 
-                                   "hair_results/totalconc_", n, "_", Sys.Date(), 
+                                   "hair_results/totalconc_", fluid,"_", n, "_", Sys.Date(), 
                                    ".csv", sep = ""), 
-              sep = ",")
+              sep = ",", row.names = FALSE)
 } else {
   message("Set not complete, did not save")
 }
