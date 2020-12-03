@@ -11,20 +11,15 @@ Loading data and shaping data frame:
 library(ggplot2) # for ggplots
 library(reshape2) # for melt()
 library(viridis) # for the viridis color palette
-# parameter values
-parameters<-read.csv("../data/parameters/allpara_165.txt", header=FALSE, sep = "\t")
-names(parameters)<-c("angle","gap","Re")
 # 25-hair array
 nohairs<-25
-waterdata.25 <- read.csv("../results/r-csv-files/25hair_results/totalconc_165_2020-11-29.csv")
-waterdata.25 <- data.frame(parameters,waterdata.25)
-waterhairs25<-data.frame(parameters,waterdata.25[,5:(4+nohairs)])
-waterhairs25.melted<-melt(waterhairs25,id.vars = c("angle","gap","Re"))
+waterdata.25 <- read.csv("../results/r-csv-files/25hair_results/totalconc_water_165_2020-12-02.csv")
+waterhairs25 <- subset(waterdata.25, select = c(1:3,seq(from=5,to=(4+nohairs))))
+waterhairs25.melted<-melt(waterhairs25, id.vars = c("angle","gap","Re"))
 # 18-hair array
-nohairs<-18
-waterdata.18 <- read.csv("../results/r-csv-files/18hair_results/totalconc_165_2020-11-30.csv")
-waterdata.18 <- data.frame(parameters,waterdata.18)
-waterhairs18<-data.frame(parameters,waterdata.18[,5:(4+nohairs)])
+nohairs <- 18
+waterdata.18 <- read.csv("../results/r-csv-files/18hair_results/totalconc_water_165_2020-12-02.csv")
+waterhairs18 <- subset(waterdata.18, select = c(1:3,seq(from=5,to=(4+nohairs))))
 waterhairs18.melted<-melt(waterhairs18, id.vars = c("angle","gap","Re"))
 ```
 
@@ -39,7 +34,7 @@ ggplot(waterhairs18.melted, aes(Re,value,color=variable)) +
   guides(color=guide_legend(ncol=2))
 ```
 Plot gap-to-diameter ratio against value: 
-```{r echo=FALSE}
+```{r echo=TRUE}
 ggplot(waterhairs18.melted, aes(gap, value, color = variable)) +
   geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
   xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") + 
@@ -165,3 +160,68 @@ ggplot(botharraysconc.melted, aes(angle, value, color = variable)) +
   geom_point() + scale_color_viridis(discrete = TRUE)
 ```
 
+# The air condition
+
+# 25-hair array
+```{r echo=TRUE, warning=FALSE}
+nohairs<-25
+airdata.25 <- read.csv("../results/r-csv-files/25hair_results/totalconc_air_165_2020-12-02.csv")
+waterhairs25 <- subset(waterdata.25, select = c(1:3,seq(from=5,to=(4+nohairs))))
+waterhairs25.melted<-melt(waterhairs25, id.vars = c("angle","gap","Re"))
+# 18-hair array
+nohairs <- 18
+airdata.18 <- read.csv("../results/r-csv-files/18hair_results/totalconc_air_165_2020-12-02.csv")
+airhairs18 <- subset(airdata.18, select = c(1:3,seq(from=5,to=(4+nohairs))))
+airhairs18.melted<-melt(airhairs18, id.vars = c("angle","gap","Re"))
+```
+## Hair plots
+
+## 18-hair array
+
+Plot Reynolds number versus odor concentration captured:
+```{r echo=FALSE}
+ggplot(airhairs18.melted, aes(Re,value,color=variable)) +
+  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
+  xlab("Reynolds number") + ylab("Odor conc captured per hair") + 
+  guides(color=guide_legend(ncol=2))
+```
+
+Plot gap width versus odor concentration captured:
+```{r echo=FALSE}
+ggplot(airhairs18.melted, aes(gap,value,color=variable)) +
+  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
+  xlab("Gap-width-to-diameter Ratio") + ylab("Odor conc captured per hair") + 
+  guides(color=guide_legend(ncol=2))
+```
+
+
+Plot angle versus odor concentration captured:
+```{r echo=FALSE}
+ggplot(airhairs18.melted, aes(angle,value,color=variable)) +
+  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
+  xlab("Angle") + ylab("Odor conc captured per hair") + 
+  guides(color=guide_legend(ncol=2))
+```
+
+```{r echo=FALSE}
+airdata18.melted <- melt(airdata.18,  id.vars = c("angle","gap","Re"))
+airtotconc.18 <- airdata18.melted[airdata18.melted$variable=="total.conc",]
+ggplot(airtotconc.18, aes(Re, value)) +
+  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
+  xlab("Re") + ylab("Total Odor conc captured ") + 
+  guides(color=guide_legend(ncol=2))
+```
+
+```{r echo=FALSE}
+ggplot(airtotconc.18, aes(gap, value)) +
+  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
+  xlab("Gap-width-to-diameter ratio") + ylab("Odor conc captured per hair") + 
+  guides(color=guide_legend(ncol=2))
+```
+
+```{r echo=FALSE}
+ggplot(airtotconc.18, aes(angle, value)) +
+  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
+  xlab("Angle") + ylab("Odor conc captured per hair") + 
+  guides(color=guide_legend(ncol=2))
+```
