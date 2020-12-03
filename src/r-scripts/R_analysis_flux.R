@@ -5,14 +5,20 @@
 ###
 #################################################################################################################
 
-nohairs <- 18     # Total number of hairs in the array. 
+#### Parameters ####
+nohairs <- 25     # Total number of hairs in the array. 
                   # Options: "3", "5", "7", "12", "18", "25"
 n <- 165				    # Total number of simulations to analyze
 
+# Parameters that should not change
 rundir <- paste(nohairs, "hair_runs/", sep = "") # Constructs hair directory
 duration <- 0.03   	 	 # duration of simulation, s
 dist <- 0.002          # diameter of each hair, m
 
+# Loading parameter file
+parameters <- read.table(paste("./data/parameters/allpara_", n, ".txt", sep = ""), sep = "\t")
+parameter_names <- c("angle", "gap", "Re")
+# Allocating space
 flux <- matrix(data = NA, nrow = n, ncol = nohairs)
 norm <- data.frame(x = c(1, 0, -1, 0), y = c(0, -1, 0, 1))
 
@@ -46,8 +52,8 @@ for (j in 1:n){		# Main loop over simulations
 # Sets up flux in data frame
 fluxnames <- as.character(rep(0, nohairs)) # Allocates space for names 
 for (i in 1:nohairs) fluxnames[i] <- paste("hair", i, sep = "") # Assigns name for each hair
-flux2 <- as.data.frame(flux)
-names(flux2) <- fluxnames
+flux2 <- data.frame(parameters, flux)
+names(flux2) <- c(parameter_names, fluxnames)
 
 #### Checking and Saving Data ####
 complete<-as.numeric(sum(is.na(flux2)))
@@ -56,7 +62,7 @@ message("~.*^*~Completeness check~*^*~.~\n",
 if (complete==0){
   message("Set complete. Saving now!")
   write.table(flux2, file = paste("./results/r-csv-files/", nohairs, "hair_results/flux_", n,
-                                "_", Sys.Date(), ".csv", sep = ""), sep = ",")
+                                "_", Sys.Date(), ".csv", sep = ""), sep = ",", row.names = FALSE)
 } else {
   message("Set not complete, did not save")
 }
