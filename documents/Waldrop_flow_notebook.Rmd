@@ -6,38 +6,48 @@ fig_width: 6
 
 # Some initial plotting of fluid flow
 
-## Flux 
-Loading data and setting up data frames:
-```{r echo=TRUE}
+Initial package loading and function definitions: 
+```{r echo=TRUE, warning=FALSE, message=FALSE}
 library(ggplot2) # for ggplots
 library(reshape2) # for melt()
 library(viridis) # for the viridis color palette
-# parameter values
-parameters<-read.csv("../data/parameters/allpara_165.txt", header=FALSE, sep = "\t")
-names(parameters)<-c("angle","gap","Re")
-# 25-hair array
-flux25 <- read.csv("../results/r-csv-files/25hair_results/flux_165_2020-11-21.csv")
-columns25<-colnames(flux25)
-flux25 <- data.frame(parameters, rep("25hair",length=length(flux25[,1])), flux25)
-colnames(flux25) <- c(colnames(parameters),"array",columns25)
-flux25.melted <- melt(flux25, id.vars = c("angle","gap","Re","array"))
-# 18-hair array
-flux18 <- read.csv("../results/r-csv-files/18hair_results/flux_165_2020-11-18.csv")
-columns18<-colnames(flux18)
-flux18 <- data.frame(parameters, rep("18hair",length=length(flux18[,1])), flux18, 
-                     rep(NA,length=length(flux18[,1])), rep(NA,length=length(flux18[,1])), 
-                     rep(NA,length=length(flux18[,1])), rep(NA,length=length(flux18[,1])), 
-                     rep(NA,length=length(flux18[,1])), rep(NA,length=length(flux18[,1])),
-                     rep(NA,length=length(flux18[,1])))
-colnames(flux18) <- c(colnames(parameters),"array",columns25)
-flux18.melted <- melt(flux18, id.vars = c("angle","gap","Re","array"))
-# Combined
-allflux <- rbind(flux18,flux25)
+n <- 165
+analysisdate <- "2020-12-02"
+
+loadnshapedata<-function(n,type,date) {
+  data_25 <- read.csv(paste("../results/r-csv-files/25hair_results/", type, "_", n, "_", date, ".csv", sep = ""))
+  columns25 <- colnames(data_25)
+  data2_25 <- data.frame(data_25, rep("25hair", length = n))
+  colnames(data2_25) <- c(columns25, "array")
+  # 18-hair array
+  data_18 <- read.csv(paste("../results/r-csv-files/18hair_results/", type, "_", n, "_", date, ".csv", sep = ""))
+  columns18<-colnames(data_18)
+  if (type=="leakiness"){
+    data2_18 <- data.frame(data_18, rep(NA,length=n), rep("18hair",length=n))
+    colnames(data2_18) <- c(columns25, "array")
+  } else{
+    data2_18 <- data.frame(data_18, 
+                     rep(NA,length=n), rep(NA,length=n), rep(NA,length=n), rep(NA,length=n), 
+                     rep(NA,length=n), rep(NA,length=n), rep(NA,length=n),
+                     rep("18hair",length=n))
+    colnames(data2_18) <- c(columns25, "array")
+  }
+  # Combined
+  alldata <- rbind(data2_18,data2_25)
+  return(alldata)
+}
+```
+
+## Flux 
+
+Loading data for flux:
+```{r echo=TRUE, warning=FALSE, message=FALSE}
+allflux <- loadnshapedata(n, "flux", analysisdate)
 allflux.melted <- melt(allflux, id.vars = c("angle","gap","Re","array"))
 ```
 
 
-Plot Flux for each hair and both arrays: 
+Plot flux for each hair and both arrays: 
 ```{r echo=FALSE, warning=FALSE}
 ggplot(allflux.melted, aes(variable, value, color = array)) + 
   geom_point() + scale_color_viridis(discrete = TRUE, option = "C") + 
@@ -45,11 +55,251 @@ ggplot(allflux.melted, aes(variable, value, color = array)) +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
 ```
 
+### 18-hair array
+
+Plot Flux against Reynolds number: 
+```{r echo=FALSE, warning=FALSE}
+subset18.datawater <- allflux.melted[allflux.melted$array=="18hair",]
+ggplot(subset18.datawater, aes(Re, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Re") + ylab("Flux")
+```
+Plot Flux against gap width: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset18.datawater, aes(gap, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Gap-width-to-diameter Ratio") + ylab("Flux")
+```
+Plot flux against angle:
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset18.datawater, aes(angle, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Angle") + ylab("Flux")
+```
+
+### 25-hair array
+
+Plot Flux against Reynolds number: 
+```{r echo=FALSE, warning=FALSE}
+subset25.datawater <- allflux.melted[allflux.melted$array=="25hair",]
+ggplot(subset25.datawater, aes(Re, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Re") + ylab("Flux")
+```
+Plot Flux against gap width: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset25.datawater, aes(gap, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Gap-width-to-diameter Ratio") + ylab("Flux")
+```
+Plot flux against angle:
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset25.datawater, aes(angle, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Angle") + ylab("Flux")
+```
 
 ## Shear
 
+Loading data and setting up data frames:
+```{r echo=TRUE, warning=FALSE, message=FALSE}
+# Loading flux data
+allshear <- loadnshapedata(n, "shear", analysisdate)
+allshear.melted <- melt(allshear, id.vars = c("angle","gap","Re","array"))
+```
+
+Plot shear for each hair and both arrays: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(allshear.melted, aes(variable, value, color = array)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, option = "C") + 
+  xlab(" ") + ylab("Shear") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
+```
+
+### 18-hair array
+
+Plot shear against Reynolds number: 
+```{r echo=FALSE, warning=FALSE}
+rm(subset18.datawater)
+subset18.datawater <- allshear.melted[allshear.melted$array=="18hair",]
+ggplot(subset18.datawater, aes(Re, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Re") + ylab("Shear")
+```
+Plot shear against gap width: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset18.datawater, aes(gap, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Gap-width-to-diameter Ratio") + ylab("Shear")
+```
+Plot shear against angle:
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset18.datawater, aes(angle, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Angle") + ylab("Shear")
+```
+
+### 25-hair array
+
+Plot shear against Reynolds number: 
+```{r echo=FALSE, warning=FALSE}
+rm(subset25.datawater)
+subset25.datawater <- allshear.melted[allshear.melted$array=="25hair",]
+ggplot(subset25.datawater, aes(Re, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Re") + ylab("Shear")
+```
+Plot shear against gap width: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset25.datawater, aes(gap, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Gap-width-to-diameter Ratio") + ylab("Shear")
+```
+Plot shear against angle:
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset25.datawater, aes(angle, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Angle") + ylab("Shear")
+```
+
 ## Umean
+
+Loading data and setting up data frames:
+```{r echo=TRUE, warning=FALSE, message=FALSE}
+# Loading flux data
+allUmean <- loadnshapedata(n, "Umean", analysisdate)
+allUmean.melted <- melt(allUmean, id.vars = c("angle","gap","Re","array"))
+```
+
+Plot $U_{mean}$ for each hair and both arrays: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(allUmean.melted, aes(variable, value, color = array)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, option = "C") + 
+  xlab(" ") + ylab("Umean") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
+```
+
+### 18-hair array
+
+Plot $U_{mean}$ against Reynolds number: 
+```{r echo=FALSE, warning=FALSE}
+rm(subset18.datawater)
+subset18.datawater <- allUmean.melted[allUmean.melted$array=="18hair",]
+ggplot(subset18.datawater, aes(Re, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Re") + ylab("Umean")
+```
+Plot $U_{mean}$ against gap width: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset18.datawater, aes(gap, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Gap-width-to-diameter Ratio") + ylab("Umean")
+```
+Plot $U_{mean}$ against angle:
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset18.datawater, aes(angle, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Angle") + ylab("Umean")
+```
+
+### 25-hair array
+
+Plot $U_{mean}$ against Reynolds number: 
+```{r echo=FALSE, warning=FALSE}
+rm(subset25.datawater)
+subset25.datawater <- allUmean.melted[allUmean.melted$array=="25hair",]
+ggplot(subset25.datawater, aes(Re, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Re") + ylab("Umean")
+```
+Plot $U_{mean}$ against gap width: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset25.datawater, aes(gap, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Gap-width-to-diameter Ratio") + ylab("Umean")
+```
+Plot $U_{mean}$ against angle:
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset25.datawater, aes(angle, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Hair number", option = "A") + 
+  xlab("Angle") + ylab("Umean")
+```
 
 ## Leakiness
 
+Loading data and setting up data frames:
+```{r echo=TRUE, warning=FALSE, message=FALSE}
+# Loading flux data
+allleakiness <- loadnshapedata(n, "leakiness", analysisdate)
+for(i in 1:(2*n)) allleakiness$avg[i] <- mean(as.numeric(allleakiness[i,4:8]),na.rm=TRUE)
+allleakiness.melted <- melt(allleakiness, id.vars = c("angle","gap","Re","array"))
+```
 
+Plot leakiness for each row and both arrays: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(allleakiness.melted, aes(variable, value, color = array)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, option = "C") + 
+  xlab(" ") + ylab("Leakiness") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
+```
+
+```{r echo=FALSE}
+ggplot(allleakiness.melted, aes(variable, value, color = array)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, option = "C") + 
+  xlab(" ") + ylab("Leakiness") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
+```
+
+### 18-hair array
+
+Plot leakiness against Reynolds number: 
+```{r echo=FALSE, warning=FALSE}
+rm(subset18.datawater)
+subset18.datawater <- allleakiness.melted[allleakiness.melted$array=="18hair",]
+ggplot(subset18.datawater, aes(Re, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Row number", option = "A") + 
+  xlab("Re") + ylab("Leakness")
+```
+Plot leakiness against gap width: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset18.datawater, aes(gap, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Row number", option = "A") + 
+  xlab("Gap-width-to-diameter Ratio") + ylab("Leakiness")
+```
+Plot leakiness against angle:
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset18.datawater, aes(angle, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Row number", option = "A") + 
+  xlab("Angle") + ylab("Leakiness")
+```
+
+### 25-hair array
+
+Plot leakiness against Reynolds number: 
+```{r echo=FALSE, warning=FALSE}
+rm(subset25.datawater)
+subset25.datawater <- allleakiness.melted[allleakiness.melted$array=="25hair",]
+ggplot(subset25.datawater, aes(Re, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Row number", option = "A") + 
+  xlab("Re") + ylab("Leakiness")
+```
+Plot leakiness against gap width: 
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset25.datawater, aes(gap, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Row number", option = "A") + 
+  xlab("Gap-width-to-diameter Ratio") + ylab("Leakiness")
+```
+Plot leakiness against angle:
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset25.datawater, aes(angle, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Row number", option = "A") + 
+  xlab("Angle") + ylab("Leakiness")
+```
+
+Plot leakiness against Re:
+```{r echo=FALSE, warning=FALSE}
+subset25.datawater<-
+ggplot(subset25.datawater, aes(angle, value, color = variable)) + 
+  geom_point() + scale_color_viridis(discrete = TRUE, name = "Row number", option = "A") + 
+  xlab("Angle") + ylab("Leakiness")
+```
