@@ -11,41 +11,92 @@ Initial package loading and function definitions:
 library(ggplot2) # for ggplots
 library(reshape2) # for melt()
 library(viridis) # for the viridis color palette
-n <- 165
-analysisdate <- "2020-12-02"
 
-loadnshapedata<-function(n,type,date) {
-  data_25 <- read.csv(paste("../results/r-csv-files/25hair_results/", type, "_", n, "_", date, ".csv", sep = ""))
-  columns25 <- colnames(data_25)
-  data2_25 <- data.frame(data_25, rep("25hair", length = n))
-  colnames(data2_25) <- c(columns25, "array")
-  # 18-hair array
-  data_18 <- read.csv(paste("../results/r-csv-files/18hair_results/", type, "_", n, "_", date, ".csv", sep = ""))
-  columns18<-colnames(data_18)
-  if (type=="leakiness"){
-    data2_18 <- data.frame(data_18, rep(NA,length=n), rep("18hair",length=n))
-    colnames(data2_18) <- c(columns25, "array")
-  } else{
-    data2_18 <- data.frame(data_18, 
-                     rep(NA,length=n), rep(NA,length=n), rep(NA,length=n), rep(NA,length=n), 
-                     rep(NA,length=n), rep(NA,length=n), rep(NA,length=n),
-                     rep("18hair",length=n))
-    colnames(data2_18) <- c(columns25, "array")
+n <- 165
+
+#source("../src/r-scripts/datahandling_functions.R")
+
+findnorows <- function(nohairs){
+  norows <- switch(as.character(nohairs),
+                     "3" = 1,
+                     "5" = 1,
+                     "7" = 2,
+                     "12" = 3,
+                     "18" = 4,
+                     "25" = 5)
+  return(norows)
+}
+
+reordercols<- function(data,nohairs,datatype){
+  parameter.names<-colnames(data[1:3])
+  if(datatype=="leakiness"){
+    norows<-findnorows(nohairs)
+    rownames <- as.character(rep(0, norows))
+    for (i in 1:norows) rownames[i] <- paste("row", i, sep = "") 
+    new.order <- c(parameter.names, "array", rownames)
+  }else {
+    hairnames <- as.character(rep(0, nohairs)) # Allocates space for names 
+    for (i in 1:nohairs) hairnames[i] <- paste("hair", i, sep = "") 
+    new.order <- c(parameter.names,"array",hairnames)
   }
-  # Combined
-  alldata <- rbind(data2_18,data2_25)
+  newdata <- data[,new.order]
+  return(newdata)
+}
+
+loadnshapedata<-function(n,datatype,nohairs,date) {
+  data <- read.csv(paste("../results/r-csv-files/",nohairs,"hair_results/", datatype, "_", n, "_", date, ".csv", sep = ""))
+  columns <- colnames(data)
+  data2 <- data.frame(data, rep(paste(nohairs, "hair", sep = ""), length = n))
+  colnames(data2) <- c(columns, "array")
+  data.final <- reordercols(data2,nohairs,datatype)
+  return(data.final)
+}
+
+stitchdata <- function(n,datatype,data1,data2,nohairs1,nohairs2){
+  if(datatype=="leakiness"){
+    norows1<-findnorows(nohairs1)
+    norows2<-findnorows(nohairs2)
+    deltah <- norows2 - norows1
+    repnames <- colnames(data1)
+    for (i in 1:deltah) {
+      data1 <- cbind(data1, rep(NA,length=n))
+      repnames <- c(repnames,paste("row",(norows1+i),sep=""))
+    }
+    colnames(data1)<-repnames
+  } else {
+    deltah <- nohairs2 - nohairs1
+    repnames <- colnames(data1)
+    for (i in 1:deltah) {
+      data1 <- cbind(data1, rep(NA,length=n))
+      repnames <- c(repnames,paste("hair",(nohairs1+i),sep=""))
+    }
+    colnames(data1)<-repnames
+  }
+  alldata <- rbind(data1,data2)
   return(alldata)
 }
+
+fluxdata_18 <- loadnshapedata(n,"flux",18,"2020-12-02")
+fluxdata_25 <- loadnshapedata(n,"flux",25,"2020-12-02")
+sheardata_18 <- loadnshapedata(n,"shearhairs",18,"2020-12-04")
+sheardata_25 <- loadnshapedata(n,"shearhairs",25,"2020-12-02")
+leakinessdata_18 <- loadnshapedata(n,"leakiness",18,"2020-12-02")
+leakinessdata_25 <- loadnshapedata(n,"leakiness",25,"2020-12-02")
+Umeandata_18 <- loadnshapedata(n,"Umean",18,"2020-12-02")
+Umeandata_25 <- loadnshapedata(n,"Umean",25,"2020-12-02")
+
+allflux <- stitchdata(n,"flux",fluxdata_18,fluxdata_25,18,25)
+allshear <- stitchdata(n,"shear",sheardata_18,sheardata_25,18,25)
+allleak <- stitchdata(n,"leakiness",leakinessdata_18,leakinessdata_25,18,25)
+allUmean <- stitchdata(n,"Umean",Umeandata_18,Umeandata_25,18,25)
+
+allflux.melted <- melt(allflux, id.vars = c("angle","gap","Re","array"))
+allshear.melted <- melt(allshear, id.vars = c("angle","gap","Re","array"))
+allleak.melted <- melt(allleak, id.vars = c("angle","gap","Re","array"))
+allUmean.melted <- melt(allUmean, id.vars = c("angle","gap","Re","array"))
 ```
 
 ## Flux 
-
-Loading data for flux:
-```{r echo=TRUE, warning=FALSE, message=FALSE}
-allflux <- loadnshapedata(n, "flux", analysisdate)
-allflux.melted <- melt(allflux, id.vars = c("angle","gap","Re","array"))
-```
-
 
 Plot flux for each hair and both arrays: 
 ```{r echo=FALSE, warning=FALSE}
@@ -101,12 +152,6 @@ ggplot(subset25.datawater, aes(angle, value, color = variable)) +
 
 ## Shear
 
-Loading data and setting up data frames:
-```{r echo=TRUE, warning=FALSE, message=FALSE}
-# Loading flux data
-allshear <- loadnshapedata(n, "shear", analysisdate)
-allshear.melted <- melt(allshear, id.vars = c("angle","gap","Re","array"))
-```
 
 Plot shear for each hair and both arrays: 
 ```{r echo=FALSE, warning=FALSE}
@@ -164,13 +209,6 @@ ggplot(subset25.datawater, aes(angle, value, color = variable)) +
 
 ## Umean
 
-Loading data and setting up data frames:
-```{r echo=TRUE, warning=FALSE, message=FALSE}
-# Loading flux data
-allUmean <- loadnshapedata(n, "Umean", analysisdate)
-allUmean.melted <- melt(allUmean, id.vars = c("angle","gap","Re","array"))
-```
-
 Plot $U_{mean}$ for each hair and both arrays: 
 ```{r echo=FALSE, warning=FALSE}
 ggplot(allUmean.melted, aes(variable, value, color = array)) + 
@@ -227,24 +265,16 @@ ggplot(subset25.datawater, aes(angle, value, color = variable)) +
 
 ## Leakiness
 
-Loading data and setting up data frames:
-```{r echo=TRUE, warning=FALSE, message=FALSE}
-# Loading flux data
-allleakiness <- loadnshapedata(n, "leakiness", analysisdate)
-for(i in 1:(2*n)) allleakiness$avg[i] <- mean(as.numeric(allleakiness[i,4:8]),na.rm=TRUE)
-allleakiness.melted <- melt(allleakiness, id.vars = c("angle","gap","Re","array"))
-```
-
 Plot leakiness for each row and both arrays: 
 ```{r echo=FALSE, warning=FALSE}
-ggplot(allleakiness.melted, aes(variable, value, color = array)) + 
+ggplot(allleak.melted, aes(variable, value, color = array)) + 
   geom_point() + scale_color_viridis(discrete = TRUE, option = "C") + 
   xlab(" ") + ylab("Leakiness") +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
 ```
 
 ```{r echo=FALSE}
-ggplot(allleakiness.melted, aes(variable, value, color = array)) + 
+ggplot(allleak.melted, aes(variable, value, color = array)) + 
   geom_point() + scale_color_viridis(discrete = TRUE, option = "C") + 
   xlab(" ") + ylab("Leakiness") +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
@@ -255,7 +285,7 @@ ggplot(allleakiness.melted, aes(variable, value, color = array)) +
 Plot leakiness against Reynolds number: 
 ```{r echo=FALSE, warning=FALSE}
 rm(subset18.datawater)
-subset18.datawater <- allleakiness.melted[allleakiness.melted$array=="18hair",]
+subset18.datawater <- allleak.melted[allleak.melted$array=="18hair",]
 ggplot(subset18.datawater, aes(Re, value, color = variable)) + 
   geom_point() + scale_color_viridis(discrete = TRUE, name = "Row number", option = "A") + 
   xlab("Re") + ylab("Leakness")
@@ -278,7 +308,7 @@ ggplot(subset18.datawater, aes(angle, value, color = variable)) +
 Plot leakiness against Reynolds number: 
 ```{r echo=FALSE, warning=FALSE}
 rm(subset25.datawater)
-subset25.datawater <- allleakiness.melted[allleakiness.melted$array=="25hair",]
+subset25.datawater <- allleak.melted[allleak.melted$array=="25hair",]
 ggplot(subset25.datawater, aes(Re, value, color = variable)) + 
   geom_point() + scale_color_viridis(discrete = TRUE, name = "Row number", option = "A") + 
   xlab("Re") + ylab("Leakiness")
