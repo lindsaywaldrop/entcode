@@ -7,7 +7,7 @@ function entsniff(topdir,hairNum,fluid,filenumbers,clpool)
 %	uniform grid. Only the final time step (set by user) is imported.
 %
 %   Note: This script relies on Eric Tytell's Matlab code for importing samrai data! 
-%	This package needs to be installed for this to work properly!
+%	This package needs to be installed for this to work properly!'
 % 
 % 	GridSize = IBAMR fluid grid size
 %	final_time = final time step of simulation, or time step of interest.
@@ -76,7 +76,6 @@ if clpool == 1
 elseif clpool > 1
     
     mycluster = parpool(clpool);
-	addAttachedFiles(mycluster, {strcat(paths.topdir, '/src/matlab/', 'temp_global_variable.mat')})
     
     parfor i = 1:length(files)
         % tic
