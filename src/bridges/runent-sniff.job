@@ -10,7 +10,7 @@
 set -x 
 
 # Number of hairs in the array
-array=25
+array=3
 
 # Fluid
 fluid=\'air\'
