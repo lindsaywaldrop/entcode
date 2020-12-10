@@ -46,14 +46,14 @@ convert_ibamr <- function(run_id,fluid,t,hairno) {
 
 
 run_id="0058"
-fluid<-"air"
-hairno<-18
+fluid<-"water"
+hairno<-3
 hair.conc <- convert_odorconc(run_id,fluid,hairno)
 all.data<-convert_ibamr(run_id,fluid,1,hairno)
 max_fill<-max(all.data$c)
 hair.points <- as.data.frame(t(hair.conc$hairs.positions))
 conc.timedata<-readMat(paste("./results/odorcapture/",hairno,"hair_array/",fluid,"/c_",run_id,".mat",sep = ""))
-for (i in 1:20){
+for (i in 1:10){
   all.data$c<- as.vector(conc.timedata[[i]])
   png(filename=paste("conc_",run_id,"_",i,".png",sep=""))
   print({
