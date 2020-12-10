@@ -55,7 +55,7 @@ if strcmp(parameters.fluid,'air')
 	parameters.print_time = 500;  
 	simulation.print_time = parameters.print_time;
 	%final time (s):                 
-	parameters.t_final_flick = 3; %0.1 s -> 200 s 
+	parameters.t_final_flick = 0.5; %0.1 s -> 200 s 
 	simulation.t_final_flick = parameters.t_final_flick;
 	%t_final_factor_flick = 20000;
 
