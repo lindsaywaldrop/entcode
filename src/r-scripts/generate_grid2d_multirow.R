@@ -25,12 +25,11 @@ package.check <- lapply(
 )
 
 plotit <- 0
-1  # plot the hairs? yes = 1, no = 0
+# plot the hairs? yes = 1, no = 0
 startrun <- 1
 endrun <- 165
 nohairs <- 3  # 2 row: 7; 3 row: 12; 4 row: 18; 5 row: 25
 
-#### Sets up directories ####
 mainDir1 <- "./data/vertex-files"
 mainDir2 <- "./data/csv-files"
 subDir1 <- paste(nohairs,"hair_files",sep="")
