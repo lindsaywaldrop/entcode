@@ -12,7 +12,7 @@ set -x
 i=119
 
 # Set hair number of array
-a=25
+a=3
 
 # Set path 
 WD="/pylon5/bi561lp/lwaldrop/entcode"
