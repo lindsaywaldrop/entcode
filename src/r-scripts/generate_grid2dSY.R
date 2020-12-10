@@ -10,17 +10,29 @@
 #- quit
 #- n
 
-#Install packages. You should only have to run these once!
-#install.packages("useful",dependencies = TRUE, repos='http://cran.us.r-project.org')
-#install.packages("pracma",dependencies = TRUE, repos='http://cran.us.r-project.org')
-
 #### Loads required packages ####
-require(pracma)
-require(useful)
+packages <- c("pracma", "useful")
+
+package.check <- lapply(
+  packages,
+  FUN <- function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE, repos='http://cran.us.r-project.org')
+      library(x, character.only = TRUE)
+    }
+  }
+)
 
 ####For automating production of vertex files####
 startrun <- 1
 endrun <- 165
+
+#### Sets up directories ####
+mainDir1 <- "./data/vertex-files"
+mainDir2 <- "./data/csv-files"
+subDir1 <- paste(5,"hair_files",sep="")
+dir.create(file.path(mainDir1, subDir1), showWarnings = FALSE)
+dir.create(file.path(mainDir2, subDir1), showWarnings = FALSE)
 
 #### Defines functions ####
 circle <- function(center, radius, L, dx){

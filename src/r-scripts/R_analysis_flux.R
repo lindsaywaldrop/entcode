@@ -6,7 +6,7 @@
 #################################################################################################################
 
 #### Parameters ####
-nohairs <- 25     # Total number of hairs in the array. 
+nohairs <- 3     # Total number of hairs in the array. 
                   # Options: "3", "5", "7", "12", "18", "25"
 n <- 165				    # Total number of simulations to analyze
 
@@ -14,6 +14,11 @@ n <- 165				    # Total number of simulations to analyze
 rundir <- paste(nohairs, "hair_runs/", sep = "") # Constructs hair directory
 duration <- 0.03   	 	 # duration of simulation, s
 dist <- 0.002          # diameter of each hair, m
+
+#### Sets up directories ####
+mainDir1 <- "./results/r-csv-files"
+subDir1 <- paste(nohairs,"hair_results",sep="")
+dir.create(file.path(mainDir1, subDir1), showWarnings = FALSE)
 
 # Loading parameter file
 parameters <- read.table(paste("./data/parameters/allpara_", n, ".txt", sep = ""), sep = "\t")

@@ -6,12 +6,17 @@
 #################################################################################################################
 
 #### Parameters ####
-nohairs <- 3     # Total number of hairs in the array. 
+nohairs <- 25     # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 n <- 165				  # number of simulations to analyze
 
 # Parameters that should not change
 ignore <- 3
+
+#### Sets up directories ####
+mainDir1 <- "./results/r-csv-files"
+subDir1 <- paste(nohairs,"hair_results",sep="")
+dir.create(file.path(mainDir1, subDir1), showWarnings = FALSE)
 
 # Allocates space
 shear_hair <- matrix(data = NA, nrow = n, ncol = nohairs)	# Allocates space for shear calculations

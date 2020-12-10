@@ -6,9 +6,14 @@
 #################################################################################################################
 
 #### Parameters ####
-nohairs <- 25     # Total number of hairs in the array. 
+nohairs <- 3     # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 n <- 165				  # number of simulations to analyze
+
+#### Sets up directories ####
+mainDir1 <- "./results/r-csv-files"
+subDir1 <- paste(nohairs,"hair_results",sep="")
+dir.create(file.path(mainDir1, subDir1), showWarnings = FALSE)
 
 # Loading parameter file
 parameters <- read.table(paste("./data/parameters/allpara_", n, ".txt", sep = ""), sep = "\t")

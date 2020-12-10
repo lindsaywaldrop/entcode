@@ -76,7 +76,7 @@ if clpool == 1
 elseif clpool > 1
     
     mycluster = parpool(clpool);
-	addAttachedFiles(mycluster, {strcat(paths.topdir, '/src/matlab/', 'temp_global_variable.mat')})
+	  %addAttachedFiles(mycluster, {strcat(paths.topdir, '/src/matlab/', 'temp_global_variable.mat')})
     
     parfor i = 1:length(files)
         % tic

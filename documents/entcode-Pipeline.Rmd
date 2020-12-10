@@ -64,11 +64,7 @@ For IBAMR to successfully run, each simulation needs two files: an input2d file,
 
 ### Input2d file generation
 
-Input2d files are generated using the shell script `setinput2d.sh` in the `src/bridges` folder. Enter this directory and run the script, where n should be the number of simulations in the gPC set (165, 681, or 1233):
-
-`$ sh setinput2d.sh "$WD" n`
-
-If you should need to make any changes to the template file, it is `template-input2d1`. Make these changes and then re-run the setinput2d.sh script.
+Input2d files are generated during the execution of `compile_sniff.sh`. You need to take no further action. 
 
 The input2d files will be located in `data/input2d-files`. 
 
@@ -76,6 +72,7 @@ The input2d files will be located in `data/input2d-files`.
 
 Vertex files describe the positions of the antennule and each hair in the array. These are divided up by the number of hairs in each array: 
 
+ * 3 hairs (one row)
  * 5 hairs (one row)
  * 7 hairs (two rows)
  * 12 hairs (three rows)
@@ -94,7 +91,7 @@ Once changed, return to the main directory and run the file using the R console:
 
 `> source('src/r-scripts/generate_grid2d_multirow.R')`
 
-If you are running the one row with 5 hairs, it is necessary to run a separate script: `generate_grid2dSY.R` in the same folder. IN this file, change the lines: 
+If you are running the one row with 5 hairs, it is necessary to run a separate script: `generate_grid2dSY.R` in the same folder. In this file, change the lines: 
 
  * Line 23: the endrun parameter should equal the number of simulations in the gPC set. 
  

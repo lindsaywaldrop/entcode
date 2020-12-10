@@ -6,7 +6,7 @@
 #################################################################################################################
 
 ####  Parameters  ####
-hairno <- 18  # Total number of hairs in the array. 
+hairno <- 3  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 n <- 165				  # number of simulations to analyze
 fluid <- "air"  # fluid of simulation, options: air, water
@@ -25,7 +25,10 @@ package.check <- lapply(
   }
 )
 
-
+#### Sets up directories ####
+mainDir1 <- "./results/r-csv-files"
+subDir1 <- paste(nohairs,"hair_results",sep="")
+dir.create(file.path(mainDir1, subDir1), showWarnings = FALSE)
 
 ####  Function Definitions  ####
 convert_odorconc <- function(run_id,fluid,hairno) {
@@ -34,10 +37,10 @@ convert_odorconc <- function(run_id,fluid,hairno) {
   steps.number <- length(data) - 2
   hairs.number <- length(data$hairs.center[, 1])
   conc.data <- matrix(NA, ncol = hairs.number, nrow = steps.number)
-  colnames(conc.data) <- paste("h", as.character(1:hairs.number), sep = "")
+  colnames(conc.data) <- paste("hair", as.character(1:hairs.number), sep = "")
   rownames(conc.data) <- as.character(1:steps.number)
   hairs.positions <- t(data$hairs.center)
-  colnames(hairs.positions) <- paste("h", as.character(1:hairs.number), sep = "")
+  colnames(hairs.positions) <- paste("hair", as.character(1:hairs.number), sep = "")
   rownames(hairs.positions) <- c("x", "y")
   for (i in 1:steps.number){
     for (j in 1:hairs.number){
