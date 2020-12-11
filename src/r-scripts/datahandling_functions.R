@@ -64,3 +64,52 @@ stitchdata <- function(n,datatype,data1,data2,nohairs1,nohairs2){
   alldata <- rbind(data1,data2)
   return(alldata)
 }
+
+pad.rows<-function(diff.row){
+  padding=0
+  switch(diff.row,
+         "1" = padding<-data.frame(rep(NA,n)),
+         "2" = padding<-data.frame(rep(NA,n), rep(NA,n)),
+         "3" = padding<-data.frame(rep(NA,n), rep(NA,n), rep(NA,n)),
+         "4" = padding<-data.frame(rep(NA,n), rep(NA,n), rep(NA,n), 
+                                   rep(NA,n)))
+  return(padding)
+}
+
+stitch.rows <- function(data, list.hairs){
+  max.hairs <- max(as.numeric(list.hairs))
+  max.rows <- findnorows(max.hairs)
+  n <- as.numeric(nrow(data[[1]]))
+  row.names <- rep(NA,max.rows)
+  for(j in 1:max.rows) row.names[j] <- paste("row", j, sep = "")
+  parameter.names <- colnames(data[[1]][, 1:3])
+  name <- list.hairs[1]
+  nohairs <- as.numeric(name)
+  alldata.row <- data[[name]]
+  norows <- findnorows(nohairs)
+  diff.row <- max.rows-norows
+  temp.row.names<-row.names[2:max.rows]
+  padding <- pad.rows(diff.row)
+  colnames(padding)<-temp.row.names
+  alldata.row <- cbind(alldata.row, padding)
+  alldata.row <-alldata.row[c(parameter.names,"array",row.names)]
+  for (i in 2:length(list.hairs)){
+    name<-list.hairs[i]
+    nohairs<-as.numeric(name)
+    temp.data<-data[[name]]
+    norows<-findnorows(nohairs)
+    diff.row<-max.rows-norows
+    if(diff.row!=0){
+      pad.row<-pad.rows(diff.row)
+      temp.row.names<-row.names[(norows+1):max.rows]
+      colnames(pad.row)<-temp.row.names
+      data.ready<-cbind(temp.data,pad.row)
+    }else{
+      data.ready <- temp.data
+    }
+    data.ready<-data.ready[c(parameter.names,"array",row.names)]
+    alldata.row<-rbind(alldata.row,data.ready)
+    rm(data.ready)
+  }
+  return(alldata.row)
+}
