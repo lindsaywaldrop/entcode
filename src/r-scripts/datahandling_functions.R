@@ -111,5 +111,8 @@ stitch.rows <- function(data, list.hairs){
     alldata.row<-rbind(alldata.row,data.ready)
     rm(data.ready)
   }
+  array.names <- rep(NA,length(list.hairs))
+  for(n in 1:length(list.hairs)) array.names[n] <- paste(list.hairs[n], "hair", sep = "")
+  alldata.row$array <- factor(alldata.row$array, levels = array.names)
   return(alldata.row)
 }
