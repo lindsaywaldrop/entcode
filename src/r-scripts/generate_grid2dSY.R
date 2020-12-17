@@ -36,11 +36,11 @@ dir.create(file.path(mainDir2, subDir1), showWarnings = FALSE)
 
 #### Defines functions ####
 circle <- function(center, radius, L, dx){
-  x_grid <- seq(-radius, radius, by = dx)
-  y_grid <- seq(-radius, radius, by = dx)
+  x_grid <- seq(-(radius + 0.01), radius + 0.01, by = dx)
+  y_grid <- seq(-(radius + 0.01), radius + 0.01, by = dx)
   whole_grid <- meshgrid(x_grid, y_grid)
   
-  THETA <- c(seq(0, 2*pi, length = 250), 0)
+  THETA <- c(seq(0, 2 * pi, length = 250), 0)
   RHO <- array(1, length(THETA)) * radius
   Z <- array(1, length(RHO)) * 0
   nap <- matrix(c(THETA, RHO), nrow = length(THETA), ncol = 2)
@@ -61,23 +61,23 @@ makehairs <- function(th, GtD, number){
   
   ##### Input parameter definitions ####
   
-  #th=0
+  np <- 3
   L <- 2.0         # length of computational domain (m)
-  N <- 1024        # number of Cartesian grid meshwidths at the finest level of the AMR grid
-  dx <- 1.0 * (L/N)  # Cartesian mesh width (m)
+  N <- 4096        # number of Cartesian grid meshwidths at the finest level of the AMR grid
+  dx <- (2.0 * L) / (N * np)   # Cartesian mesh width (m)
   # Notes ~ Rule of thumb: 2 boundary points per fluid grid point. 
   #        vertex pts too far apart: flow thru boundary, too close: numerical weirdness
-  NFINEST <- 4  # NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
+  NFINEST <- 5  # NFINEST = 4 corresponds to a uniform grid spacing of h=1/64
   kappa_target <- 1.0e-2        # target point penalty spring constant (Newton)
   
-  hdia <- 0.01     # Diameter of hair
+  hdia <- 0.002     # Diameter of hair
   adia <- 0.1     # Diameter of flagellum
   
   th2 <- (th/180) * pi      # Angle off positive x-axis in radians
   #GtD = 6.0787      # Gap width to diameter ratio
-  dist <- 0.02     # Distance between antennule and hair 
+  dist <- 2 * hdia     # Distance between antennule and hair 
   mindGap <- (0.5 * adia) + (0.5 * hdia) + dist  # Calculate distance between hair centers
-  width <- GtD * hdia + hdia
+  width <- (GtD * hdia) + hdia
   
   #### Calculates center positions (x,y) of each hair ####
   hair1Centerx <- mindGap * cos(th2)
