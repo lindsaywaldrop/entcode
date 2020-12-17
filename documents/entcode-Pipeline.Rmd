@@ -168,13 +168,19 @@ For the second script, through the command line, enter:
 
 Specify only the number of hairs in the array after the working directory. It will deposit curve files in `results/visit/nhair_runs/simi/hairline_flux`. Four files will be produced for each hair. This script needs to be run only once. 
 
+For the third script, through the command line, enter: 
+
+`$ sh setlineout_shear.sh "$WD" 25 165`
+
+Specify the number of hairs in the array after the working directory and the number of simulations in your set after that. It will deposit curve files in `results/visit/nhair_runs/simi/shear`, with one file per hair. This script only needs to be run once. 
+
 ### Checking for VisIt results completeness
 
 To check that VisIt provided a complete data set for R to do final calculations, run the following script in the src/visit directory: 
 
 `$ sh checkvisitresults.sh "$WD" 25 165`
 
-where the first argument is the top working directory, the second is the number of hairs in the array, and the third is the number of simulations to check. This script will provide a list of files in the flux, hairline (leakiness), and Umean that are missing so you can check individual simulations and rerun as necessary. 
+where the first argument is the top working directory, the second is the number of hairs in the array, and the third is the number of simulations to check. This script will provide a list of files in the flux, hairline (leakiness), and `Umean` that are missing so you can check individual simulations and rerun as necessary. 
 
 
 ### Execution of R scripts for calculation of final flow values
@@ -228,7 +234,7 @@ In order to set these up, you will need to change the run job file. Navigate to 
 
 To submit a job, use the following: 
 
-`sh setrunent.sh 1 165`
+`$ sh setrunent.sh 1 165`
 
 Jobs will be submitted to Bridges in sets of 8 per job ID. If you enter a non-multiple of 8, the remainder will be submitted as its own job. 
 
@@ -240,7 +246,7 @@ First, check to see if all hair concentration files are present in the necessary
 
 The R script in `src/r-scripts` can be run either on your own machine (after downloading the resulting mat files in the form `hairs_c_*.mat`) or on Bridges. To do so, simply open R and source the script: 
 
-`source('src/r-scripts/R_analysis_totalodor.R')`
+`> source('src/r-scripts/R_analysis_totalodor.R')`
 
 A csv file will all results will be deposited in `results/r-csv-files/`. 
 

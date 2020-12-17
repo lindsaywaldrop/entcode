@@ -1,7 +1,11 @@
 ---
 title: "Dr. Waldrop's Odor-capture Notebook"
-output: html_notebook
-fig_width: 6
+output:
+  html_notebook: default
+  pdf_document: default
+  html_document:
+    df_print: paged
+fig_width: 8.5
 ---
 
 # Some initial plotting for the water condition
@@ -9,6 +13,7 @@ fig_width: 6
 Loading data and shaping data frame:
 ```{r echo=TRUE, message=TRUE, warning=FALSE}
 library(ggplot2) # for ggplots
+library(cowplot) # for plot_grid()
 library(reshape2) # for melt()
 library(viridis) # for the viridis color palette
 
@@ -25,287 +30,383 @@ airdata_3 <- loadnshapedata(n,"totalconc_air",3,"2020-12-08")
 airdata_18 <- loadnshapedata(n,"totalconc_air",18,"2020-12-04")
 airdata_25 <- loadnshapedata(n,"totalconc_air",25,"2020-12-04")
 
-# Subsetting hair data only
-waterhairs3 <- subset(waterdata_3, select = c(1:3,seq(from=6,to=(5+3))))
-waterhairs18 <- subset(waterdata_18, select = c(1:3,seq(from=6,to=(5+18))))
-waterhairs25 <- subset(waterdata_25, select = c(1:3,seq(from=6,to=(5+25))))
-airhairs3 <- subset(airdata_3, select = c(1:3,seq(from=6,to=(5+3))))
-airhairs18 <- subset(airdata_18, select = c(1:3,seq(from=6,to=(5+18))))
-airhairs25 <- subset(airdata_25, select = c(1:3,seq(from=6,to=(5+25))))
-
-# Subsetting row data only
-waterrow3 <- subset(waterdata_3, select = c(1:3,seq(from=(6+3), 
-                                                      to=length(waterdata_3[1,]))))
-waterrow18 <- subset(waterdata_18, select = c(1:3,seq(from=(6+18), 
-                                                      to=length(waterdata_18[1,]))))
-waterrow25 <- subset(waterdata_25, select = c(1:3,seq(from=(6+25), 
-                                                      to=length(waterdata_25[1,]))))
-airrow3 <- subset(airdata_3, select = c(1:3,seq(from=(6+3), 
-                                                      to=length(airdata_3[1,]))))
-airrow18 <- subset(airdata_18, select = c(1:3,seq(from=(6+18), 
-                                                      to=length(airdata_18[1,]))))
-airrow25 <- subset(airdata_25, select = c(1:3,seq(from=(6+25), 
-                                                      to=length(airdata_25[1,]))))
-
-# Melting data
-waterhairs3.melted<-melt(waterhairs3, id.vars = c("angle","gap","Re"))
-waterhairs18.melted<-melt(waterhairs18, id.vars = c("angle","gap","Re"))
-waterhairs25.melted<-melt(waterhairs25, id.vars = c("angle","gap","Re"))
-airhairs3.melted<-melt(airhairs3, id.vars = c("angle","gap","Re"))
-airhairs18.melted<-melt(airhairs18, id.vars = c("angle","gap","Re"))
-airhairs25.melted<-melt(airhairs25, id.vars = c("angle","gap","Re"))
-waterrow3.melted<-melt(waterrow3, id.vars = c("angle","gap","Re"))
-waterrow18.melted<-melt(waterrow18, id.vars = c("angle","gap","Re"))
-waterrow25.melted<-melt(waterrow25, id.vars = c("angle","gap","Re"))
-airrow18.melted<-melt(airrow18, id.vars = c("angle","gap","Re"))
-airrow25.melted<-melt(airrow25, id.vars = c("angle","gap","Re"))
+water.data <- list("3" = waterdata_3, "18" = waterdata_18, "25" = waterdata_25)
+air.data <- list("3" = airdata_3, "18" = airdata_18, "25" = airdata_25)
+list.hairs <- c("3","18","25")
+alldatarow.water<-stitch.rows(water.data,list.hairs)
+alldatarow.air<-stitch.rows(air.data,list.hairs)
 
 ```
 
-## Hair plots
 
-## 3-hair array
-Plot Reynolds number versus odor concentration captured:
-```{r echo=FALSE}
-ggplot(waterhairs3.melted, aes(Re,value,color=variable)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
-  xlab("Reynolds number") + ylab("Odor conc captured per hair") + 
-  guides(color=guide_legend(ncol=2))
-```
-Plot gap-to-diameter ratio against value: 
+## Preliminary Results
+
+### 1. It's better to have more hairs in water and fewer hairs in air.
+
+We can set up data frames that will compare for us in separate plots the total odor concentration caught by each array in air or water.
 ```{r echo=TRUE}
-ggplot(waterhairs3.melted, aes(gap, value, color = variable)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
-  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") + 
-  guides(color=guide_legend(ncol=2))
+alldatawater.totalconc <- data.frame(waterdata_3[,1:3], waterdata_3$total.conc, 
+                                     waterdata_18$total.conc, waterdata_25$total.conc)
+colnames(alldatawater.totalconc)<- c(colnames(waterdata_3[,1:3]),
+                                     "3hairs","18hairs","25hairs")
+alldatawaterconc.melted <- melt(alldatawater.totalconc, 
+                                id.vars = c("angle","gap","Re"))
+alldataair.totalconc <- data.frame(airdata_3[,1:3], airdata_3$total.conc,
+                                   airdata_18$total.conc, airdata_25$total.conc)
+colnames(alldataair.totalconc)<- c(colnames(airdata_3[,1:3]),
+                                   "3hairs","18hairs","25hairs")
+alldataairconc.melted <- melt(alldataair.totalconc, 
+                              id.vars = c("angle","gap","Re"))
 ```
 
-Plot angle versus value:
-```{r echo=FALSE}
-ggplot(waterhairs3.melted, aes(angle, value, color = variable)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
-  xlab("Angle of array to flow") + ylab("Odor conc captured per hair") + 
-  guides(color=guide_legend(ncol=2))
+From here, we can plot the mean total concentration captured by each array for water and air: 
+
+```{r echo = FALSE, warning = FALSE}
+all.water <- ggplot(alldatawaterconc.melted, aes(variable, value, fill = variable)) + 
+  geom_violin(color = "gray30") +
+  stat_summary(fun = "mean", color = "gray30", fill = "white", pch = 21, size = 1.25)+
+  scale_fill_viridis(name = "Array", discrete = TRUE) + 
+  xlab("") + ylab("Total Conc Captured") + ggtitle("Water") +
+  theme_bw() + theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
+
+all.air <- ggplot(alldataairconc.melted, aes(variable, value, fill = variable)) +
+  geom_violin(color = "gray30") +
+  stat_summary(fun = "mean", color = "black", fill = "white", pch = 21, size = 1.25)+
+  scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") + 
+  xlab("") + ylab("Total Conc Captured") + ggtitle("Air") + 
+  theme_bw() + theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
+plot_grid(all.water, all.air, labels = c("Water","Air"), 
+          label_x = c(0.5, 0.5), label_y = c(1.1, 1.1))
+```
+```{r,warning=FALSE,echo=FALSE,error=FALSE}
+model.water318<-t.test(alldatawater.totalconc[,4],alldatawater.totalconc[,5])
+model.water325<-t.test(alldatawater.totalconc[,4],alldatawater.totalconc[,6])
+model.water1825<-t.test(alldatawater.totalconc[,5],alldatawater.totalconc[,6])
+
+model.air318<-t.test(alldataair.totalconc[,4],alldataair.totalconc[,5])
+model.air325<-t.test(alldataair.totalconc[,4],alldataair.totalconc[,6])
+model.air1825<-t.test(alldataair.totalconc[,5],alldataair.totalconc[,6])
+```
+
+Here we can see that in water, it's slightly better to have more hairs, and in some cases, a lot better. The 3-hair array captures significantly less odor than the 18-hair array ($t = `r signif(model.water318$statistic,digits=3)`$, $p = `r signif(model.water318$p.value,digits=1)`$) and the 25-hair array ($t = `r signif(model.water325$statistic,digits=3)`$, $p = `r signif(model.water325$p.value, digits=1)`$). The odor captured by the 18-hair and 25-hair arrays was not different from each other ($t = `r signif(model.water1825$statistic,digits=3)`$, $p = `r signif(model.water1825$p.value,digits=1)`$).
+
+However, in air it's generally better to have fewer hairs. Even though there is less surface area available to capture odor, totals were on average higher for the 3-hair array than for 18-hair ($t = `r signif(model.air318$statistic,digits=3)`$, $p = `r signif(model.air318$p.value,digits=1)`$) or 25-hair ($t = `r signif(model.air325$statistic,digits=3)`$, $p = `r signif(model.air325$p.value,digits=1)`$) arrays. Once again, odor captured by the 18-hair and 25-hair arrays were not different from each other ($t = `r signif(model.air1825$statistic,digits=3)`$, $p = `r signif(model.air1825$p.value,digits=1)`$). 
+
+We can also plot the total concentration captured against each of the three parameters for air and water: 
+```{r echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, fig.height = 10, fig.width = 8.5}
+# fig.height=4.5, fig.width=4.25
+water.gap <- ggplot(alldatawaterconc.melted, aes(gap, value, fill = variable)) +
+            geom_point(size = 4, pch = 21, color = "gray30") +           
+            geom_smooth(aes(fill=variable,color=variable)) +
+            scale_fill_viridis(name = "Array", discrete = TRUE) +
+            scale_color_viridis(name = "Array", discrete = TRUE) +
+            xlab("Gap-to-diameter ratio") + ylab("Total odor captured") +
+            theme_bw() + theme(legend.position = "top")
+leg.water<-get_legend(water.gap)
+water.gap <- ggplot(alldatawaterconc.melted, aes(gap, value, fill = variable)) +
+            geom_point(size = 2.5, pch = 21, color = "gray30") + 
+            geom_smooth(aes(fill=variable,color=variable)) +
+            scale_fill_viridis(name = "Array", discrete = TRUE) +
+            scale_color_viridis(name = "Array", discrete = TRUE) +
+            xlab("Gap-to-diameter ratio") + ylab("Total odor captured") +
+            theme_bw() + theme(legend.position = "none")
+air.gap <- ggplot(alldataairconc.melted, aes(gap, value, fill = variable)) +
+            geom_point(size = 4, pch = 21, color = "gray30") + 
+            geom_smooth(aes(fill=variable,color=variable)) +
+            scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") +
+            scale_color_viridis(name = "Array", discrete = TRUE, option = "C") +
+            xlab("Gap-to-diameter ratio") + ylab("Total odor captured") + 
+            theme_bw() + theme(legend.position = "bottom")
+leg.air<-get_legend(air.gap)
+air.gap <- ggplot(alldataairconc.melted, aes(gap, value, fill = variable)) +
+            geom_point(size = 2.5, pch = 21, color = "gray30") + 
+            geom_smooth(aes(fill=variable,color=variable)) +
+            scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") +
+            scale_color_viridis(name = "Array", discrete = TRUE, option = "C") +
+            xlab("Gap-to-diameter ratio") + ylab("Total odor captured") + 
+            theme_bw() + theme(legend.position = "none")
+water.Re <- ggplot(alldatawaterconc.melted, aes(Re, value, fill = variable)) +
+            geom_point(size = 2.5, pch = 21, color = "gray30") + 
+            geom_smooth(aes(fill=variable,color=variable)) +
+            scale_fill_viridis(name = "Array", discrete = TRUE) +
+            scale_color_viridis(name = "Array", discrete = TRUE) +
+            xlab("Reynolds number") + ylab("Total odor captured") +
+            theme_bw() + theme(legend.position = "none")
+air.Re <- ggplot(alldataairconc.melted, aes(Re, value, fill = variable)) +
+            geom_point(size = 2.5, pch = 21, color = "gray30") + 
+            geom_smooth(aes(fill=variable,color=variable)) +
+            scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") +
+            scale_color_viridis(name = "Array", discrete = TRUE, option = "C") +
+            xlab("Reynolds number") + ylab("Total odor captured") + 
+            theme_bw() + theme(legend.position = "none")
+water.angle <- ggplot(alldatawaterconc.melted, aes(angle, value, fill = variable)) +
+            geom_point(size = 2.5, pch = 21, color = "gray30") + 
+            geom_smooth(aes(fill=variable,color=variable)) +
+            scale_fill_viridis(name = "Array", discrete = TRUE) +
+            scale_color_viridis(name = "Array", discrete = TRUE) +
+            xlab("Angle") + ylab("Total odor captured") +
+            theme_bw() + theme(legend.position = "none")
+air.angle <- ggplot(alldataairconc.melted, aes(angle, value, fill = variable)) +
+            geom_point(size = 2.5, pch = 21, color = "gray30") + 
+            geom_smooth(aes(fill=variable,color=variable)) +
+            scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") +
+            scale_color_viridis(name = "Array", discrete = TRUE, option = "C") +
+            xlab("Angle") + ylab("Total odor captured") + 
+            theme_bw() + theme(legend.position = "none")
+
+plot_grid(leg.water, leg.air, water.gap, air.gap, water.Re, air.Re, water.angle, air.angle,
+          nrow = 4,
+          labels=c("Water", "Air"), 
+          label_x = c(0.45,0.45), 
+          label_y = c(1, 1),
+          rel_heights = c(0.75,2,2,2),rel_widths = c(1,1))
 ```
 
 
-## 18-hair array
-Plot Reynolds number versus odor concentration captured:
-```{r echo=FALSE}
-ggplot(waterhairs18.melted, aes(Re,value,color=variable)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
-  xlab("Reynolds number") + ylab("Odor conc captured per hair") + 
-  guides(color=guide_legend(ncol=2))
-```
+## 2. Outer hairs shield inner hairs from capturing odor in air (but not water)
+
 Plot gap-to-diameter ratio against value: 
-```{r echo=TRUE}
-ggplot(waterhairs18.melted, aes(gap, value, color = variable)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
-  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") + 
-  guides(color=guide_legend(ncol=2))
-```
+```{r echo=FALSE, warning=FALSE, fig.height=5.5, fig.width=4.25}
+row1water <- ggplot(alldatarow.water, aes(gap, row1, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Conc captured per row") + ylim(c(0, 200)) +
+  theme_bw() + theme(legend.position = "none")
+row2water <- ggplot(alldatarow.water, aes(gap, row2, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
+  theme_bw() + theme(legend.position = "none")
+row3water <- ggplot(alldatarow.water, aes(gap, row3, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
+  theme_bw() + theme(legend.position = "none")
+row4water <- ggplot(alldatarow.water, aes(gap, row4, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
+  theme_bw() + theme(legend.position = "none")
+row5water <- ggplot(alldatarow.water, aes(gap, row5, fill = array)) +
+  geom_point(size = 4, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) +
+  theme_bw() + theme(legend.position = "bottom")
+leg.water <- get_legend(row5water)
+row5water <- ggplot(alldatarow.water, aes(gap, row5, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
+  theme_bw() + theme(legend.position = "none")
 
-Plot angle versus value:
-```{r echo=FALSE}
-ggplot(waterhairs18.melted, aes(angle, value, color = variable)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
-  xlab("Angle of array to flow") + ylab("Odor conc captured per hair") + 
-  guides(color=guide_legend(ncol=2))
-```
+row1air <- ggplot(alldatarow.air, aes(gap, row1, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Conc captured per row") + ylim(c(0, 30000)) +
+  theme_bw() + theme(legend.position = "none")
+row2air <- ggplot(alldatarow.air, aes(gap, row2, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "none")
+row3air <- ggplot(alldatarow.air, aes(gap, row3, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "none")
+row4air <- ggplot(alldatarow.air, aes(gap, row4, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "none")
+row5air <- ggplot(alldatarow.air, aes(gap, row5, fill = array)) +
+  geom_point(size = 4, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "bottom")
+leg.air <- get_legend(row5air)
+row5air <- ggplot(alldatarow.air, aes(gap, row5, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
+  xlab("Gap-to-diameter ratio") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "none")
 
-
-## 25-hair array
-
-
-Plot Reynolds number versus odor concentration captured:
-```{r echo=FALSE}
-ggplot(waterhairs25.melted, aes(Re,value,color=variable)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE) + 
-  xlab("Reynolds number") + ylab("Odor conc captured per hair") 
-```
-
-Plot gap-to-diameter ratio against value: 
-```{r echo=FALSE}
-ggplot(waterhairs25.melted, aes(gap,value,color=variable)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE) + 
-  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") 
-```
-
-
-Plot angle versus value:
-```{r echo=FALSE}
-ggplot(waterhairs25.melted, aes(angle, value, color = variable)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE) + 
-  xlab("Angle of array to flow") + ylab("Odor conc captured per hair") 
-  
-```
-## Individual Row Plots
-
-
-Plot row number versus value for both values:
-```{r echo=FALSE, warning=FALSE}
-ggplot(rowdatawater.melted, aes(variable, value, color = array)) +
-  geom_point() + scale_color_viridis(name = "Array", discrete = TRUE) + 
-  xlab("Row of array") + ylab("Odor conc captured per row") 
-```
-
-Plot gap-to-diameter ratio against value: 
-```{r echo=FALSE, warning=FALSE}
-ggplot(rowdatawater.melted, aes(gap,value,color=variable, shape=array)) +
-  geom_point(size=2) + scale_color_viridis(name = "Row number", discrete = TRUE) + 
-  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") 
-```
-Plot gap-to-diameter ratio against value for just 18-hair array: 
-```{r echo=FALSE, warning=FALSE}
-subset18.rowdatawater <- rowdatawater.melted[rowdatawater.melted$array == "18hair",]
-ggplot(subset18.rowdatawater, aes(gap,value,color=variable)) +
-  geom_point(size=2) + scale_color_viridis(name = "Row number", discrete = TRUE) + 
-  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") 
-```
-
-Plot gap-to-diameter ratio against value for just 25-hair array: 
-```{r echo=FALSE, warning=FALSE}
-subset25.rowdatawater <- rowdatawater.melted[rowdatawater.melted$array == "25hair",]
-ggplot(subset25.rowdatawater, aes(gap,value,color=variable)) +
-  geom_point(size=2) + scale_color_viridis(name = "Row number", discrete = TRUE) + 
-  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") 
-```
-Plot Reynolds number against value for just 18-hair array: 
-```{r echo=FALSE, warning=FALSE}
-ggplot(subset18.rowdatawater, aes(Re,value,color=variable)) +
-  geom_point(size=2) + scale_color_viridis(name = "Row number", discrete = TRUE) + 
-  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") 
-```
-
-Plot Reynolds number against value for just 25-hair array: 
-```{r echo=FALSE, warning=FALSE}
-ggplot(subset25.rowdatawater, aes(Re,value,color=variable)) +
-  geom_point(size=2) + scale_color_viridis(name = "Row number", discrete = TRUE) + 
-  xlab("Gap-to-diameter ratio") + ylab("Odor conc captured per hair") 
-```
-
-## Total Concentration Plots
-
-Setup data frames: 
-```{r echo=TRUE}
-alldata.totalconc <- data.frame(parameters,waterdata_3$total.conc, waterdata_18$total.conc, waterdata_25$total.conc)
-colnames(alldata.totalconc)<- c(colnames(parameters),"3hairs","18hairs","25hairs")
-alldataconc.melted <- melt(alldata.totalconc, id.vars = c("angle","gap","Re"))
-```
-
-Total concentration for gap-to-diameter ratio versus odor captured, arrays as colors: 
-```{r echo=FALSE}
-ggplot(alldataconc.melted, aes(gap, value, color = variable)) +
-  geom_point() + scale_color_viridis(discrete = TRUE) +
-  xlab("Gap-to-diameter ratio") + ylab("Total odor captured (water)")
-```
-
-Total concentration for Re versus odor captured, arrays as colors: 
-```{r echo=FALSE}
-ggplot(alldataconc.melted, aes(Re, value, color = variable)) +
-  geom_point() + scale_color_viridis(discrete = TRUE) + 
-  xlab("Re") + ylab("Total odor captured (water)")
-```
-
-Total concentration for angle versus odor captured, arrays as color: 
-```{r echo=FALSE}
-ggplot(alldataconc.melted, aes(angle, value, color = variable)) +
-  geom_point() + scale_color_viridis(discrete = TRUE) + 
-  xlab("Angle") + ylab("Total odor captured (water)")
-```
-
-# The air condition
-
-# 25-hair array
-```{r echo=TRUE, warning=FALSE}
-nohairs<-25
-airdata.25 <- read.csv("../results/r-csv-files/25hair_results/totalconc_air_165_2020-12-02.csv")
-waterhairs25 <- subset(waterdata.25, select = c(1:3,seq(from=5,to=(4+nohairs))))
-waterhairs25.melted<-melt(waterhairs25, id.vars = c("angle","gap","Re"))
-# 18-hair array
-nohairs <- 18
-airdata.18 <- read.csv("../results/r-csv-files/18hair_results/totalconc_air_165_2020-12-02.csv")
-airhairs18 <- subset(airdata.18, select = c(1:3,seq(from=5,to=(4+nohairs))))
-airhairs18.melted<-melt(airhairs18, id.vars = c("angle","gap","Re"))
-```
-## Hair plots
-
-## 18-hair array
-
-Plot Reynolds number versus odor concentration captured:
-```{r echo=FALSE}
-ggplot(airhairs18.melted, aes(Re,value,color=variable)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
-  xlab("Reynolds number") + ylab("Odor conc captured per hair") + 
-  guides(color=guide_legend(ncol=2))
-```
-
-Plot gap width versus odor concentration captured:
-```{r echo=FALSE}
-ggplot(airhairs18.melted, aes(gap,value,color=variable)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
-  xlab("Gap-width-to-diameter Ratio") + ylab("Odor conc captured per hair") + 
-  guides(color=guide_legend(ncol=2))
+plot_grid(leg.water, leg.air,
+          row1water, row1air, row2water, row2air, row3water, row3air, 
+          row4water, row4air, row5water, row5air, 
+          nrow = 6, labels=c("Water", "Air",
+                             "row 1", " ",
+                             "row 2", " ",
+                             "row 3", " ",
+                             "row 4", " ",
+                             "row 5", " "), 
+          label_x = c(0.45,0.45,0,0,0,0,0,0,0,0,0,0), 
+          label_y = c(1.1, 1.1),
+          rel_heights = c(0.75,2,2,2,2,2))
 ```
 
 
-Plot angle versus odor concentration captured:
-```{r echo=FALSE}
-ggplot(airhairs18.melted, aes(angle,value,color=variable)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
-  xlab("Angle") + ylab("Odor conc captured per hair") + 
-  guides(color=guide_legend(ncol=2))
+Plot Reynolds number against odor captured:
+```{r echo=FALSE, message = FALSE, warning = FALSE, fig.height = 10, fig.width = 8.5}
+row1water <- ggplot(alldatarow.water, aes(Re, row1, fill = array)) +
+  geom_point(size = 4, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) +
+  scale_color_viridis(name = "Array", discrete = TRUE) +
+  xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 200)) +
+  theme_bw() + theme(legend.position = "bottom")
+leg.water <- get_legend(row1water)
+row1water <- ggplot(alldatarow.water, aes(Re, row1, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) +
+  xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 200)) +
+  theme_bw() + theme(legend.position = "none")
+row2water <- ggplot(alldatarow.water, aes(Re, row2, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) +
+  xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
+  theme_bw() + theme(legend.position = "none")
+row3water <- ggplot(alldatarow.water, aes(Re, row3, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) +
+  xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
+  theme_bw() + theme(legend.position = "none")
+row4water <- ggplot(alldatarow.water, aes(Re, row4, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) +
+  xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
+  theme_bw() + theme(legend.position = "none")
+row5water <- ggplot(alldatarow.water, aes(Re, row5, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) +
+  theme_bw() + theme(legend.position = "none")
+
+row1air <- ggplot(alldatarow.air, aes(Re, row1, fill = array)) +
+  geom_point(size = 4, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") +
+  xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 30000)) +
+  theme_bw() + theme(legend.position = "bottom")
+leg.air <- get_legend(row1air)
+row1air <- ggplot(alldatarow.air, aes(Re, row1, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") +
+  xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 30000)) +
+  theme_bw() + theme(legend.position = "none")
+row2air <- ggplot(alldatarow.air, aes(Re, row2, fill = array, color=array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(discrete = TRUE, option = "C") +
+  xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "none")
+row3air <- ggplot(alldatarow.air, aes(Re, row3, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") +
+  scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") +
+  xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "none")
+row4air <- ggplot(alldatarow.air, aes(Re, row1, fill = array, color=array)) +
+  scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") +
+  xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "none")
+row5air <- ggplot(alldatarow.air, aes(Re, row5, fill = array, color=array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") +
+  xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0,30000)) + 
+  theme_bw() + theme(legend.position = "none")
+
+plot_grid(leg.water, leg.air,
+          row1water, row1air, row2water, row2air, row3water, row3air, 
+          row4water, row4air, row5water, row5air, 
+          nrow = 6, labels=c("Water", "Air",
+                             "row 1", " ",
+                             "row 2", " ",
+                             "row 3", " ",
+                             "row 4", " ",
+                             "row 5", " "), 
+          label_x = c(0.45,0.45,0,0,0,0,0,0,0,0,0,0), 
+          label_y = c(1.1, 1.1),
+          rel_heights = c(0.75,2,2,2,2,2))
 ```
 
-```{r echo=FALSE}
-airdata18.melted <- melt(airdata.18,  id.vars = c("angle","gap","Re"))
-airtotconc.18 <- airdata18.melted[airdata18.melted$variable=="total.conc",]
-ggplot(airtotconc.18, aes(Re, value)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
-  xlab("Re") + ylab("Total Odor conc captured ") + 
-  guides(color=guide_legend(ncol=2))
+
+Plot angle against value: 
+```{r echo=FALSE, warning=FALSE, fig.height=5.5, fig.width=4.25}
+row1water <- ggplot(alldatarow.water, aes(angle, row1, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) + 
+  xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 200)) +
+  theme_bw() + theme(legend.position = "none")
+row2water <- ggplot(alldatarow.water, aes(angle, row2, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) + 
+  xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
+  theme_bw() + theme(legend.position = "none")
+row3water <- ggplot(alldatarow.water, aes(angle, row3, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) + 
+  xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
+  theme_bw() + theme(legend.position = "none")
+row4water <- ggplot(alldatarow.water, aes(angle, row4, fill = array)) +
+  geom_point(size = 2, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) + 
+  xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
+  theme_bw() + theme(legend.position = "none")
+row5water <- ggplot(alldatarow.water, aes(angle, row5, fill = array)) +
+  geom_point(size = 4, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) +
+  theme_bw() + theme(legend.position = "bottom")
+leg.water <- get_legend(row5water)
+row5water <- ggplot(alldatarow.water, aes(angle, row5, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", discrete = TRUE) + 
+  xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
+  theme_bw() + theme(legend.position = "none")
+
+row1air <- ggplot(alldatarow.air, aes(angle, row1, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
+  xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 30000)) +
+  theme_bw() + theme(legend.position = "none")
+row2air <- ggplot(alldatarow.air, aes(angle, row2, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
+  xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "none")
+row3air <- ggplot(alldatarow.air, aes(angle, row3, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
+  xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "none")
+row4air <- ggplot(alldatarow.air, aes(angle, row4, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
+  xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "none")
+row5air <- ggplot(alldatarow.air, aes(angle, row5, fill  = array)) +
+  geom_point(size = 4, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
+  xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "bottom")
+leg.air <- get_legend(row5air)
+row5air <- ggplot(alldatarow.air, aes(angle, row5, fill = array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
+  xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
+  theme_bw() + theme(legend.position = "none")
+
+plot_grid(leg.water, leg.air,
+          row1water, row1air, row2water, row2air, row3water, row3air, 
+          row4water, row4air, row5water, row5air, 
+          nrow = 6,  labels=c("Water", "Air",
+                             "row 1", " ",
+                             "row 2", " ",
+                             "row 3", " ",
+                             "row 4", " ",
+                             "row 5", " "), 
+          label_x = c(0.45,0.45,0,0,0,0,0,0,0,0,0,0), 
+          label_y = c(1.1, 1.1),
+          rel_heights = c(0.75,2,2,2,2,2))
 ```
 
-```{r echo=FALSE}
-ggplot(airtotconc.18, aes(gap, value)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
-  xlab("Gap-width-to-diameter ratio") + ylab("Odor conc captured per hair") + 
-  guides(color=guide_legend(ncol=2))
-```
 
-```{r echo=FALSE}
-ggplot(airtotconc.18, aes(angle, value)) +
-  geom_point() + scale_color_viridis(name = "Hair number", discrete = TRUE, option = "A") + 
-  xlab("Angle") + ylab("Odor conc captured per hair") + 
-  guides(color=guide_legend(ncol=2))
-```
+### 3. Odor capture is most sensitive to changes in gap-width-to-diameter ratio for both fluids
 
-## Total Concentration Plots
+things.
 
-Setup data frames: 
-```{r echo=TRUE}
-alldata.totalconc <- data.frame(parameters,airdata_3$total.conc, airdata_18$total.conc, airdata_25$total.conc)
-colnames(alldata.totalconc)<- c(colnames(parameters),"3hairs","18hairs","25hairs")
-alldataconc.melted <- melt(alldata.totalconc, id.vars = c("angle","gap","Re"))
-```
 
-Total concentration for gap-to-diameter ratio versus odor captured, arrays as colors: 
-```{r echo=FALSE}
-ggplot(alldataconc.melted, aes(gap, value, color = variable)) +
-  geom_point() + scale_color_viridis(discrete = TRUE) +
-  xlab("Gap-to-diameter ratio") + ylab("Total odor captured (water)")
-```
-
-Total concentration for Re versus odor captured, arrays as colors: 
-```{r echo=FALSE}
-ggplot(alldataconc.melted, aes(Re, value, color = variable)) +
-  geom_point() + scale_color_viridis(discrete = TRUE) + 
-  xlab("Re") + ylab("Total odor captured (water)")
-```
-
-Total concentration for angle versus odor captured, arrays as color: 
-```{r echo=FALSE}
-ggplot(alldataconc.melted, aes(angle, value, color = variable)) +
-  geom_point() + scale_color_viridis(discrete = TRUE) + 
-  xlab("Angle") + ylab("Total odor captured (water)")
-```
