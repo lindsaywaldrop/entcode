@@ -116,3 +116,15 @@ stitch.rows <- function(data, list.hairs){
   alldata.row$array <- factor(alldata.row$array, levels = array.names)
   return(alldata.row)
 }
+
+plot.hairs <- function(nohairs){
+  data <- read.table(file = paste("../data/vertex-files/",
+                                  nohairs, "hair_files/hairs0.vertex", sep = ""),
+                     skip = 1, header = FALSE)
+  csv.data <- read.csv(file = paste("../data/csv-files/", 
+                                    nohairs, "hair_files/hairs0.csv", sep = ""))
+  data$antorhair <- c(rep("ant",csv.data[1,1]),
+                      rep("hair",(csv.data[1,2]*nohairs)))
+  colnames(data)<-c("x","y","antorhair")
+  return(data)
+}
