@@ -3,6 +3,9 @@
 *.out
 *.Rhistory
 *.DS_Store
+*.mat
+*.csv
+*viz_IB2d*/
 input2d-files/input2d*
 vertex-files/hairs*.vertex
 vertex-files/hair*.mat
