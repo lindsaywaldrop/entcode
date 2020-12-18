@@ -36,8 +36,46 @@ list.hairs <- c("3","18","25")
 alldatarow.water<-stitch.rows(water.data,list.hairs)
 alldatarow.air<-stitch.rows(air.data,list.hairs)
 
+
+
+# Loads plotting data
+data.3hair <- plot.hairs(3)
+data.5hair <- plot.hairs(5) 
+data.7hair <- plot.hairs(7) 
+data.12hair <- plot.hairs(12) 
+data.18hair <- plot.hairs(18) 
+data.25hair <- plot.hairs(25)
 ```
 
+## Methods
+
+We created six hair arrays with different numbers of hairs and configurations. The number of hairs varied (3, 5, 7, 12, 18, and 25 hairs) in one to five rows of hairs (3 and 5 hairs in 1 row, 7 hairs in two rows, 12 hairs in 3 rows, 18 hairs in 4 rows, and 25 hairs in 5 rows). 
+
+```{r, echo=FALSE}
+plot.3hair <- ggplot(data.3hair, aes(x, y, color=antorhair)) + geom_point(size = 0.5) + 
+  xlim(-0.05,0.25) + ylim(-0.17, 0.17) + scale_color_manual(values=c("gray60","black"), name =" ") +
+  theme_bw() + theme(plot.margin = unit(c(0.75,0.57,0,0),"cm"), legend.position = "none")
+plot.5hair <- ggplot(data.5hair, aes(x, y, color=antorhair)) + geom_point(size = 0.5) + 
+  xlim(-0.05,0.25) + ylim(-0.17, 0.17) + scale_color_manual(values=c("gray60","black"), name =" ") +
+  theme_bw() + theme(plot.margin = unit(c(0.75,0.57,0,0),"cm"), legend.position = "none")
+plot.7hair <- ggplot(data.7hair, aes(x, y, color=antorhair)) + geom_point(size = 0.5) + 
+  xlim(-0.05,0.25) + ylim(-0.17, 0.17) + scale_color_manual(values=c("gray60","black"), name =" ") +
+  theme_bw() + theme(plot.margin = unit(c(0.75,0.57,0,0),"cm"), legend.position = "none")
+plot.12hair <- ggplot(data.12hair, aes(x, y, color=antorhair)) + geom_point(size = 0.5) + 
+  xlim(-0.05,0.25) + ylim(-0.17, 0.17) + scale_color_manual(values=c("gray60","black"), name =" ") +
+  theme_bw() + theme(plot.margin = unit(c(0.75,0.57,0,0),"cm"), legend.position = "none")
+plot.18hair <- ggplot(data.18hair, aes(x, y, color=antorhair)) + geom_point(size = 0.5) + 
+  xlim(-0.05,0.25) + ylim(-0.17, 0.17) + scale_color_manual(values=c("gray60","black"), name =" ") +
+  theme_bw() + theme(plot.margin = unit(c(0.75,0.57,0,0),"cm"), legend.position = "none")
+plot.25hair <- ggplot(data.25hair, aes(x, y, color=antorhair)) + geom_point(size = 0.5) + 
+  xlim(-0.05,0.25) + ylim(-0.17, 0.17) + scale_color_manual(values=c("gray60","black"), name =" ") +
+  theme_bw() + theme(plot.margin = unit(c(0.75,0.57,0,0),"cm"), legend.position = "none")
+#png(file="hair-configs.png",height=6,width=8.5,unit="in",res=600)
+plot_grid(plot.3hair, plot.5hair, plot.7hair, plot.12hair, plot.18hair, plot.25hair, 
+          labels = c("3 hairs, 1 row", "5 hairs, 1 row", "7 hairs, 2 rows", 
+                     "12 hairs, 3 rows", "18 hairs, 4 rows", "25 hairs, 5 rows"))
+#dev.off()
+```
 
 ## Preliminary Results
 
@@ -62,9 +100,10 @@ alldataairconc.melted <- melt(alldataair.totalconc,
 From here, we can plot the mean total concentration captured by each array for water and air: 
 
 ```{r echo = FALSE, warning = FALSE}
+label.df <- data.frame(variable=c("3hairs","18hairs","25hairs"), value=c(30000,NA,NA))
 all.water <- ggplot(alldatawaterconc.melted, aes(variable, value, fill = variable)) + 
   geom_violin(color = "gray30") +
-  stat_summary(fun = "mean", color = "gray30", fill = "white", pch = 21, size = 1.25)+
+  stat_summary(fun = "mean", color = "gray30", fill = "white", pch = 21, size = 1.25) +
   scale_fill_viridis(name = "Array", discrete = TRUE) + 
   xlab("") + ylab("Total Conc Captured") + ggtitle("Water") +
   theme_bw() + theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
@@ -73,11 +112,16 @@ all.air <- ggplot(alldataairconc.melted, aes(variable, value, fill = variable)) 
   geom_violin(color = "gray30") +
   stat_summary(fun = "mean", color = "black", fill = "white", pch = 21, size = 1.25)+
   scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") + 
+  geom_point(data=label.df,mapping=aes(x=variable,y=value),color="black",pch="*",size=6) +
   xlab("") + ylab("Total Conc Captured") + ggtitle("Air") + 
   theme_bw() + theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
+#png(file = "total.conc.violin.png", height = 2.5, width = 5.6, unit = "in", res = 500)
 plot_grid(all.water, all.air, labels = c("Water","Air"), 
           label_x = c(0.5, 0.5), label_y = c(1.1, 1.1))
+#dev.off()
 ```
+
+
 ```{r,warning=FALSE,echo=FALSE,error=FALSE}
 model.water318<-t.test(alldatawater.totalconc[,4],alldatawater.totalconc[,5])
 model.water325<-t.test(alldatawater.totalconc[,4],alldatawater.totalconc[,6])
@@ -94,7 +138,7 @@ However, in air it's generally better to have fewer hairs. Even though there is 
 
 We can also plot the total concentration captured against each of the three parameters for air and water: 
 ```{r echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, fig.height = 10, fig.width = 8.5}
-# fig.height=4.5, fig.width=4.25
+#fig.height=4.5, fig.width=4.25}
 water.gap <- ggplot(alldatawaterconc.melted, aes(gap, value, fill = variable)) +
             geom_point(size = 4, pch = 21, color = "gray30") +           
             geom_smooth(aes(fill=variable,color=variable)) +
@@ -154,16 +198,38 @@ air.angle <- ggplot(alldataairconc.melted, aes(angle, value, fill = variable)) +
             xlab("Angle") + ylab("Total odor captured") + 
             theme_bw() + theme(legend.position = "none")
 
+#png(filename = "three-parameters.png", height = 10, width = 8.5, unit="in",res=600)
 plot_grid(leg.water, leg.air, water.gap, air.gap, water.Re, air.Re, water.angle, air.angle,
           nrow = 4,
           labels=c("Water", "Air"), 
           label_x = c(0.45,0.45), 
           label_y = c(1, 1),
           rel_heights = c(0.75,2,2,2),rel_widths = c(1,1))
+#dev.off()
 ```
 
 
 ## 2. Outer hairs shield inner hairs from capturing odor in air (but not water)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+alldatarowair.melted<-melt(alldatarow.air,id.vars = c("angle","gap","Re","array"))
+alldatarowwater.melted<-melt(alldatarow.water,id.vars = c("angle","gap","Re","array"))
+
+allrows.water<-ggplot(alldatarowwater.melted,aes(variable,value,fill=array)) + 
+  #geom_violin() + 
+  geom_jitter(size=1.5, color = "gray30", pch=21)+
+  xlab("") + ylab("Conc captured per row")+ 
+  scale_fill_viridis(discrete=TRUE)+theme_bw() + theme(legend.position = "top")
+allrows.air<-ggplot(alldatarowair.melted,aes(variable,value,fill=array)) + 
+  #geom_violin() + 
+  geom_jitter(size=1.5, color = "gray30", pch=21)+
+  xlab("") + ylab("Conc captured per row") + scale_x_discrete(position="top") +
+  scale_fill_viridis(discrete=TRUE, option="C")+theme_bw() + theme(legend.position = "top")
+png(file = "jiggerrow.png", height = 3.75, width = 8.4, unit = "in", res = 500)
+plot_grid(allrows.water,allrows.air)
+dev.off()
+```
+
 
 Plot gap-to-diameter ratio against value: 
 ```{r echo=FALSE, warning=FALSE, fig.height=5.5, fig.width=4.25}
@@ -246,11 +312,12 @@ plot_grid(leg.water, leg.air,
 
 
 Plot Reynolds number against odor captured:
-```{r echo=FALSE, message = FALSE, warning = FALSE, fig.height = 10, fig.width = 8.5}
+```{r echo=FALSE, message = FALSE, warning = FALSE, fig.height=5.5, fig.width=4.25}
+#, fig.height = 10, fig.width = 8.5}
+
 row1water <- ggplot(alldatarow.water, aes(Re, row1, fill = array)) +
   geom_point(size = 4, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", discrete = TRUE) +
-  scale_color_viridis(name = "Array", discrete = TRUE) +
   xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 200)) +
   theme_bw() + theme(legend.position = "bottom")
 leg.water <- get_legend(row1water)
@@ -269,7 +336,7 @@ row3water <- ggplot(alldatarow.water, aes(Re, row3, fill = array)) +
   scale_fill_viridis(name = "Array", discrete = TRUE) +
   xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
   theme_bw() + theme(legend.position = "none")
-row4water <- ggplot(alldatarow.water, aes(Re, row4, fill = array)) +
+row4water <- ggplot(alldatarow.water, aes(Re, row4, fill = array, color=array)) +
   geom_point(size = 2.5, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", discrete = TRUE) +
   xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
@@ -277,6 +344,7 @@ row4water <- ggplot(alldatarow.water, aes(Re, row4, fill = array)) +
 row5water <- ggplot(alldatarow.water, aes(Re, row5, fill = array)) +
   geom_point(size = 2.5, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", discrete = TRUE) +
+  xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
   theme_bw() + theme(legend.position = "none")
 
 row1air <- ggplot(alldatarow.air, aes(Re, row1, fill = array)) +
@@ -300,7 +368,8 @@ row3air <- ggplot(alldatarow.air, aes(Re, row3, fill = array)) +
   scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") +
   xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
   theme_bw() + theme(legend.position = "none")
-row4air <- ggplot(alldatarow.air, aes(Re, row1, fill = array, color=array)) +
+row4air <- ggplot(alldatarow.air, aes(Re, row4, fill = array, color=array)) +
+  geom_point(size = 2.5, pch = 21, color = "gray30") +
   scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") +
   xlab("Reynolds number") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
   theme_bw() + theme(legend.position = "none")
@@ -326,7 +395,9 @@ plot_grid(leg.water, leg.air,
 
 
 Plot angle against value: 
-```{r echo=FALSE, warning=FALSE, fig.height=5.5, fig.width=4.25}
+```{r echo=FALSE, warning=FALSE, fig.height=10,fig.width=8.5}
+# fig.height=4.5, fig.width=8.5} 
+#, fig.height=5.5, fig.width=4.25}
 row1water <- ggplot(alldatarow.water, aes(angle, row1, fill = array)) +
   geom_point(size = 2.5, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", discrete = TRUE) + 
@@ -393,15 +464,20 @@ row5air <- ggplot(alldatarow.air, aes(angle, row5, fill = array)) +
 plot_grid(leg.water, leg.air,
           row1water, row1air, row2water, row2air, row3water, row3air, 
           row4water, row4air, row5water, row5air, 
-          nrow = 6,  labels=c("Water", "Air",
+          nrow = 6,  rel_heights = c(0.75,2,2,2,2,2),
+          labels=c("Water", "Air",
                              "row 1", " ",
                              "row 2", " ",
                              "row 3", " ",
                              "row 4", " ",
                              "row 5", " "), 
           label_x = c(0.45,0.45,0,0,0,0,0,0,0,0,0,0), 
-          label_y = c(1.1, 1.1),
-          rel_heights = c(0.75,2,2,2,2,2))
+          label_y = c(1.1, 1.1))
+#png(filename="angle-rows.png", width=8.5, height=4.5, unit="in", res=600)
+#plot_grid(row1water, row2water, row3water, row4water, row5water, leg.water,
+#          row1air,  row2air, row3air, row4air, row5air, leg.air,  
+#          nrow=2, rel_widths = c(1,1,1,1,1,0.65))
+#dev.off()
 ```
 
 
