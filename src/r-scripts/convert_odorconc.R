@@ -1,5 +1,6 @@
 library(ggplot2)
 library(viridis)
+library(RColorBrewer)
 library(R.matlab)
 library(png)
 
@@ -45,9 +46,9 @@ convert_ibamr <- function(run_id,fluid,t,hairno) {
 }
 
 
-run_id="0058"
+run_id="0001"
 fluid<-"water"
-hairno<-3
+hairno<-5
 hair.conc <- convert_odorconc(run_id,fluid,hairno)
 all.data<-convert_ibamr(run_id,fluid,1,hairno)
 max_fill<-max(all.data$c)
@@ -55,10 +56,11 @@ hair.points <- as.data.frame(t(hair.conc$hairs.positions))
 conc.timedata<-readMat(paste("./results/odorcapture/",hairno,"hair_array/",fluid,"/c_",run_id,".mat",sep = ""))
 for (i in 1:10){
   all.data$c<- as.vector(conc.timedata[[i]])
-  png(filename=paste("conc_",run_id,"_",i,".png",sep=""))
+  png(filename=paste("conc_",run_id,"_",i,".png",sep=""),height=3,width=4,units="in",res=600)
   print({
-    ggplot(all.data, aes(x=x,y=y,fill=c)) + geom_tile() + scale_fill_viridis(option="C",limits=c(-0.01,max_fill)) +
-      geom_point(data=hair.points,mapping=aes(x=x,y=y),pch=19,size=1,col="white",fill="white") 
+    ggplot(all.data, aes(x=x,y=y,fill=c)) + geom_tile() + 
+      scale_fill_distiller(name = "Conc",type="seq",palette="OrRd",direction=1,limits=c(-0.01,max_fill)) +
+      geom_point(data=hair.points,mapping=aes(x=x,y=y),pch=19,size=1,col="black",fill="black") +theme_bw()
     })
   dev.off()
 }
