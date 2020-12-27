@@ -25,7 +25,7 @@ package.check <- lapply(
 
 ####For automating production of vertex files####
 startrun <- 1
-endrun <- 165
+endrun <- 10
 
 #### Sets up directories ####
 mainDir1 <- "./data/vertex-files"
