@@ -37,12 +37,16 @@ airdata_18 <- loadnshapedata(n,"totalconc_air",18,"2020-12-04")
 airdata_25 <- loadnshapedata(n,"totalconc_air",25,"2020-12-04")
 
 water.data <- list("3" = waterdata_3, "5" = waterdata_5,
-                   "7" = waterdata_7, "12" = waterdata_12, 
+                   #"7" = waterdata_7, 
+                   "12" = waterdata_12, 
                    "18" = waterdata_18, "25" = waterdata_25)
 air.data <- list("3" = airdata_3, "5" = airdata_5,
-                 "7" = airdata_7, "12" = airdata_12,
+                 #"7" = airdata_7, 
+                 "12" = airdata_12,
                  "18" = airdata_18, "25" = airdata_25)
-list.hairs <- c("3","5","7","12","18","25")
+list.hairs <- c("3","5",
+                #"7",
+                "12","18","25")
 alldatarow.water<-stitch.rows(water.data,list.hairs)
 alldatarow.air<-stitch.rows(air.data,list.hairs)
 
@@ -105,21 +109,24 @@ We can set up data frames that will compare for us in separate plots the total o
 alldatawater.totalconc <- data.frame(waterdata_3[,1:3], 
                                      waterdata_3$total.conc, 
                                      waterdata_5$total.conc,
-                                     waterdata_7$total.conc, 
+                                     #waterdata_7$total.conc, 
                                      waterdata_12$total.conc, 
                                      waterdata_18$total.conc, 
                                      waterdata_25$total.conc)
 colnames(alldatawater.totalconc)<- c(colnames(waterdata_3[,1:3]),
-                                 "3hairs","5hairs","7hairs", 
+                                 "3hairs","5hairs",
+                                 #"7hairs", 
                                  "12hairs","18hairs","25hairs")
 alldatawaterconc.melted <- melt(alldatawater.totalconc, 
                                 id.vars = c("angle","gap","Re"))
 alldataair.totalconc <- data.frame(airdata_3[,1:3], airdata_3$total.conc,
-                                   airdata_5$total.conc, airdata_7$total.conc,
+                                   airdata_5$total.conc, 
+                                   #airdata_7$total.conc,
                                    airdata_12$total.conc, airdata_18$total.conc,
                                    airdata_25$total.conc)
 colnames(alldataair.totalconc)<- c(colnames(airdata_3[,1:3]),
-                                  "3hairs","5hairs","7hairs", 
+                                  "3hairs","5hairs",
+                                  #"7hairs", 
                                   "12hairs","18hairs","25hairs")
 alldataairconc.melted <- melt(alldataair.totalconc, 
                               id.vars = c("angle","gap","Re"))
@@ -128,17 +135,27 @@ alldataairconc.melted <- melt(alldataair.totalconc,
 From here, we can plot the mean total concentration captured by each array for water and air: 
 
 ```{r echo = FALSE, warning = FALSE}
-labelair.df <- data.frame(variable=c("3hairs","5hairs","7hairs","12hairs","18hairs","25hairs"), value=c(30000,NA,NA,NA,NA,NA))
-labelwater.df <- data.frame(variable=c("3hairs","5hairs","7hairs","12hairs","18hairs","25hairs"), value=c(200,NA,NA,NA,NA,NA))
+#labelair.df <- data.frame(variable=c("3hairs","5hairs",
+                                     #"7hairs",
+#                                     "12hairs","18hairs","25hairs"), 
+#                          value=c(30000,NA,NA,
+#                                  #NA,
+#                                  NA,NA))
+#labelwater.df <- data.frame(variable=c("3hairs","5hairs",
+#                                       #"7hairs",
+#                                       "12hairs","18hairs","25hairs"), 
+#                            value=c(200,NA,NA,
+#                                    #NA,
+#                                    NA,NA))
 
 all.water <- ggplot(alldatawaterconc.melted, aes(variable, value, fill = variable)) + 
   geom_violin(color = "gray30") +
   stat_summary(fun = "mean", color = "gray30", fill = "white", pch = 21, 
                size = 1.25) +
   scale_fill_viridis(name = "Array", discrete = TRUE) + 
-  geom_point(data=labelwater.df, 
-             mapping=aes(x=variable,y=value),color="black",pch="*",size=6) +
-  xlab("") + ylab("Total Conc Captured") + ggtitle("Water") +
+  #geom_point(data=labelwater.df, 
+  #           mapping=aes(x=variable,y=value),color="black",pch="*",size=6) +
+  xlab("") + ylab("Total Conc Captured") + ggtitle("Water") + ylim(0, 700) +
   theme_bw() + theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
 
 all.air <- ggplot(alldataairconc.melted, aes(variable, value, fill = variable)) +
@@ -146,9 +163,9 @@ all.air <- ggplot(alldataairconc.melted, aes(variable, value, fill = variable)) 
   stat_summary(fun = "mean", color = "black", fill = "white", pch = 21, 
                size = 1.25)+
   scale_fill_viridis(name = "Array", discrete = TRUE, option = "C") + 
-  geom_point(data=labelair.df, 
-             mapping=aes(x=variable,y=value),color="black",pch="*",size=6) +
-  xlab("") + ylab("Total Conc Captured") + ggtitle("Air") + 
+  #geom_point(data=labelair.df, 
+  #           mapping=aes(x=variable,y=value),color="black",pch="*",size=6) +
+  xlab("") + ylab("Total Conc Captured") + ggtitle("Air") + ylim(0, 35000) +
   theme_bw() + theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
 #png(file = "total.conc.violin.png", height = 2.5, width = 5.6, unit = "in", res = 500)
 plot_grid(all.water, all.air, labels = c("Water","Air"), 
@@ -158,20 +175,73 @@ plot_grid(all.water, all.air, labels = c("Water","Air"),
 
 
 ```{r,warning=FALSE,echo=FALSE,error=FALSE}
-model.water312<-t.test(alldatawater.totalconc[,4],alldatawater.totalconc[,5])
-model.water318<-t.test(alldatawater.totalconc[,4],alldatawater.totalconc[,6])
-model.water325<-t.test(alldatawater.totalconc[,4],alldatawater.totalconc[,7])
-model.water1218<-t.test(alldatawater.totalconc[,5],alldatawater.totalconc[,6])
-model.water1225<-t.test(alldatawater.totalconc[,5],alldatawater.totalconc[,7])
-model.water1825<-t.test(alldatawater.totalconc[,6],alldatawater.totalconc[,7])
+model.water35<-t.test(alldatawater.totalconc$'3hairs',alldatawater.totalconc$'5hairs')
+print("Water: 3-hair vs 5-hair")
+print(model.water35)
+#model.water37<-t.test(alldatawater.totalconc$'3hairs',alldatawater.totalconc$'7hairs')
+#print("3-hair vs 7-hair")
+#print(model.water37)
+model.water312<-t.test(alldatawater.totalconc$'3hairs',alldatawater.totalconc$'12hairs')
+print("Water: 3-hair vs 12-hair")
+print(model.water312)
+model.water318<-t.test(alldatawater.totalconc$'3hairs',alldatawater.totalconc$'18hairs')
+print("Water: 3-hair vs 18-hair")
+print(model.water318)
+model.water325<-t.test(alldatawater.totalconc$'3hairs',alldatawater.totalconc$'25hairs')
+print("Water: 3-hair vs 25-hair")
+print(model.water325)
+model.water512<-t.test(alldatawater.totalconc$'5hairs',alldatawater.totalconc$'12hairs')
+print("Water: 5-hair vs 12-hair")
+print(model.water512)
+model.water518<-t.test(alldatawater.totalconc$'5hairs',alldatawater.totalconc$'18hairs')
+print("Water: 5-hair vs 18-hair")
+print(model.water518)
+model.water525<-t.test(alldatawater.totalconc$'5hairs',alldatawater.totalconc$'25hairs')
+print("Water: 5-hair vs 25-hair")
+print(model.water525)
+model.water1218<-t.test(alldatawater.totalconc$'12hairs',alldatawater.totalconc$'18hairs')
+print("Water: 12-hair vs 18-hair")
+print(model.water1218)
+model.water1225<-t.test(alldatawater.totalconc$'12hairs',alldatawater.totalconc$'25hairs')
+print("Water: 12-hair vs 25-hair")
+print(model.water1225)
+model.water1825<-t.test(alldatawater.totalconc$'18hairs',alldatawater.totalconc$'25hairs')
+print("Water: 18-hair vs 25-hair")
+print(model.water1825)
 
-
-model.air312<-t.test(alldataair.totalconc[,4],alldataair.totalconc[,5])
-model.air318<-t.test(alldataair.totalconc[,4],alldataair.totalconc[,6])
-model.air325<-t.test(alldataair.totalconc[,4],alldataair.totalconc[,7])
-model.air1218<-t.test(alldataair.totalconc[,5],alldataair.totalconc[,6])
-model.air1225<-t.test(alldataair.totalconc[,5],alldataair.totalconc[,7])
-model.air1825<-t.test(alldataair.totalconc[,6],alldataair.totalconc[,7])
+model.air35<-t.test(alldataair.totalconc$'3hairs',alldataair.totalconc$'5hairs')
+print("Air: 3-hair vs 5-hair")
+print(model.air35)
+#model.water37<-t.test(alldatawater.totalconc$'3hairs',alldatawater.totalconc$'7hairs')
+#print("3-hair vs 7-hair")
+#print(model.water37)
+model.air312<-t.test(alldataair.totalconc$'3hairs',alldataair.totalconc$'12hairs')
+print("Air: 3-hair vs 12-hair")
+print(model.air312)
+model.air318<-t.test(alldataair.totalconc$'3hairs',alldataair.totalconc$'18hairs')
+print("Air: 3-hair vs 18-hair")
+print(model.air318)
+model.air325<-t.test(alldataair.totalconc$'3hairs',alldataair.totalconc$'25hairs')
+print("Air: 3-hair vs 25-hair")
+print(model.air325)
+model.air512<-t.test(alldataair.totalconc$'5hairs',alldataair.totalconc$'12hairs')
+print("Air: 5-hair vs 12-hair")
+print(model.air512)
+model.air518<-t.test(alldataair.totalconc$'5hairs',alldataair.totalconc$'18hairs')
+print("Air: 5-hair vs 18-hair")
+print(model.air518)
+model.air525<-t.test(alldataair.totalconc$'5hairs',alldataair.totalconc$'25hairs')
+print("Air: 5-hair vs 25-hair")
+print(model.air525)
+model.air1218<-t.test(alldataair.totalconc$'12hairs',alldataair.totalconc$'18hairs')
+print("Air: 12-hair vs 18-hair")
+print(model.air1218)
+model.air1225<-t.test(alldataair.totalconc$'12hairs',alldataair.totalconc$'25hairs')
+print("Air: 12-hair vs 25-hair")
+print(model.air1225)
+model.air1825<-t.test(alldataair.totalconc$'18hairs',alldataair.totalconc$'25hairs')
+print("Air: 18-hair vs 25-hair")
+print(model.air1825)
 ```
 
 Here we can see that in water, it's slightly better to have more hairs, and in some cases, a lot better. The 3-hair array captures significantly less odor than the 12-hair array ($t = `r signif(model.water312$statistic,digits=3)`$, $p = `r signif(model.water312$p.value,digits=1)`$), the 18-hair array ($t = `r signif(model.water318$statistic,digits=3)`$, $p = `r signif(model.water318$p.value,digits=1)`$), and the 25-hair array ($t = `r signif(model.water325$statistic,digits=3)`$, $p = `r signif(model.water325$p.value, digits=1)`$). The odor captured by the 18-hair and 25-hair arrays was not different from each other ($t = `r signif(model.water1825$statistic,digits=3)`$, $p = `r signif(model.water1825$p.value,digits=1)`$).
@@ -241,17 +311,20 @@ air.angle <- ggplot(alldataairconc.melted, aes(angle, value, fill = variable)) +
             theme_bw() + theme(legend.position = "none")
 
 #png(filename = "three-parameters.png", height = 10, width = 8.5, unit="in",res=600)
-plot_grid(leg.water, leg.air, water.gap, air.gap, water.Re, air.Re, water.angle, air.angle,
-          nrow = 4,
-          labels=c("Water", "Air"), 
-          label_x = c(0.45,0.45), 
-          label_y = c(1, 1),
-          rel_heights = c(0.75,2,2,2),rel_widths = c(1,1))
+#plot_grid(leg.water, leg.air, water.gap, air.gap, water.Re, air.Re, water.angle, air.angle,
+#          nrow = 4,
+#          labels=c("Water", "Air"), 
+#          label_x = c(0.45,0.45), 
+#          label_y = c(1, 1),
+#          rel_heights = c(0.75,2,2,2),rel_widths = c(1,1))
 #dev.off()
 
 #png(filename = "three-parameters.png", height = 6, width = 8.5, unit="in",res=600)
 plot_grid(water.gap,  water.Re, water.angle, air.gap, air.Re,  air.angle,
           nrow = 2)
+#dev.off()
+#png(filename = "legend.png", height = 3, width=6, unit="in", res=600)
+#plot_grid(leg.air,leg.water)
 #dev.off()
 ```
 
@@ -264,19 +337,33 @@ alldatarowwater.melted<-melt(alldatarow.water,id.vars = c("angle","gap","Re","ar
 
 allrows.water<-ggplot(alldatarowwater.melted,aes(variable,value,fill=array)) + 
   #geom_violin() + 
-  geom_jitter(size=1.5, color = "gray30", pch=21)+
+  geom_jitter(size=2.5, color = "gray30", pch=21)+
   xlab("") + ylab("Conc captured per row")+ 
-  scale_fill_viridis(discrete=TRUE)+theme_bw() + theme(legend.position = "top")
+  scale_fill_viridis(discrete=TRUE)+theme_bw() + theme(legend.position = "right")
+#leg.water <- get_legend(allrows.water)
+#allrows.water<-ggplot(alldatarowwater.melted,aes(variable,value,fill=array)) + 
+  #geom_violin() + 
+#  geom_jitter(size=1.5, color = "gray30", pch=21)+
+#  xlab("") + ylab("Conc captured per row")+ 
+#  scale_fill_viridis(discrete=TRUE)+theme_bw() + theme(legend.position = "none")
+
 allrows.air<-ggplot(alldatarowair.melted,aes(variable,value,fill=array)) + 
   #geom_violin() + 
-  geom_jitter(size=1.5, color = "gray30", pch=21)+
+  geom_jitter(size=2.5, color = "gray30", pch=21)+
   xlab("") + ylab("Conc captured per row") + scale_x_discrete(position="top") +
-  scale_fill_viridis(discrete=TRUE, option="C")+theme_bw() + theme(legend.position = "top")
-#png(file = "jiggerrow.png", height = 3.75, width = 8.4, unit = "in", res = 500)
+  scale_fill_viridis(discrete=TRUE, option="C")+theme_bw() + theme(legend.position = "right")
+#leg.air <- get_legend(allrows.air)
+#allrows.air<-ggplot(alldatarowair.melted,aes(variable,value,fill=array)) + 
+  #geom_violin() + 
+#  geom_jitter(size=1.5, color = "gray30", pch=21)+
+#  xlab("") + ylab("Conc captured per row") + scale_x_discrete(position="top") +
+#  scale_fill_viridis(discrete=TRUE, option="C")+theme_bw() + theme(legend.position = "none")
+
+#png(file = "jiggerrow.png", height = 3.75, width = 9.4, unit = "in", res = 500)
 plot_grid(allrows.water,allrows.air)
 #dev.off()
-#png(filename="legend.png")
-plot_grid(leg.air,leg.water)
+#png(filename="legend.png", height = 4, width = 6, unit = "in", res = 600)
+#plot_grid(leg.air,leg.water,nrow=2)
 ```
 
 
@@ -448,22 +535,22 @@ Plot angle against value:
 # fig.height=4.5, fig.width=8.5} 
 #, fig.height=5.5, fig.width=4.25}
 row1water <- ggplot(alldatarow.water, aes(angle, row1, fill = array)) +
-  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  geom_point(size = 2.75, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", discrete = TRUE) + 
   xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 200)) +
   theme_bw() + theme(legend.position = "none")
 row2water <- ggplot(alldatarow.water, aes(angle, row2, fill = array)) +
-  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  geom_point(size = 2.75, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", discrete = TRUE) + 
   xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
   theme_bw() + theme(legend.position = "none")
 row3water <- ggplot(alldatarow.water, aes(angle, row3, fill = array)) +
-  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  geom_point(size = 2.75, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", discrete = TRUE) + 
   xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
   theme_bw() + theme(legend.position = "none")
 row4water <- ggplot(alldatarow.water, aes(angle, row4, fill = array)) +
-  geom_point(size = 2, pch = 21, color = "gray30") + 
+  geom_point(size = 2.75, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", discrete = TRUE) + 
   xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
   theme_bw() + theme(legend.position = "none")
@@ -473,28 +560,28 @@ row5water <- ggplot(alldatarow.water, aes(angle, row5, fill = array)) +
   theme_bw() + theme(legend.position = "bottom")
 leg.water <- get_legend(row5water)
 row5water <- ggplot(alldatarow.water, aes(angle, row5, fill = array)) +
-  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  geom_point(size = 2.75, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", discrete = TRUE) + 
   xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 200)) + 
   theme_bw() + theme(legend.position = "none")
 
 row1air <- ggplot(alldatarow.air, aes(angle, row1, fill = array)) +
-  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  geom_point(size = 2.75, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
   xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 30000)) +
   theme_bw() + theme(legend.position = "none")
 row2air <- ggplot(alldatarow.air, aes(angle, row2, fill = array)) +
-  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  geom_point(size = 2.75, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
   xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
   theme_bw() + theme(legend.position = "none")
 row3air <- ggplot(alldatarow.air, aes(angle, row3, fill = array)) +
-  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  geom_point(size = 2.75, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
   xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
   theme_bw() + theme(legend.position = "none")
 row4air <- ggplot(alldatarow.air, aes(angle, row4, fill = array)) +
-  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  geom_point(size = 2.75, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
   xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
   theme_bw() + theme(legend.position = "none")
@@ -505,31 +592,31 @@ row5air <- ggplot(alldatarow.air, aes(angle, row5, fill  = array)) +
   theme_bw() + theme(legend.position = "bottom")
 leg.air <- get_legend(row5air)
 row5air <- ggplot(alldatarow.air, aes(angle, row5, fill = array)) +
-  geom_point(size = 2.5, pch = 21, color = "gray30") + 
+  geom_point(size = 2.75, pch = 21, color = "gray30") + 
   scale_fill_viridis(name = "Array", option = "C", discrete = TRUE) + 
   xlab("Angle") + ylab("Conc captured per row") + ylim(c(0, 30000)) + 
   theme_bw() + theme(legend.position = "none")
 
-plot_grid(leg.water, leg.air,
-          row1water, row1air, row2water, row2air, row3water, row3air, 
-          row4water, row4air, row5water, row5air, 
-          nrow = 6,  rel_heights = c(0.75,2,2,2,2,2),
-          labels=c("Water", "Air",
-                             "row 1", " ",
-                             "row 2", " ",
-                             "row 3", " ",
-                             "row 4", " ",
-                             "row 5", " "), 
-          label_x = c(0.45,0.45,0,0,0,0,0,0,0,0,0,0), 
-          label_y = c(1.1, 1.1))
+#plot_grid(leg.water, leg.air,
+ #         row1water, row1air, row2water, row2air, row3water, row3air, 
+#          row4water, row4air, row5water, row5air, 
+#          nrow = 6,  rel_heights = c(0.75,2,2,2,2,2))#,
+          #labels=c("Water", "Air",
+          #                   "row 1", " ",
+          #                   "row 2", " ",
+          #                   "row 3", " ",
+          #                   "row 4", " ",
+          #                   "row 5", " "), 
+          #label_x = c(0.45,0.45,0,0,0,0,0,0,0,0,0,0), 
+          #label_y = c(1.1, 1.1))
 #png(filename="angle-rows.png", width=8.5, height=4.5, unit="in", res=600)
 #plot_grid(row1water, row2water, row3water, row4water, row5water, leg.water,
 #          row1air,  row2air, row3air, row4air, row5air, leg.air,  
 #          nrow=2, rel_widths = c(1,1,1,1,1,0.65))
 #dev.off()
 #png(filename="angle-rows.png", width=8.5*0.5, height=9.5, unit="in", res=600)
-#plot_grid(row1air,row2air,row3air,row4air,row5air,nrow = 5, rel_heights = c(1,1,1,1,1))
-plot_grid(row1water,row2water,row3water,row4water,row5water,nrow = 5, rel_heights = c(1,1,1,1,1))
+plot_grid(row1air,row2air,row3air,row4air,row5air,nrow = 5, rel_heights = c(1,1,1,1,1))
+#plot_grid(row1water,row2water,row3water,row4water,row5water,nrow = 5, rel_heights = c(1,1,1,1,1))
 #dev.off()
 ```
 
