@@ -24,11 +24,14 @@ if (nohairs == 5) {
 #### Defines function ####
 
 generateLineout <- function(starthair, endhair, startrun, endrun){
-  filename2 <- paste("./data/lineout-files/lineout_h", starthair, "-h", endhair, ".txt", sep = "")   # Defines file name
+  filename2 <- paste("./data/lineout-files/lineout_h", starthair, "-h", 
+                     endhair, ".txt", sep = "")   # Defines file name
   if(file.exists(filename2)) file.remove(filename2)  # Deletes file with that name if it exists
   for (p in startrun:endrun){
-    hair.data <- read.csv(paste("./data/csv-files/",nohairs,"hair_files/hairs", p, ".csv", sep = ""))
-    l <- sqrt((hair.data[2, starthair + 1] - hair.data[2, endhair + 1])^2 + (hair.data[3, starthair + 1] - hair.data[3, endhair + 1])^2)
+    hair.data <- read.csv(paste("./data/csv-files/", nohairs, "hair_files/hairs", p, 
+                                ".csv", sep = ""))
+    l <- sqrt((hair.data[2, starthair + 1] - hair.data[2, endhair + 1])^2 + 
+                (hair.data[3, starthair + 1] - hair.data[3, endhair + 1])^2)
     cat(c(as.character(p),
           as.character(hair.data[2, starthair + 1]), as.character(hair.data[3, starthair + 1]),
           as.character(hair.data[2, endhair + 1]), as.character(hair.data[3, endhair + 1]),

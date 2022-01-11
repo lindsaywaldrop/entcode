@@ -12,18 +12,6 @@
 
 #### Loads required packages ####
 
-packages <- c("pracma", "useful", "data.table")
-
-package.check <- lapply(
-  packages,
-  FUN <- function(x) {
-    if (!require(x, character.only = TRUE)) {
-      install.packages(x, dependencies = TRUE, repos='http://cran.us.r-project.org')
-      library(x, character.only = TRUE)
-    }
-  }
-)
-
 plotit <- 0
 # plot the hairs? yes = 1, no = 0
 startrun <- 1
@@ -32,7 +20,7 @@ nohairs <- 12  # 2 row: 7; 3 row: 12; 4 row: 18; 5 row: 25
 
 mainDir1 <- "./data/vertex-files"
 mainDir2 <- "./data/csv-files"
-subDir1 <- paste(nohairs,"hair_files",sep="")
+subDir1 <- paste(nohairs, "hair_files", sep = "")
 dir.create(file.path(mainDir1, subDir1), showWarnings = FALSE)
 dir.create(file.path(mainDir2, subDir1), showWarnings = FALSE)
 
@@ -58,6 +46,7 @@ circle <- function(center, radius, L, dx){
   circ <- data.frame(X, Y)
   return(circ)
 }
+
 plotahair <- function(hairxCenterx, hairxCentery, hdia, L, dx, no, plotit){
   h1 <- circle(c(hairxCenterx, hairxCentery), 0.5 * hdia, L, dx)
   if(plotit == 1){
@@ -172,7 +161,8 @@ makehairs <- function( th, GtD, number, nohairs, plotit = 0){
   ant <- circle(c(0, 0), 0.5 * adia, L, dx);  # Produces points that define antennule
   aN <- size(ant$X, 2)                   # Records number of points inside antennule
   if(plotit == 1){
-    plot(0, 0, xlim = c(-0.1, 0.1), ylim = c(-0.1,0.1), pch = 19, cex = 4.5) #Plots antennule
+    plot(0, 0, xlim = c(-0.1, 0.1), ylim = c(-0.1, 0.1), 
+         pch = 19, cex = 4.5) #Plots antennule
     text(0, 0, labels = "Ant", col = "red")
   }
   
@@ -189,7 +179,8 @@ makehairs <- function( th, GtD, number, nohairs, plotit = 0){
   
   totalN <- aN + nohairs * hN  # Calculates total number of points (first line of vertex file)
   
-  filename <- paste("./data/vertex-files/",nohairs,"hair_files/hairs", number, ".vertex", sep = "")   # Defines file name
+  filename <- paste("./data/vertex-files/", nohairs, "hair_files/hairs", 
+                    number, ".vertex", sep = "")   # Defines file name
   if(file.exists(filename)) file.remove(filename)  # Deletes file with that name if it exists
   cat(as.character(totalN), sep = "\n", file = filename, append = FALSE)
   # new code with fwrite in data.table package
@@ -207,13 +198,15 @@ makehairs <- function( th, GtD, number, nohairs, plotit = 0){
     allhairs <- cbind(allhairs, "h" = c(hN, hairx, hairy))
   }
   
-  fwrite(allhairs, file = paste("./data/csv-files/",nohairs,"hair_files/hairs", number, ".csv", sep = ""), row.names = FALSE)
+  fwrite(allhairs, file = paste("./data/csv-files/", nohairs, 
+                                "hair_files/hairs", number, ".csv", sep = ""), 
+         row.names = FALSE)
   
 }
 
 ##### Input parameter definitions ####
 
-parameters <- read.table(paste("./data/parameters/allpara_",endrun,".txt",sep = ""))
+parameters <- read.table(paste("./data/parameters/allpara_", endrun, ".txt", sep = ""))
 names(parameters) <- c("angle", "gap", "Re")
 
 for (j in startrun:endrun){

@@ -13,12 +13,12 @@ library(scatterplot3d)
 # Clears any previous data
 rm(list=ls())
 
-maxconc_air<-0.0806  # Calculate: 0.1/ylength from init data file
-maxconc_water<-3.1282 # Maximum concentration in simulations
-dx_air<-0.0024  # Look up init file
-dx_water<-6.1035e-04  # Look up in init file
-hairdia<-0.01 # m, hair diameter 
-simdur<-20 #s, duration of concentration capture simulation
+maxconc_air <- 0.0806  # Calculate: 0.1/ylength from init data file
+maxconc_water <- 3.1282 # Maximum concentration in simulations
+dx_air <- 0.0024  # Look up init file
+dx_water <- 6.1035e-04  # Look up in init file
+hairdia <- 0.01 # m, hair diameter 
+simdur <- 20 #s, duration of concentration capture simulation
 
 setwd("/Users/Bosque/Dropbox/EntIBAMR/results/")	# Sets directory to main
 Umean<-read.csv("Umean1233-2018-03-27.csv",header=FALSE,skip=1)

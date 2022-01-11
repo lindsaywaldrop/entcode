@@ -39,16 +39,16 @@ for (j in 1:n){		# Main loop over simulations
     dirname2 <- paste("./results/visit/", rundir, "sim", j, "/hairline", 
                       arrayrow, "/", sep = "") # Construct directory name
     data1 <- read.table(paste(dirname2, "hairline0003.curve", sep = ""), 
-                        header=FALSE, sep = "")	# Loads final time-step data
+                        header = FALSE, sep = "")	# Loads final time-step data
 	  rowwidth <- data1$V1[sample + 1] - data1$V1[1]
-	  samplewidth <- rowwidth/sample # Calculates real width between sample points
+	  samplewidth <- rowwidth / sample # Calculates real width between sample points
 	  leak_bot <- (speed) * rowwidth	# Calculates bottom of leakiness ratio
 	  data2 <- rep(0, length(data1$V1))		# Allocates space for leakiness calculation
 	  
 	  for (i in 1:sample+1){	# Loop that cycles through each sampled point in a simulation
 	    data2[i] <- (data1$V2[i] * samplewidth)	# Calculates top of leakiness for each sampled point
 	  }
-	  leakiness[j,arrayrow] <- sum(data2) / leak_bot	# Calculates leakiness value for each simulation
+	  leakiness[j, arrayrow] <- sum(data2) / leak_bot	# Calculates leakiness value for each simulation
 	  rm(data2)
   } # End loop over rows
 } # End main loop
@@ -62,10 +62,10 @@ for (i in 1:rowno) leaknames[i] <- paste("row", i, sep = "") # Assigns name for 
 names(leakiness2) <- c(parameter_names, leaknames) # Assigns all names to data frame
 
 #### Checking and Saving Data ####
-complete<-as.numeric(sum(is.na(leakiness2)))
+complete <- as.numeric(sum(is.na(leakiness2)))
 message("~.*^*~Completeness check~*^*~.~\n",
         "Number of NAs: ",complete)
-if (complete==0){
+if (complete == 0){
   message("Set complete. Saving now!")
   write.table(leakiness2, file = 
                  paste("./results/r-csv-files/", nohairs, "hair_results/leakiness_", 

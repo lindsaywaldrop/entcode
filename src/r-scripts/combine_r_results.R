@@ -15,7 +15,7 @@ source("src/r-scripts/datahandling_functions.R")
 #### Actions ####
 
 # 3-hair array
-leakinessdata_3 <- loadnshapedata(n,"leakiness",3,"2020-12-06")
+leakinessdata_3 <- loadnshapedata(n, "leakiness",3, "2020-12-06")
 waterdata_3 <- loadnshapedata(n, "totalconc_water", 3, "2020-12-08")
 airdata_3 <- loadnshapedata(n, "totalconc_air", 3, "2020-12-08")
 

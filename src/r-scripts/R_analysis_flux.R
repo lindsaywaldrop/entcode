@@ -17,18 +17,20 @@ dist <- 0.002          # diameter of each hair, m
 
 #### Sets up directories ####
 mainDir1 <- "./results/r-csv-files"
-subDir1 <- paste(nohairs,"hair_results",sep="")
+subDir1 <- paste(nohairs, "hair_results", sep = "")
 dir.create(file.path(mainDir1, subDir1), showWarnings = FALSE)
 
 # Loading parameter file
-parameters <- read.table(paste("./data/parameters/allpara_", n, ".txt", sep = ""), sep = "\t")
+parameters <- read.table(paste("./data/parameters/allpara_", n, ".txt", sep = ""), 
+                         sep = "\t")
 parameter_names <- c("angle", "gap", "Re")
+
 # Allocating space
 flux <- matrix(data = NA, nrow = n, ncol = nohairs)
 norm <- data.frame(x = c(1, 0, -1, 0), y = c(0, -1, 0, 1))
 
 for (j in 1:n){		# Main loop over simulations
-	print(paste("Simulation: ",j,sep=""))					# Prints simulation number 
+	print(paste("Simulation: ", j, sep = ""))					# Prints simulation number 
   dirname <- paste("./results/visit/", rundir, "sim", j, "/hairline_flux/", 
                     sep = "") # Construct directory name
   
@@ -50,7 +52,8 @@ for (j in 1:n){		# Main loop over simulations
 	                   sum(Ux.side2$V2 * norm$x[3]) + sum(Uy.side2$V2 * norm$y[3]), 
 	                   sum(Ux.side3$V2 * norm$x[4]) + sum(Uy.side3$V2 * norm$y[4])) * (2 * 4 * dist)
 	  # Removes variables
-	  rm(Ux,Uy,Ux.side0,Uy.side0,Ux.side1,Uy.side1,Ux.side2,Uy.side2,Ux.side3,Uy.side3)
+	  rm(Ux, Uy, Ux.side0, Uy.side0, Ux.side1, Uy.side1, Ux.side2, Uy.side2, 
+	     Ux.side3, Uy.side3)
 	} # End loop over hairs
 } # End main loop
 
@@ -61,13 +64,15 @@ flux2 <- data.frame(parameters, flux)
 names(flux2) <- c(parameter_names, fluxnames)
 
 #### Checking and Saving Data ####
-complete<-as.numeric(sum(is.na(flux2)))
+complete <- as.numeric(sum(is.na(flux2)))
 message("~.*^*~Completeness check~*^*~.~\n",
-        "Number of NAs: ",complete)
-if (complete==0){
+        "Number of NAs: ", complete)
+if (complete == 0){
   message("Set complete. Saving now!")
-  write.table(flux2, file = paste("./results/r-csv-files/", nohairs, "hair_results/flux_", n,
-                                "_", Sys.Date(), ".csv", sep = ""), sep = ",", row.names = FALSE)
+  write.table(flux2, file = paste("./results/r-csv-files/", nohairs, 
+                                  "hair_results/flux_", n, "_", Sys.Date(), ".csv", 
+                                  sep = ""), 
+              sep = ",", row.names = FALSE)
 } else {
   message("Set not complete, did not save")
 }
