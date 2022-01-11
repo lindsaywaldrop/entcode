@@ -12,25 +12,26 @@ n <- 165				  # number of simulations to analyze
 
 #### Sets up directories ####
 mainDir1 <- "./results/r-csv-files"
-subDir1 <- paste(nohairs,"hair_results",sep="")
+subDir1 <- paste(nohairs, "hair_results", sep = "")
 dir.create(file.path(mainDir1, subDir1), showWarnings = FALSE)
 
 # Loading parameter file
-parameters <- read.table(paste("./data/parameters/allpara_", n, ".txt", sep = ""), sep = "\t")
+parameters <- read.table(paste("./data/parameters/allpara_", n, ".txt", sep = ""), 
+                         sep = "\t")
 parameter_names <- c("angle", "gap", "Re")
 
 # Allocates space
-Umean<-matrix(data=NA,nrow=n,ncol=nohairs)
+Umean <- matrix(data = NA, nrow = n, ncol = nohairs)
 
 for (j in 1:n){		# Main loop over simulations
-	print(paste("Simulation: ",j,sep=""))					# Prints simulation number 
+	print(paste("Simulation: ", j, sep = ""))					# Prints simulation number 
 	for (i in 1:nohairs){
 		# Loads Umean data
 		data <- read.table(paste("./results/visit/", nohairs, "hair_runs/sim", j, 
 		                         "/Umean/Umag_hair", i, ".curve", sep = ""), 
 		                   header = FALSE, sep = " ")	
-		k<-as.numeric(length(data$V2))
-		Umean[j,i]=data$V2[k]
+		k <- as.numeric(length(data$V2))
+		Umean[j, i] <- data$V2[k]
 		}
 }
 
@@ -41,10 +42,10 @@ for (i in 1:nohairs) Umeannames[i] <- paste("hair", i, sep = "") # Assigns name 
 names(Umean2) <- c(parameter_names, Umeannames) # Assigns all names to data frame
 
 #### Checking and Saving Data ####
-complete<-as.numeric(sum(is.na(Umean2)))
+complete <- as.numeric(sum(is.na(Umean2)))
 message("~.*^*~Completeness check~*^*~.~\n",
-        "Number of NAs: ",complete)
-if (complete==0){
+        "Number of NAs: ", complete)
+if (complete == 0){
   message("Set complete. Saving now!")
   write.table(Umean2, file = paste("./results/r-csv-files/", nohairs, 
                                  "hair_results/Umean_", n, "_", Sys.Date(), 
