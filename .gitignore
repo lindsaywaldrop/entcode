@@ -17,3 +17,6 @@ analysis_code/visit*
 .Rproj.user
 src/matlab/matlab-tytell/.hg/*
 *visitlog*.py
+results/ibamr*
+results/odor*
+results/visit*
