@@ -33,7 +33,12 @@ reordercols<- function(data,nohairs,datatype){
 }
 
 loadnshapedata<-function(n,datatype,nohairs,date) {
-  data <- read.csv(paste("../results/r-csv-files/",nohairs,"hair_results/", datatype, "_", n, "_", date, ".csv", sep = ""))
+  if (file.exists(paste("../results/r-csv-files/",nohairs,"hair_results/", datatype, "_", n, "_", date, ".csv", sep = ""))){
+    data <- read.csv(paste("../results/r-csv-files/",nohairs,"hair_results/", datatype, "_", n, "_", date, ".csv", sep = ""))
+  } else {
+    data <- read.csv(paste("results/r-csv-files/",nohairs,"hair_results/", datatype, "_", n, "_", date, ".csv", sep = ""))
+  }
+  
   columns <- colnames(data)
   data2 <- data.frame(data, rep(paste(nohairs, "hair", sep = ""), length = n))
   colnames(data2) <- c(columns, "array")
