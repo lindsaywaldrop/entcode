@@ -5,6 +5,7 @@
 *.DS_Store
 *.mat
 *.csv
+*.png
 *viz_IB2d*/
 data/input2d-files/input2d*
 data/vertex-files/hairs*.vertex
