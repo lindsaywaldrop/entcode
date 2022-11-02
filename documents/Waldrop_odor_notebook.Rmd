@@ -54,7 +54,7 @@ alldatarow.air<-stitch.rows(air.data,list.hairs)
 
 # Loads plotting data
 data.3hair <- plot.hairs(3)
-data.5hair <- plot.hairs(5) 
+#data.5hair <- plot.hairs(5) 
 data.7hair <- plot.hairs(7) 
 data.12hair <- plot.hairs(12) 
 data.18hair <- plot.hairs(18) 

@@ -11,12 +11,13 @@
 # - n
 
 #### Loads required packages ####
-
-plotit <- 0
+library(pracma)
+library(useful)
+plotit <- 1
 # plot the hairs? yes = 1, no = 0
 startrun <- 1
-endrun <- 165
-nohairs <- 12  # 2 row: 7; 3 row: 12; 4 row: 18; 5 row: 25
+endrun <- 1
+nohairs <- 25  # 2 row: 7; 3 row: 12; 4 row: 18; 5 row: 25
 
 mainDir1 <- "./data/vertex-files"
 mainDir2 <- "./data/csv-files"
@@ -47,20 +48,23 @@ circle <- function(center, radius, L, dx){
   return(circ)
 }
 
-plotahair <- function(hairxCenterx, hairxCentery, hdia, L, dx, no, plotit){
+plotahair <- function(domain, hairxCenterx, hairxCentery, hdia, L, dx, no, plotit){
   h1 <- circle(c(hairxCenterx, hairxCentery), 0.5 * hdia, L, dx)
   if(plotit == 1){
-    points(hairxCenterx, hairxCentery, pch = 19, cex = 2.5)
+    points(h1$X, h1$Y, pch=19)
+    #points(hairxCenterx, hairxCentery, pch = 19, cex = 2.5)
     text(hairxCenterx, hairxCentery, labels = no, col = "red")
   }
   return(h1)
 }
-makehairs <- function( th, GtD, number, nohairs, plotit = 0){
+
+makehairs <- function(th, GtD, AtD, hdist, number, nohairs, plotit = 0){
   
   #th=0
   #nohairs <- 25
   np <- 3
   L <- 2.0         # length of computational domain (m)
+  domain <- list(x=c(-0.5*L, 0.5*L), y = c(-0.5*L, 0.5*L))
   N <- 4096        # number of Cartesian grid meshwidths at the finest level of the AMR grid
   dx <- (2.0 * L) / (N * np)  # Cartesian mesh width (m)
   # Notes ~ Rule of thumb: 2 boundary points per fluid grid point. 
@@ -71,11 +75,13 @@ makehairs <- function( th, GtD, number, nohairs, plotit = 0){
   #hdia <- (3/8)*0.01     # Diameter of hair
   #adia <- 10*hdia     # Diameter of flagellum
   hdia <- 0.002     # Diameter of hair
-  adia <- 0.1     # Diameter of flagellum
+  adia <- AtD*hdia
+  #adia <- 0.1     # Diameter of flagellum
+  
   
   th2 <- (th / 180) * pi      # Angle off positive x-axis in radians
   #GtD <- 5.0      # Gap width to diameter ratio
-  dist <- 2 * hdia     # Distance between antennule and hair 
+  dist <- hdist * hdia     # Distance between antennule and hair 
   mindGap <- (0.5 * adia) + (0.5 * hdia) + dist  # Calculate distance between hair centers
   width <- (GtD * hdia) + hdia
   
@@ -161,15 +167,17 @@ makehairs <- function( th, GtD, number, nohairs, plotit = 0){
   ant <- circle(c(0, 0), 0.5 * adia, L, dx);  # Produces points that define antennule
   aN <- size(ant$X, 2)                   # Records number of points inside antennule
   if(plotit == 1){
-    plot(0, 0, xlim = c(-0.1, 0.1), ylim = c(-0.1, 0.1), 
-         pch = 19, cex = 4.5) #Plots antennule
+    plot(ant$X, ant$Y, col = "blue", type = "p", xlim = domain$x, ylim = domain$y, 
+         pch = 19)
+    #plot(0, 0, xlim = domain$x, ylim = domain$y, 
+    #     pch = 19, cex = 4.5) #Plots antennule
     text(0, 0, labels = "Ant", col = "red")
   }
   
   for (i in 1:nohairs){
     hairx <- eval(as.name(paste("hair", i, "Centerx", sep = "")))
     hairy <- eval(as.name(paste("hair", i, "Centery", sep = "")))
-    h <- plotahair(hairx, hairy, hdia, L, dx, i, plotit)
+    h <- plotahair(domain, hairx, hairy, hdia, L, dx, i, plotit)
     assign(paste("h", i, sep = ""), h)
   }
   hN <- size(h$X, 2)
@@ -206,12 +214,14 @@ makehairs <- function( th, GtD, number, nohairs, plotit = 0){
 
 ##### Input parameter definitions ####
 
-parameters <- read.table(paste("./data/parameters/allpara_", endrun, ".txt", sep = ""))
-names(parameters) <- c("angle", "gap", "Re")
+#parameters <- read.table(paste("./data/parameters/allpara_", endrun, ".txt", sep = ""))
+parameters <- data.frame(0, 50, 50, 10, 5)
+names(parameters) <- c("angle", "gap", "ant", "dist", "Re")
 
 for (j in startrun:endrun){
   #ptm <- proc.time()
-  makehairs(parameters$angle[j], parameters$gap[j], j, nohairs, plotit)
+  makehairs(parameters$angle[j], parameters$gap[j], parameters$ant[j], parameters$dist[j], 
+            j, nohairs, plotit)
   #t <- (proc.time() - ptm)
   #message(t)
 }
