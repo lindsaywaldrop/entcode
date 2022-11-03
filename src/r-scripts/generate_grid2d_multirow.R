@@ -13,11 +13,11 @@
 #### Loads required packages ####
 library(pracma)
 library(useful)
-plotit <- 1
+plotit <- 0
 # plot the hairs? yes = 1, no = 0
 startrun <- 1
-endrun <- 1
-nohairs <- 25  # 2 row: 7; 3 row: 12; 4 row: 18; 5 row: 25
+endrun <- 10
+nohairs <- 3  # 2 row: 7; 3 row: 12; 4 row: 18; 5 row: 25
 
 mainDir1 <- "./data/vertex-files"
 mainDir2 <- "./data/csv-files"
@@ -51,14 +51,14 @@ circle <- function(center, radius, L, dx){
 plotahair <- function(domain, hairxCenterx, hairxCentery, hdia, L, dx, no, plotit){
   h1 <- circle(c(hairxCenterx, hairxCentery), 0.5 * hdia, L, dx)
   if(plotit == 1){
-    points(h1$X, h1$Y, pch=19)
+    points(h1$X, h1$Y, pch='.')
     #points(hairxCenterx, hairxCentery, pch = 19, cex = 2.5)
     text(hairxCenterx, hairxCentery, labels = no, col = "red")
   }
   return(h1)
 }
 
-makehairs <- function(th, GtD, AtD, hdist, number, nohairs, plotit = 0){
+makehairs <- function(th, GtD, AtD, dist, number, nohairs, plotit = 0){
   
   #th=0
   #nohairs <- 25
@@ -81,7 +81,7 @@ makehairs <- function(th, GtD, AtD, hdist, number, nohairs, plotit = 0){
   
   th2 <- (th / 180) * pi      # Angle off positive x-axis in radians
   #GtD <- 5.0      # Gap width to diameter ratio
-  dist <- hdist * hdia     # Distance between antennule and hair 
+  #dist <- hdist * hdia     # Distance between antennule and hair 
   mindGap <- (0.5 * adia) + (0.5 * hdia) + dist  # Calculate distance between hair centers
   width <- (GtD * hdia) + hdia
   
@@ -167,8 +167,8 @@ makehairs <- function(th, GtD, AtD, hdist, number, nohairs, plotit = 0){
   ant <- circle(c(0, 0), 0.5 * adia, L, dx);  # Produces points that define antennule
   aN <- size(ant$X, 2)                   # Records number of points inside antennule
   if(plotit == 1){
-    plot(ant$X, ant$Y, col = "blue", type = "p", xlim = domain$x, ylim = domain$y, 
-         pch = 19)
+    plot(ant$X, ant$Y, col = "blue", type = "p", xlim = c(-(adia+width+2*hdia),adia+width+2*hdia), ylim = c(-(adia+width+hdia), adia+width+hdia), 
+         pch = '.', main = paste("Simulation", number))
     #plot(0, 0, xlim = domain$x, ylim = domain$y, 
     #     pch = 19, cex = 4.5) #Plots antennule
     text(0, 0, labels = "Ant", col = "red")
@@ -214,9 +214,8 @@ makehairs <- function(th, GtD, AtD, hdist, number, nohairs, plotit = 0){
 
 ##### Input parameter definitions ####
 
-#parameters <- read.table(paste("./data/parameters/allpara_", endrun, ".txt", sep = ""))
-parameters <- data.frame(0, 50, 50, 10, 5)
-names(parameters) <- c("angle", "gap", "ant", "dist", "Re")
+parameters <- read.table(paste("./data/parameters/data_uniform_2000.dat", sep = "\t"))
+names(parameters) <- c("angle", "gap", "ant", "dist", "re", "diff_coef", "stink_width", "init_conc")
 
 for (j in startrun:endrun){
   #ptm <- proc.time()

@@ -1,15 +1,14 @@
 #!/bin/bash
 
 WD=${1:?Provide a working directory}
-a=${2:?Provide a simulation set number}
 
 # Separate main parameter file into three files
 #cut -f 1 allpara_1233.txt > angle.txt
 #cut -f 2 allpara_1233.txt > gap.txt
-cut -f 3 "$WD"/data/parameters/allpara_${a}.txt > Re.txt
+cut -f 5 "$WD"/data/parameters/data_uniform_2000.txt > Re.txt
 
 # Count number of lines in files
-numlines=$(grep -c "^" "$WD"/data/parameters/allpara_${a}.txt)
+numlines=$(grep -c "^" "$WD"/data/parameters/data_uniform_2000.txt)
 
 # initialize variables
 #angle=0

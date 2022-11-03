@@ -1,8 +1,10 @@
 ######################################################################
 ## Here specify the location of the IBAMR source and the location
 ## where IBAMR has been built.
-IBAMR_SRC_DIR = /Users/waldrop/sfw/ibamr/IBAMR
-IBAMR_BUILD_DIR = /Users/waldrop/sfw/ibamr/ibamr-opt
+#IBAMR_SRC_DIR = /Users/waldrop/sfw/ibamr/IBAMR
+#IBAMR_BUILD_DIR = /Users/waldrop/sfw/ibamr/ibamr-opt
+IBAMR_SRC_DIR = /home/waldrop@chapman.edu/sfw/ibamr/IBAMR
+IBAMR_BUILD_DIR = /home/waldrop@chapman.edu/sfw/ibamr/ibamr-opt
 
 ######################################################################
 ## Include variables specific to the particular IBAMR build.
@@ -10,8 +12,8 @@ include $(IBAMR_BUILD_DIR)/config/make.inc
 
 ######################################################################
 ## Build the IB tester application.
-SOURCES = main.C update_target_point_positions.C update_target_point_positions.h RigidBodyKinematics.cpp
-OBJS = main.o update_target_point_positions.o RigidBodyKinematics.o
+SOURCES = main.C RigidBodyKinematics.cpp
+OBJS = main.o RigidBodyKinematics.o
 
 default:
 	@echo "make one of: main2d, main3d"

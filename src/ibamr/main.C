@@ -1,5 +1,5 @@
 // Config files
-#include <IBAMR_config.h>
+#include <ibamr/config.h>
 #include <IBTK_config.h>
 #include <SAMRAI_config.h>
 
@@ -26,7 +26,6 @@
 #include <ibtk/LData.h>
 
 // Headers for application specific operations.
-#include "update_target_point_positions.h"
 #include "RigidBodyKinematics.h"
 
 // Function prototypes
@@ -90,11 +89,13 @@ main(
         const bool dump_timer_data = app_initializer->dumpTimerData();
         const int timer_dump_interval = app_initializer->getTimerDumpInterval();
 
+        Pointer<Database> main_db = app_initializer->getComponentDatabase("Main");
+        
         // Create major algorithm and data objects that comprise the
         // application.  These objects are configured from the input database
         // and, if this is a restarted run, from the restart database.
         const int num_structures = input_db->getIntegerWithDefault("num_structures", 1);
-	Pointer<ConstraintIBMethod> ib_method_ops = new ConstraintIBMethod("ConstraintIBMethod", app_initializer->getComponentDatabase("ConstraintIBMethod"), num_structures);
+		Pointer<ConstraintIBMethod> ib_method_ops = new ConstraintIBMethod("ConstraintIBMethod", app_initializer->getComponentDatabase("ConstraintIBMethod"), num_structures);
         Pointer<INSHierarchyIntegrator> navier_stokes_integrator = new INSStaggeredHierarchyIntegrator("INSStaggeredHierarchyIntegrator", app_initializer->getComponentDatabase("INSStaggeredHierarchyIntegrator"));
         Pointer<IBHierarchyIntegrator> time_integrator = new IBExplicitHierarchyIntegrator("IBHierarchyIntegrator", app_initializer->getComponentDatabase("IBHierarchyIntegrator"), ib_method_ops, navier_stokes_integrator);
         Pointer<CartesianGridGeometry<NDIM> > grid_geometry = new CartesianGridGeometry<NDIM>("CartesianGeometry", app_initializer->getComponentDatabase("CartesianGeometry"));
@@ -103,6 +104,8 @@ main(
         Pointer<BergerRigoutsos<NDIM> > box_generator = new BergerRigoutsos<NDIM>();
         Pointer<LoadBalancer<NDIM> > load_balancer = new LoadBalancer<NDIM>("LoadBalancer", app_initializer->getComponentDatabase("LoadBalancer"));
         Pointer<GriddingAlgorithm<NDIM> > gridding_algorithm = new GriddingAlgorithm<NDIM>("GriddingAlgorithm", app_initializer->getComponentDatabase("GriddingAlgorithm"), error_detector, box_generator, load_balancer);
+
+	    const bool periodic_domain = grid_geometry->getPeriodicShift().min() > 0;
 
         // Configure the IB solver.
         Pointer<IBStandardInitializer> ib_initializer = new IBStandardInitializer("IBStandardInitializer", app_initializer->getComponentDatabase("IBStandardInitializer"));
@@ -122,7 +125,7 @@ main(
         }
 
         // Create Eulerian boundary condition specification objects (when necessary).
-        const bool periodic_domain = grid_geometry->getPeriodicShift().min() > 0;
+        //const bool periodic_domain = grid_geometry->getPeriodicShift().min() > 0;
         std::vector<RobinBcCoefStrategy<NDIM>*> u_bc_coefs(NDIM,static_cast<RobinBcCoefStrategy<NDIM>*>(NULL));
         if (!periodic_domain)
         {

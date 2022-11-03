@@ -1,7 +1,7 @@
 ---
-title: "entcode multiarray project -- pipeline"
+title: "entcode 3-hair master project -- pipeline"
 author: "Lindsay Waldrop"
-date: "9/24/2020"
+date: "`r Sys.Date()`"
 output: pdf_document
 ---
 
@@ -11,20 +11,33 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-This simulation and data analysis pipeline for the entcode multiarray project. It includes all the steps necessary to generate results through each step of the pipeline from cloning the project on Github to figures for publication. 
+The entcode 3-hair master project is a computational fluid dynamic simulation of odor capture by a chemosensory hair array consisting of three hairs and a supporting, non-chemosensory antenna. The simulations are in two dimensions, representing a cross-section of the array. The project consists of setup for 2,000 individual simulations, each representing a unique combination of the following parameters: 
+
+ * Angle of array to oncoming flow: 0 to 180 degrees
+ * Gap-to-hair-diameter ratio of the gaps between chemosensory hairs to their widths: 1 to 50
+ * Antenna-to-hair-diameter ratio of the diameter of a chemosensory hair to the diameter of the supporting antenna: 1 to 50
+ * Distance of the center hair from the antenna: 0.001 to 0.02 m
+ * Reynolds number: 0.1 to 10
+ * Odor diffusion coefficient: 1e-9 to 1e-4 m^2 s^-1
+ * Width of the initial odor stripe: 0.5 to 5 % of the domain width
+ * Initial odor concentration: 1e3 to 1e7 (no units)
+ 
+This simulation and data analysis pipeline for the entcode 3-hair master project. It includes all the steps necessary to generate results through each step of the pipeline from cloning the project on Github to figures for publication. 
 
 ## Overview of the Pipeline
 
 This pipeline takes the following inputs: 
 
- * IBAMR source code for rigid body constraint method. 
- * Generalized polynomial chaos (gPC) simulation set with n number of simulations (either 165, 681, or 1233) establishing parameter values for angle of array to flow, gap width to diameter ratio, and Reynolds number. 
+ * IBAMR source code for rigid-body constraint method. 
+ * MATLAB
+ * Deep neural network simulation set with 2,000 number of simulations establishing parameter values listed in the Intro section. 
 
 This pipeline produces the following outputs: 
 
  * IBAMR flow data
  * Calculated shear around hairs
  * Calculated leakiness through each row of the array
+ * Odor capture for the hair array.
 
 The pipeline has the following components:
 
