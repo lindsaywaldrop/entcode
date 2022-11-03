@@ -18,7 +18,7 @@ The entcode 3-hair master project is a computational fluid dynamic simulation of
  * Antenna-to-hair-diameter ratio of the diameter of a chemosensory hair to the diameter of the supporting antenna: 1 to 50
  * Distance of the center hair from the antenna: 0.001 to 0.02 m
  * Reynolds number: 0.1 to 10
- * Odor diffusion coefficient: 1e-9 to 1e-4 m^2 s^-1
+ * Odor diffusion coefficient: 1e-9 to 1e-4 m$^2$ s$^{-1}$
  * Width of the initial odor stripe: 0.5 to 5 % of the domain width
  * Initial odor concentration: 1e3 to 1e7 (no units)
  
