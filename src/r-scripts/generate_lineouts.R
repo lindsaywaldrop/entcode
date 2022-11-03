@@ -10,10 +10,10 @@
 # - quit()
 # - n
 
-nohairs <- 25  # 1 row: 5, 3 row: 12, 4 row: 18, 5 row: 25
+nohairs <- 3  # 1 row: 5, 3 row: 12, 4 row: 18, 5 row: 25
 
 startrun <- 1
-endrun <- 165
+endrun <- 2000
 
 if (nohairs == 5) {
   hairendpts <- data.frame(starthair = c(5), endhair = c(4))
