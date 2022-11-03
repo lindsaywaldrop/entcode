@@ -11,8 +11,8 @@ for j in `seq $startrun $endrun`;
 do
 
 echo Job ${j}.
-awk -v var="$j" 'NR==12 {$0="i="'"var"'""} 1' runhairs.job > temp/temp${j}.job
+awk -v var="$j" 'NR==12 {$0="i="'"var"'""} 1' runhairs.job > temp/tmp${j}.job
 cd temp/
-sbatch temp${j}.job
+sbatch tmp${j}.job
 cd ..
 done

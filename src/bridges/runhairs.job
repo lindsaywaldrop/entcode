@@ -3,7 +3,7 @@
 #SBATCH -t 12:00:00
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=16
-#SBATCH --mail-type=ALL
+#SBATCH --mail-type=END
 
 # echo commands to stdout
 set -x 
