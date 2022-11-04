@@ -79,10 +79,7 @@ calculate_leakiness <- function(rowno, run_dir, speed, sample, sim_no){
   return(leakiness)
 }
 
-check_completeness_save <- function(parameters, dat, nohairs, filename_base){
-  #### Combines parameters and data into data frame ####
-  parameter_names <- names(parameters)
-  dat2 <- data.frame(parameters, dat)  # Turns matrix into data frame
+create_hair_names <- function(nohairs, filename_base){
   Hair_names <- as.character(rep(0, nohairs)) # Allocates space for names 
   if(filename_base=="leakiness"){
     blep <- "row"
@@ -90,8 +87,11 @@ check_completeness_save <- function(parameters, dat, nohairs, filename_base){
     blep <- "hair"
   }
   for (i in 1:nohairs) Hair_names[i] <- paste(filename_base, blep, i, sep = "_") # Assigns name for each hair
-  names(dat2) <- c(parameter_names, Hair_names) # Assigns all names to data frame
-  
+  return(Hair_names)
+}
+
+check_completeness_save <- function(parameters, dat, nohairs, filename_base){
+  dat2 <- cbind(parameters, dat)
   #### Checking and Saving Data ####
   complete <- as.numeric(sum(is.na(dat2)))
   message("~.*^*~Completeness check~*^*~.~\n",
