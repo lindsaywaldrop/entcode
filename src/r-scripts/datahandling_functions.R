@@ -1,3 +1,169 @@
+
+calculate_maxshear <- function(nohairs, ignore, sim_no){
+  shear_hair <- rep(NA, nohairs)
+  for (hair in 1:nohairs){
+    dat <- read.table(paste("./results/visit/", nohairs, "hair_runs/sim", sim_no,
+                            "/shear/shear_hair", hair, ".curve", sep = ""), 
+                      header = FALSE, skip = 1)
+    len <- length(dat[, 1])
+    shear <- matrix(NA, nrow = (len - 1), ncol = 2)
+    shear[, 1] <- dat[2:len, 1]
+    for(ii in 2:(length(dat[, 1] - 1))){
+      shear[ii - 1, 2] <- (dat[ii, 2] - dat[ii - 1, 2])/(dat[ii, 1] - dat[ii - 1, 1])
+    }
+    shear <- shear[ignore:len - 1,]
+    shear_hair[hair] <- max(abs(shear[, 2]))
+  }
+  return(shear_hair)
+}
+
+calculate_flux <- function(nohairs, run_dir, dist, sim_num) {
+  dir_name <- paste("./results/visit/", run_dir, "sim", sim_num, "/hairline_flux/", 
+                    sep = "") # Construct directory name
+  flux <- rep(NA, nohairs)
+  blep <- data.frame(x = c(1, 0, -1, 0), y = c(0, -1, 0, 1))
+  for (hair in 1:nohairs){ # Loop over individual hairs to calculate flux
+    for (k in 0:3){
+      # Reads in square side velocity components Ux and Uy
+      # Sides: 0 - Top right to bottom right; 1 - Bottom right to bottom left; 
+      #        2 - Bottom left to top left;   3 - Top left to top right
+      Ux <- read.table(paste(dir_name, "flux_hair", hair, 
+                             "_Ux_side", k, ".curve", sep = ""), header = FALSE, sep = "")	
+      Uy <- read.table(paste(dir_name, "flux_hair", hair, 
+                             "_Uy_side", k, ".curve", sep = ""), header = FALSE, sep = "")	
+      assign(paste("Ux.side", k, sep = ""), Ux)
+      assign(paste("Uy.side", k, sep = ""), Uy)
+    }
+    # Calculates flux
+    flux[hair] <- sum(sum(Ux.side0$V2 * blep$x[1]) + sum(Uy.side0$V2 * blep$y[1]),
+                      sum(Ux.side1$V2 * blep$x[2]) + sum(Uy.side0$V2 * blep$y[2]),
+                      sum(Ux.side2$V2 * blep$x[3]) + sum(Uy.side2$V2 * blep$y[3]), 
+                      sum(Ux.side3$V2 * blep$x[4]) + sum(Uy.side3$V2 * blep$y[4])) * (2 * 4 * dist)
+    # Removes variables
+    rm(Ux, Uy, Ux.side0, Uy.side0, Ux.side1, Uy.side1, Ux.side2, Uy.side2, 
+       Ux.side3, Uy.side3)
+  } # End loop over hairs
+  return(flux)
+}
+
+calculate_Umean <- function(nohairs, sim_no){
+  Umean <- rep(NA, nohairs)
+  for (j in 1:nohairs){
+    # Loads Umean data
+    dat <- read.table(paste("./results/visit/", nohairs, "hair_runs/sim", sim_no, 
+                            "/Umean/Umag_hair", j, ".curve", sep = ""), 
+                      header = FALSE, sep = " ")	
+    k <- as.numeric(length(dat$V2))
+    Umean[j] <- dat$V2[k]
+  }
+  return(Umean)
+}
+
+calculate_leakiness <- function(rowno, run_dir, speed, sample, sim_no){
+  leakiness <- rep(NA, rowno)
+  for (arrayrow in 1:rowno){ # Loop over rows 
+    dirname2 <- paste("./results/visit/", run_dir, "sim", sim_no, "/leakiness", 
+                      arrayrow, "/", sep = "") # Construct directory name
+    data1 <- read.table(paste(dirname2, "leakiness0003.curve", sep = ""), 
+                        header = FALSE, sep = "")	# Loads final time-step data
+    rowwidth <- data1$V1[sample + 1] - data1$V1[1]
+    samplewidth <- rowwidth / sample # Calculates real width between sample points
+    leak_bot <- (speed) * rowwidth	# Calculates bottom of leakiness ratio
+    data2 <- rep(0, length(data1$V1))		# Allocates space for leakiness calculation
+    for (i in 1:sample+1){	# Loop that cycles through each sampled point in a simulation
+      data2[i] <- (data1$V2[i] * samplewidth)	# Calculates top of leakiness for each sampled point
+    }
+    leakiness[arrayrow] <- sum(data2) / leak_bot	# Calculates leakiness value for each simulation
+    rm(data2)
+  } # End loop over rows
+  return(leakiness)
+}
+
+check_completeness_save <- function(parameters, dat, nohairs, filename_base){
+  #### Combines parameters and data into data frame ####
+  parameter_names <- names(parameters)
+  dat2 <- data.frame(parameters, dat)  # Turns matrix into data frame
+  Hair_names <- as.character(rep(0, nohairs)) # Allocates space for names 
+  if(filename_base=="leakiness"){
+    blep <- "row"
+  } else {
+    blep <- "hair"
+  }
+  for (i in 1:nohairs) Hair_names[i] <- paste(filename_base, blep, i, sep = "_") # Assigns name for each hair
+  names(dat2) <- c(parameter_names, Hair_names) # Assigns all names to data frame
+  
+  #### Checking and Saving Data ####
+  complete <- as.numeric(sum(is.na(dat2)))
+  message("~.*^*~Completeness check~*^*~.~\n",
+          "Number of NAs: ", complete)
+  if (complete == 0){
+    message("Set complete. Saving now!")
+    write.table(dat2, file = paste("./results/r-csv-files/", nohairs, 
+                                   "hair_results/", filename_base, "_", Sys.Date(),
+                                   ".csv", sep = ""),
+                sep = ",", row.names = FALSE)
+  } else {
+    message("Set not complete, did not save")
+  }
+  return(dat2)
+}
+
+convert_odorconc <- function(run_id, fluid, hairno) {
+  require(R.matlab)
+  dat <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", fluid, 
+                       "/hairs_c_", run_id, ".mat", sep = ""))
+  steps.number <- length(dat) - 2
+  hairs.number <- length(dat$hairs.center[, 1])
+  conc.data <- matrix(NA, ncol = hairs.number, nrow = steps.number)
+  colnames(conc.data) <- paste("hair", as.character(1:hairs.number), sep = "")
+  rownames(conc.data) <- as.character(1:steps.number)
+  hairs.positions <- t(dat$hairs.center)
+  colnames(hairs.positions) <- paste("hair", as.character(1:hairs.number), sep = "")
+  rownames(hairs.positions) <- c("x", "y")
+  for (i in 1:steps.number){
+    for (j in 1:hairs.number){
+      a <- dat[[paste("hairs.c.", i, sep = "")]][[j]][[1]]
+      if (length(a) == 0) { conc.data[i, j] <- 0 }
+      else {conc.data[i, j] <- sum(dat[[paste("hairs.c.", i, sep = "")]][[j]][[1]])}
+    }
+  }
+  extracted <- list(hairs.positions = hairs.positions, conc.data = conc.data)
+  return(extracted)
+}
+
+magnitude <- function(u, v) {
+  it <- sqrt(u^2 + v^2)
+  it <- replace(it, is.na(it), 0)
+}
+
+convert_ibamr <- function(run_id, fluid,t, hairno) {
+  require(R.matlab)
+  loc.data <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", fluid, 
+                            "/initdata_", run_id, ".mat", sep = ""))
+  ibamr.data <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", fluid, 
+                              "/velocity_", run_id, ".mat", sep = ""))
+  conc.timedata <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", fluid, 
+                                 "/c_", run_id, ".mat", sep = ""))
+  u <- as.vector(ibamr.data$u.flick)
+  v <- as.vector(ibamr.data$v.flick)
+  x <- as.vector(matrix(loc.data$x, nrow = nrow(loc.data$x), ncol = nrow(loc.data$y)))
+  y <- as.vector(matrix(loc.data$y, nrow = nrow(loc.data$x), ncol = nrow(loc.data$y), 
+                        byrow = TRUE))
+  c1 <- as.vector(conc.timedata[[t]])
+  all.data <- data.frame(x = x, y = y, u = u, v = v, w = magnitude(u, v), c = c1)
+  return(all.data)
+}
+
+
+load_parameters <- function(){
+  parameters <- read.table(paste("./data/parameters/data_uniform_2000.txt", sep = ""), 
+                           sep = "\t")
+  parameter_names <- c("angle", "gap", "ant", "dist", "re", "diff_coef", 
+                       "stink_width", "init_conc")
+  names(parameters) <- parameter_names
+  return(parameters)
+}
+
 findnorows <- function(nohairs){
   norows <- switch(as.character(nohairs),
                    "3" = 1,
@@ -9,30 +175,30 @@ findnorows <- function(nohairs){
   return(norows)
 }
 
-reordercols<- function(data,nohairs,datatype){
-  parameter.names<-colnames(data[1:3])
-  if(datatype=="leakiness"){
-    norows<-findnorows(nohairs)
+reordercols<- function(data,nohairs, datatype){
+  parameter.names <- colnames(data[1:3])
+  if(datatype == "leakiness"){
+    norows <- findnorows(nohairs)
     rownames <- as.character(rep(0, norows))
     for (i in 1:norows) rownames[i] <- paste("row", i, sep = "") 
     new.order <- c(parameter.names, "array", rownames)
-  }else if(datatype=="totalconc_water" || datatype == "totalconc_air"){
-    norows<-findnorows(nohairs)
+  }else if(datatype == "totalconc_water" || datatype == "totalconc_air"){
+    norows <- findnorows(nohairs)
     rownames <- as.character(rep(0, norows))
     for (i in 1:norows) rownames[i] <- paste("row", i, sep = "") 
     hairnames <- as.character(rep(0, nohairs)) # Allocates space for names 
     for (i in 1:nohairs) hairnames[i] <- paste("hair", i, sep = "") 
-    new.order <- c(parameter.names,"array","total.conc",hairnames,rownames)
-  }else {
+    new.order <- c(parameter.names, "array", "total.conc", hairnames, rownames)
+  } else {
     hairnames <- as.character(rep(0, nohairs)) # Allocates space for names 
     for (i in 1:nohairs) hairnames[i] <- paste("hair", i, sep = "") 
-    new.order <- c(parameter.names,"array",hairnames)
+    new.order <- c(parameter.names, "array", hairnames)
   }
-  newdata <- data[,new.order]
+  newdata <- data[, new.order]
   return(newdata)
 }
 
-loadnshapedata<-function(n,datatype,nohairs,date) {
+loadnshapedata<-function(n, datatype, nohairs, date) {
   if (file.exists(paste("../results/r-csv-files/",nohairs,"hair_results/", datatype, "_", n, "_", date, ".csv", sep = ""))){
     data <- read.csv(paste("../results/r-csv-files/",nohairs,"hair_results/", datatype, "_", n, "_", date, ".csv", sep = ""))
   } else {
@@ -46,7 +212,7 @@ loadnshapedata<-function(n,datatype,nohairs,date) {
   return(data.final)
 }
 
-stitchdata <- function(n,datatype,data1,data2,nohairs1,nohairs2){
+stitchdata <- function(n, datatype, data1, data2, nohairs1, nohairs2){
   if(datatype=="leakiness"){
     norows1<-findnorows(nohairs1)
     norows2<-findnorows(nohairs2)
