@@ -15,7 +15,21 @@ ignore <- 3
 run_dir <- paste(nohairs, "hair_runs/", sep = "") # Constructs hair directory
 duration <- 0.03   	 	 # duration of simulation, s
 dist <- 0.002          # diameter of each hair, m
+speed <- 0.06      	 	 # free fluid speed, m/s
+sample <- 5000			 # sampling rate
 
+# Assigns total number of rows in the array.
+if(nohairs == 25){ 
+  rowno <- 5
+}else if (nohairs == 18){
+  rowno <- 4
+}else if(nohairs == 12){
+  rowno <- 3
+}else if (nohairs == 7){
+  rowno <- 2
+}else {
+  rowno <- 1
+}
 
 #### Sets up directories ####
 mainDir1 <- "./results/r-csv-files"
@@ -36,6 +50,7 @@ source("./src/r-scripts/analysis_functions.R")
 shear_hair <- matrix(data = NA, nrow = nrow(parameters), ncol = nohairs)	# Allocates space for shear calculations
 flux <- matrix(data = NA, nrow = nrow(parameters), ncol = nohairs)	# Allocates space for shear calculations
 Umean <- matrix(data = NA, nrow = nrow(parameters), ncol = nohairs)
+leakiness <- matrix(data = NA, nrow = nrow(parameters), ncol = rowno)	# Allocates space for leakiness calculation
 
 #### Main Loop for Calculations ####
 for (j in 1:n){		# Main loop over simulations
@@ -43,6 +58,7 @@ for (j in 1:n){		# Main loop over simulations
   shear_hair[j,] <- calculate_maxshear(nohairs, ignore, j) 
   flux[j,] <-calculate_flux(nohairs, run_dir, dist, j)
   Umean[j,] <- calculate_Umean(nohairs, j)
+  leakiness[j,] <- calculate_leakiness(rowno, run_dir, speed, sample, j)
 }
 
 
@@ -50,8 +66,7 @@ for (j in 1:n){		# Main loop over simulations
 shear2 <- check_completeness_save(parameters, shear_hair, nohairs, "shear")
 flux2 <- check_completeness_save(parameters, flux, nohairs, "flux")
 Umean2 <- check_completeness_save(parameters, Umean, nohairs, "Umean")
-
-
+leakiness2 <- check_completeness_save(parameters, leakiness, rowno, "leakiness")
 
 #################################################################################################################
 

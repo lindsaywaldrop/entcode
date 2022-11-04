@@ -60,12 +60,37 @@ calculate_Umean <- function(nohairs, sim_no){
   return(Umean)
 }
 
+calculate_leakiness <- function(rowno, run_dir, speed, sample, sim_no){
+  leakiness <- rep(NA, rowno)
+  for (arrayrow in 1:rowno){ # Loop over rows 
+    dirname2 <- paste("./results/visit/", run_dir, "sim", sim_no, "/leakiness", 
+                      arrayrow, "/", sep = "") # Construct directory name
+    data1 <- read.table(paste(dirname2, "leakiness0003.curve", sep = ""), 
+                        header = FALSE, sep = "")	# Loads final time-step data
+    rowwidth <- data1$V1[sample + 1] - data1$V1[1]
+    samplewidth <- rowwidth / sample # Calculates real width between sample points
+    leak_bot <- (speed) * rowwidth	# Calculates bottom of leakiness ratio
+    data2 <- rep(0, length(data1$V1))		# Allocates space for leakiness calculation
+    for (i in 1:sample+1){	# Loop that cycles through each sampled point in a simulation
+      data2[i] <- (data1$V2[i] * samplewidth)	# Calculates top of leakiness for each sampled point
+    }
+    leakiness[arrayrow] <- sum(data2) / leak_bot	# Calculates leakiness value for each simulation
+    rm(data2)
+  } # End loop over rows
+  return(leakiness)
+}
+
 check_completeness_save <- function(parameters, dat, nohairs, filename_base){
   # Sets up Umean data as data frame
   parameter_names <- names(parameters)
   dat2 <- data.frame(parameters, dat)  # Turns matrix into data frame
   Hair_names <- as.character(rep(0, nohairs)) # Allocates space for names 
-  for (i in 1:nohairs) Hair_names[i] <- paste(filename_base, "hair", i, sep = "_") # Assigns name for each hair
+  if(filename_base=="leakiness"){
+    blep <- "row"
+  } else {
+    blep <- "hair"
+  }
+  for (i in 1:nohairs) Hair_names[i] <- paste(filename_base, blep, i, sep = "_") # Assigns name for each hair
   names(dat2) <- c(parameter_names, Hair_names) # Assigns all names to data frame
   
   #### Checking and Saving Data ####
