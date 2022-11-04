@@ -7,11 +7,12 @@
 
 nohairs <- 3     # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
-n <- 165				  # number of simulations to analyze
+n <- 2				  # number of simulations to analyze
 
 # Loading parameter file
-parameters <- read.table(paste("./data/parameters/allpara_", n, ".txt", sep = ""), sep = "\t")
-parameter_names <- c("angle", "gap", "Re")
+parameters <- read.table(paste("./data/parameters/data_uniform_2000.txt", sep = ""), sep = "\t")
+parameter_names <- c("angle", "gap", "ant", "dist", "re", "diff_coef", "stink_width", "init_conc")
+names(parameters) <- parameter_names
 
 # Assigns total number of rows in the array.
 if(nohairs == 25){ 
@@ -30,7 +31,7 @@ if(nohairs == 25){
 rundir <- paste(nohairs, "hair_runs/", sep = "")   # Constructs hair directory
 speed <- 0.06      	 	 # free fluid speed, m/s
 sample <- 5000			 # sampling rate
-leakiness <- matrix(data = NA, nrow = n, ncol = rowno)	# Allocates space for leakiness calculation
+leakiness <- matrix(data = NA, nrow = nrow(parameters), ncol = rowno)	# Allocates space for leakiness calculation
 
 #### Main Loop for Calculations ####
 for (j in 1:n){		# Main loop over simulations

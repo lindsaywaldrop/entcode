@@ -1,12 +1,14 @@
-##### Using Lineout ####
+##### Using lineout_leak.py ####
 #
-# Instructions: Make the following edits:
-# 
-# Lines 16,21,92,117: Make sure your name is in the file path. 
-# 
-# Open terminal window in Bosque and paste: 
+# This script will produce curve files necessary for calculating leakiness through 
+# a hair array flow simulation from IBAMR. The script will produce a number of curve 
+# files that corresponds to the number of time steps in the viz_IB2d folder.
 #
-# /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout1.py 1 2 3 4 5 
+# Instructions: Use setlineout_multihair.sh to call this script. 
+# 
+# To use this script one time, open a terminal window and paste: 
+#
+# /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s [script.py] 1 2 3 4 5 
 # Where the following numbers must be provided:
 #  - 1: the number of the simulation
 #  - 2: the x value of the startpoint for the lineout
@@ -40,7 +42,7 @@ for i in range(TimeSliderGetNStates()):
 	SaveWindowAtts = SaveWindowAttributes()
 	SaveWindowAtts.outputToCurrentDirectory = 0
 	SaveWindowAtts.outputDirectory = str(WDout)
-	SaveWindowAtts.fileName = "hairline"
+	SaveWindowAtts.fileName = "leakiness"
 	SaveWindowAtts.family = 1
 	SaveWindowAtts.format = SaveWindowAtts.CURVE  # BMP, CURVE, JPEG, OBJ, PNG, POSTSCRIPT, POVRAY, PPM, RGB, STL, TIFF, ULTRA, VTK, PLY
 	SaveWindowAtts.width = 1024

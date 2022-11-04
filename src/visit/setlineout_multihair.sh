@@ -1,8 +1,18 @@
 #!/bin/bash
 
+# This script calls lineout_leak.py in python and VisIt to calculate leakiness in the hair array.
+# It will produce a number of curve files based on how many time steps there are in the viz_IB2d 
+# folder. Use the last time step in a steady-state leakiness calculation.
+
 WD=${1:?Please provide a top-level working directory}
-a=${2:?Provide the number of hairs in the array}
-row=${3:?Provide the row number to process}
+#a=${2:?Provide the number of hairs in the array}
+#row=${3:?Provide the row number to process}
+startrun=${2:?Provide a starting run}
+endrun=${3:?Provide an ending run}
+
+# Setting variables for 3-hair only
+a=3
+row=1
 
 if [ "$row" == 1 ] && [ "$a" == 5 ]; then
   filename="lineout_h5-h4.txt"
@@ -27,12 +37,12 @@ numlines=$(grep -c "^" "$WD"/data/lineout-files/$filename)
 
 cd "${WD}"/results/visit/${a}hair_runs/
 
-# Clear hairline directories of curve files or make hairline directories. 
-for i in `seq 1 $numlines`; do
-  if [ -d "sim${i}/hairline${row}/" ]; then
-    rm sim${i}/hairline${row}/*.curve
+# Clear leakiness directories of curve files or make leakiness directories. 
+for i in `seq $startrun $endrun`; do
+  if [ -d "sim${i}/leakiness${row}/" ]; then
+    rm sim${i}/leakiness${row}/*.curve
   else
-    mkdir -p sim${i}/hairline${row}/
+    mkdir -p sim${i}/leakiness${row}/
   fi
 done
 
@@ -51,7 +61,7 @@ EX=0
 EY=0
 
 # For loop that will write files
-for i in `seq 1 $numlines`; do
+for i in `seq $startrun $endrun`; do
 #for i in `seq 67 67`; do
   # Sets Wo based on i
   SX=$(awk -v var="$i" 'NR==var' startx.txt)
@@ -60,7 +70,7 @@ for i in `seq 1 $numlines`; do
   EY=$(awk -v var="$i" 'NR==var' endy.txt)
 
   /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout_leak.py \
- "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/hairline${row} ${i} $SX $SY $EX $EY
+ "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/leakiness${row} ${i} $SX $SY $EX $EY
 
 done
 
