@@ -7,7 +7,7 @@
 
 nohairs <- 3     # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
-n <- 2				  # number of simulations to analyze
+n <- 10				  # number of simulations to analyze
 
 # Loading parameter file
 parameters <- read.table(paste("./data/parameters/data_uniform_2000.txt", sep = ""), sep = "\t")
@@ -37,9 +37,9 @@ leakiness <- matrix(data = NA, nrow = nrow(parameters), ncol = rowno)	# Allocate
 for (j in 1:n){		# Main loop over simulations
 	print(paste("Simulation: ", j, sep = ""))					# Prints simulation number 
   for (arrayrow in 1:rowno){ # Loop over rows 
-    dirname2 <- paste("./results/visit/", rundir, "sim", j, "/hairline", 
+    dirname2 <- paste("./results/visit/", rundir, "sim", j, "/leakiness", 
                       arrayrow, "/", sep = "") # Construct directory name
-    data1 <- read.table(paste(dirname2, "hairline0003.curve", sep = ""), 
+    data1 <- read.table(paste(dirname2, "leakiness0003.curve", sep = ""), 
                         header = FALSE, sep = "")	# Loads final time-step data
 	  rowwidth <- data1$V1[sample + 1] - data1$V1[1]
 	  samplewidth <- rowwidth / sample # Calculates real width between sample points
