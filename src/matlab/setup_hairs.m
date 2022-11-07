@@ -15,7 +15,7 @@ function [parameters, simulation] = setup_hairs(paths, parameters, simulation)
 [xx,yy] = ndgrid(simulation.x, simulation.y);
 
 %hairs filename
-flickdata = load(strcat(paths.pathbase_data, 'hairinfo-files/', num2str(parameters.hairNum),...
+flickdata = load(strcat(paths.pathbase_data, '/hairinfo-files/', num2str(parameters.hairNum),...
     'hair_files/', parameters.hairs_data_filename, '.mat'));  
 % [flickdata.p] = convert_hairdata(pathbase_data,hairNum,str2double(run_id));
 

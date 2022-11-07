@@ -16,7 +16,7 @@ flickdata = eval(['flickdata_temp.' parameters.hairs_data_filename_interior.file
 
 flickdata = modify_hair_data(flickdata,parameters.hairs_data_filename_interior.numofhairs); 
 eval([parameters.hairs_data_filename_interior.filename, '=flickdata']); 
-save(strcat(paths.pathbase_data, 'hairinfo-files/', num2str(parameters.hairNum), 'hair_files/',...
+save(strcat(paths.pathbase_data, '/hairinfo-files/', num2str(parameters.hairNum), 'hair_files/',...
     parameters.hairs_data_filename, '.mat'), parameters.hairs_data_filename_interior.filename); 
 
 %loads the location of the hairs

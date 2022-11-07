@@ -22,41 +22,41 @@ if (exist(d,'dir'))
     ext = '';
 else
     [pn,fn,ext] = fileparts(d);
-end;
+end
 
 exclude = [opt.exclude opt.baseexclude];
 
 files = dir(d);
-if (~isempty(files)),
+if (~isempty(files))
     a = 1;
     filenames = cell(length(files),1);
-	for i = 1:length(files),
+	for i = 1:length(files)
         good = true;
-        for j = 1:length(exclude),
+        for j = 1:length(exclude)
             if (~isempty(regexp(files(i).name, exclude{j}, 'once')))
                 good = false;
                 break;
-            end;
-        end;
+            end
+        end
         
         if (good)
             fn1 = fullfile(pn,files(i).name);
-            if (opt.recursive && exist(fn1,'dir')),
+            if (opt.recursive && exist(fn1,'dir'))
                 rec = getfilenames(fullfile(fn1,[fn ext]),'recursive',opt.recursive, ...
                     'exclude',opt.exclude, 'baseexclude',opt.baseexclude);
                 if (~isempty(rec))
                     filenames(a:a+length(rec)-1,1) = rec;
-                end;
+                end
                 a = a+length(rec);
             else
                 filenames{a,1} = fullfile(pn,files(i).name);
                 a = a+1;
-            end;
-        end;
-	end;
+            end
+        end
+    end
     filenames = filenames(1:a-1);
 else
 	filenames = {};
-end;
+end
 
 filenames = sortfiles(filenames);

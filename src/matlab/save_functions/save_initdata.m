@@ -22,7 +22,7 @@ run_id = parameters.run_id;
 
 
 %the default extension is .mat
-filename = [paths.pathbase_results, 'initdata_', run_id, '.mat'];
+filename = strcat(paths.pathbase_results, 'initdata_', run_id, '.mat');
 save(filename, 'dx','dy', 'Nx', 'Ny', 'xlength', ...
      'ylength', 'x', 'y','run_id', 'explicit_vel', 'D',...
      'dt','dt_flick','t_final_flick');

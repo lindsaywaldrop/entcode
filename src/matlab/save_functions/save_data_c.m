@@ -11,7 +11,7 @@ function save_data_c(paths, parameters, simulation, initial)
 T = evalc(['c_' num2str(simulation.pcount) ' = simulation.c']);
 
 %the default extension is .mat
-filename = [paths.pathbase_results,'c_', parameters.run_id];
+filename = strcat(paths.pathbase_results,'c_', parameters.run_id);
 
 if (initial == 1) %if this is the first time saving then create the file
   save(filename, 'c_*');

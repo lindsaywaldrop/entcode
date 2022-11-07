@@ -84,7 +84,8 @@ elseif strcmp(parameters.initc,'exp_right_small') %THIS ONE
     %exp_center = 1.45;
     %c_max = 0.25; 
     
-    width = 0.05; 
+    width = parameters.stinkwidth*parameters.xlength; 
+    %width = 0.05; 
     %%dist_frh = 0.0125;
     %dist_frh = 0.005;
     
@@ -94,7 +95,7 @@ elseif strcmp(parameters.initc,'exp_right_small') %THIS ONE
 		exp_center = parameters.far_right_hair+width/2; %far_right_hair + dist_frh + width/2; 
 	end
     c_Linf = 7; 
-    c_max_constant = 0.1; 
+    c_max_constant = parameters.initconc; 
     parameters.c_max = c_max_constant/parameters.ylength; 
     
     simulation.c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*parameters.c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));
@@ -137,7 +138,7 @@ elseif strcmp(parameters.initc,'exp_right_small_smdom') %THIS ONE
     %exp_center = 1.45;
     %c_max = 0.25; 
     
-    width = 0.1; 
+    parameters.stinkwidth = width; 
     %%dist_frh = 0.0125;
     %dist_frh = 0.005;
     

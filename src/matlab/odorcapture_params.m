@@ -63,7 +63,8 @@ elseif strcmp(parameters.fluid,'water')
 	%initializing the bulk surfactants
 	parameters.initc = 'exp_right_small';
 	%diffusion coefficient (m^2/s)
-	parameters.D = 2000*7.84e-10;     %caproic acid in water - in m^2/s -> corresponds to exp_right_small IC 
+	%parameters.D = 2000*7.84e-10;     %caproic acid in water - in m^2/s -> corresponds to exp_right_small IC 
+	parameters.D = parameters.D*2000;
 	simulation.D = parameters.D;
 	%print every print_time timesteps 
 	parameters.print_time = 100;  

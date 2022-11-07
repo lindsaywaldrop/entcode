@@ -1,4 +1,4 @@
-function entsniff(topdir,hairNum,fluid,filenumbers,clpool)
+function entsniff(topdir,hairNum,fluid,filenumbers,clpool,DiffCoef,width,initconc)
 % entsniff.m
 %
 % Script for running code on Bridges
@@ -26,6 +26,8 @@ addpath(genpath(strcat(topdir,'/src/matlab')))
 
 parameters.GridSize = 4096;
 parameters.final_time = 30000;
+parameters.stinkwidth = width;
+parameters.initconc = initconc;
 
 j = length(filenumbers);
 for ii = 1:j
@@ -35,10 +37,11 @@ end
 
 % Setting paths to necessary files
 paths.pathbase_piv = strcat(topdir, '/results/ibamr/', num2str(hairNum), 'hair_runs/');
-paths.pathbase_data = strcat(topdir, '/data/');
-paths.pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair_array/',fluid,'/');
+paths.pathbase_data = strcat(topdir, '/data');
+paths.pathbase_results = strcat(topdir, '/results/odorcapture/',num2str(hairNum),'hair_array/');
 parameters.fluid = fluid;
 parameters.hairNum = hairNum;
+parameters.D = DiffCoef;
 
 if clpool == 1
     

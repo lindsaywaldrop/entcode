@@ -26,11 +26,12 @@ mkdir results/visit/
 mkdir results/visit/3hair_runs/
 mkdir results/r-csv-files/
 mkdir results/odorcapture/
-mkdir -p results/odorcapture/3hair_array/air/
+mkdir -p results/odorcapture/3hair_array/
 mkdir data/
 mkdir data/vertex-files/
 mkdir data/csv-files/
 mkdir data/hairinfo-files/
+mkdir data/hairinfo-files/3hair_files/
 mkdir data/lineout-files/
 mkdir data/input2d-files/
 

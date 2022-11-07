@@ -5,8 +5,8 @@ function [p] = convert_hairdata(pathbase_data,hairNum,run_id)
 p.hdia = 0.002;
 run_number = run_id
 
-hairdata = csvread(strcat(pathbase_data,'/csv-files/',num2str(hairNum),...
-    'hair_files/hairs',num2str(run_number),'.csv'),1,0,[1 0 3 hairNum]);
+hairdata = readmatrix(strcat(pathbase_data,'/csv-files/',num2str(hairNum),...
+    'hair_files/hairs',num2str(run_number),'.csv'));
 C1 = 0;
 C2 = 1;
 numPoints = hairdata(1,2);
@@ -25,5 +25,5 @@ for h = 1:hairNum
     eval(['p.h',num2str(h),'_y = hair_temp(:,2);']);
 end
 
-save([pathbase_data,'/hairinfo-files/',num2str(hairNum),...
-    'hair_files/hairinfo',num2str(run_id),'.mat'],'p')
+save(strcat(pathbase_data,'/hairinfo-files/',num2str(hairNum),...
+    'hair_files/hairinfo',num2str(run_id),'.mat'),'p')

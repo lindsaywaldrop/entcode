@@ -13,7 +13,7 @@ ptindex_hairs = simulation.ptindex_hairs;
 hairs_center = simulation.hairs_center;
 
 %the default extension is .mat
-filename = [paths.pathbase_results, 'hairs_c_', parameters.run_id];
+filename = strcat(paths.pathbase_results, 'hairs_c_', parameters.run_id);
 
 if (initial == 1) %if this is the first time saving then create the file
   save(filename, 'hairs_c_*', 'ptindex_hairs','hairs_center');

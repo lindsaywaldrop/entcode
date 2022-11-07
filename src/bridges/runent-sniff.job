@@ -2,8 +2,8 @@
 #SBATCH -t 30:00:00
 #SBATCH -p RM
 #SBATCH -N 1
-#SBATCH --ntasks-per-node 8
-#SBATCH --mail-type ALL
+#SBATCH --ntasks-per-node 1
+#SBATCH --mail-type FAIL
 #SBATCH -C EGRESS
 
 # echo commands to stdout
@@ -13,7 +13,7 @@ set -x
 array=3
 
 # Fluid
-fluid=\'air\'
+fluid=\'water\'
 
 # First number
 a=1
@@ -21,8 +21,17 @@ a=1
 # Second number
 b=1
 
+# Diffusion coefficient
+D=0
+
+#Stink width (width of odor stripe)
+width=0
+
+# Initial concentration
+initconc=0
+
 # Set path 
-WD=/pylon5/bi561lp/lwaldrop/entcode
+WD=/home/waldrop@chapman.edu/entcode
 MatWD=\'$WD\'
 
 # move to working directory
@@ -32,6 +41,6 @@ cd "${WD}"/src/matlab
 module load matlab
 
 # run matlab program
-matlab -r "entsniff(${MatWD},$array,${fluid},$a:$b,8);exit"
+matlab -r "entsniff(${MatWD},$array,${fluid},$a:$b,1,$D,$width,$initconc);exit"
 
 wait

@@ -18,7 +18,7 @@ function [parameters, simulation] = read_in_velocity_data_p1(paths, parameters, 
 strcat(paths.pathbase_piv, parameters.piv_data_filename, '.mat')
 
 %filenames
-flickdata = load([paths.pathbase_piv parameters.piv_data_filename '.mat']);
+flickdata = load(strcat(paths.pathbase_piv, parameters.piv_data_filename, '.mat'));
 
 %finding the endpts for x_length and y_length (data is in m) 
 flick_xpiv = eval(['flickdata.' parameters.piv_data_filename_interior.x]);     

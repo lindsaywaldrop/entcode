@@ -9,31 +9,31 @@ function [fn,ind] = sortfiles(fn)
 % Mercurial revision hash: $Revision$ $Date$
 % Copyright (c) 2010, Eric Tytell <tytell at jhu dot edu>
 
-if (~isempty(fn)),
-    [fn,ind] = sort(fn);
-    for i = 1:length(fn),
+if (~isempty(fn))
+    [fn,ind] = sort([fn{:}]);
+    for i = 1:length(fn)
         [rind,q,tok] = regexp(fn{i},'(.*[^0-9])([0-9]+)[^0-9]*');
-        if (~isempty(rind)),
+        if (~isempty(rind))
             tok = tok{1};
             base{i} = fn{i}(tok(1,1):tok(1,2));
             num(i) = str2num(fn{i}(tok(2,1):tok(2,2)));
         else
             base{i} = fn{i};
-        end;
-    end;
+        end
+    end
 
     [basenames,q,baseind] = unique(base);
 
-    if (length(basenames) ~= length(fn)),
-        for i = 1:length(basenames),
+    if (length(basenames) ~= length(fn))
+        for i = 1:length(basenames)
             k = find(baseind == i);
-            if (length(k) > 1),
+            if (length(k) > 1)
                 [a,jig] = sort(num(k));
                 fn(k) = fn(k(jig));
                 ind(k) = ind(k(jig));
-            end;
-        end;
-    end;
-end;
+            end
+        end
+    end
+end
 
        
