@@ -1,14 +1,15 @@
-# Generates grid for use with Constraint IB Method IBAMR
-# GtD = gap to diameter ratio between hairs
-# dist = distance from antennule
-# theta = angle of center hair with positive x-axis
-#
-# To run this R script on Bridges, enter the following commands: 
+# Generates lineout files for use with VisIt analysis script for leakiness.
+# 
+# To run this R script, enter the following commands: 
 # - module add R
 # - R   ## This will start R!##
 # - source('generate_lineouts.R')  ## Follow prompts if installing packages
 # - quit()
 # - n
+# OR 
+# - module add R
+# - Rscript src/r-scripts/generate_lineouts.R
+#
 
 nohairs <- 3  # 1 row: 5, 3 row: 12, 4 row: 18, 5 row: 25
 

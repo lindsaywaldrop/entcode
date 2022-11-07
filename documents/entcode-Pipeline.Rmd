@@ -117,26 +117,25 @@ In order to make calculations on flow speed, we need to extract velocities from 
 
 ### Checking for simulation set completeness 
 
-All simulations must be complete, unzipped, and in the appropriate directory before running data analysis in VisIt. To check for completeness of the simulations, run the shell script `checkruns.sh` in command-line bash using the top-level directory as the first argument, the number of hairs in the array as the second, and the number of simulations as the third:
+All simulations must be complete, unzipped, and in the appropriate directory before running data analysis in VisIt. To check for completeness of the simulations, run the shell script `checkruns.sh` in command-line bash using the top-level directory as the first argument, the number of simulations as the second, and whether you want to check for folders (1) or zip files (other).
 
-`$ sh checkruns.sh "$WD" 25 165`
+`$ sh checkruns.sh "$WD" 2000 1`
 
-This script will return "Simulation found" if it exists, is unzipped, and is complete. If these conditions are not met, it will return the number of the simulation missing.
+This script will return "Simulation found" if it exists. If these conditions are not met, it will return the number of the simulation missing. All simulations need to be unzipped and complete for the VisIt analysis to work properly. 
 
 ### Generating lineout files 
 
-Fluid speeds need to be sampled along a line that intersects all hairs in a row. In order for VisIt to extract fluid speeds, it needs to know where each hair exists in the doman for each array configuration in each simulation. Then these values need to be put in a standard form so that VisIt can read them automatically from the python script. 
+Fluid speeds need to be sampled along a line that intersects all hairs in a row. In order for VisIt to extract fluid speeds, it needs to know where each hair exists in the domain for each array configuration in each simulation. Then these values need to be put in a standard form so that VisIt can read them automatically from the python script. 
 
-This is done by way of a standard lineout text file, which you can generate using `generate_lineouts.R` in `src/r-scripts`. Be sure to edit: 
-
- * Line 13 (nohairs) with the number of hairs in the array. (Note: separate files are produced with running either 5 or 25 hairs, but 7, 12, 18, and 25 hair arrays may use the 25-hair lineout files.)
- * Line 18 (endrun) with the number of simulations in the set. 
- 
- In the R console in the main directory, run: 
+This is done by way of a standard lineout text file, which you can generate using `generate_lineouts.R` in `src/r-scripts`. In the R console in the main directory, run: 
 
 `> setwd(getwd())`
 
 `> source('src/r-scripts/generate_lineouts.R')`
+
+Or from shell, add the R module and run from the top working directory run:
+
+`$ Rscript src/r-scripts/generate_lineouts.R`
 
 This script will read in the csv files in `results/csv-files` and deposit the lineout files into `data/lineout-files`. This only needs to be run once, as all the hairs in all the arrays conform to the same standards. 
 
@@ -144,36 +143,28 @@ This script will read in the csv files in `results/csv-files` and deposit the li
 
 To execute the python script, use the shell script `setlineout_multihair.sh` in the folder `src/visit` through command-line bash:
 
-`$ sh setlineout_multihair.sh "$WD" 25 1`
+`$ sh setlineout_multihair.sh "$WD" 1 2000`
 
-For this example, the 25-hair array is processed for row 1. VisIt will write these values to a .curve file and store them in `results/visit/nhair_runs/simi/hairlinej` where n number of hairs in the array, i is the simulation number, and j is the row number. 
-
-This script needs to be executed independently for each row in the array. 
+After the top working directory, enter the range of simulations you would like analyzed. VisIt will write these values to a .curve file and store them in `results/visit/3hair_runs/simi/hairlinej` where i is the simulation number and j is the row number. 
 
 For the second script, through the command line, enter: 
 
-`$ sh setlineout_flux.sh "$WD" 25`
+`$ sh setlineout_flux.sh "$WD" 1 2000`
 
-Specify only the number of hairs in the array after the working directory. It will deposit curve files in `results/visit/nhair_runs/simi/hairline_flux`. Four files will be produced for each hair. This script needs to be run only once. 
-
-For the third script, through the command line, enter: 
-
-`$ sh setlineout_shear.sh "$WD" 25 165`
-
-Specify the number of hairs in the array after the working directory and the number of simulations in your set after that. It will deposit curve files in `results/visit/nhair_runs/simi/shear`, with one file per hair. This script only needs to be run once. 
+It will deposit curve files in `results/visit/3hair_runs/simi/hairline_flux`. Four files will be produced for each hair. 
 
 ### Checking for VisIt results completeness
 
 To check that VisIt provided a complete data set for R to do final calculations, run the following script in the src/visit directory: 
 
-`$ sh checkvisitresults.sh "$WD" 25 165`
+`$ sh checkvisitresults.sh "$WD" 2000`
 
-where the first argument is the top working directory, the second is the number of hairs in the array, and the third is the number of simulations to check. This script will provide a list of files in the flux, hairline (leakiness), and `Umean` that are missing so you can check individual simulations and rerun as necessary. 
+where the first argument is the top working directory and the second is the number of simulations to check. This script will provide a list of files in the flux, shear, leakiness, and Umean that are missing so you can check individual simulations and rerun as necessary. 
 
 
 ### Execution of R scripts for calculation of final flow values
 
-The final values for leakiness, shear around hairs, flux through hair area, and mean velocity around hairs are calculated in R. Each script should be changed in two places before execution, the value ``n'' which is the number of simulations in the set and ``nohairs'' which is the number of hairs in the array. 
+The final values for leakiness, shear around hairs, flux through hair area, and mean velocity around hairs are calculated in R. Each script should be changed in two places before execution, the value `n` which is the number of simulations in the set and `nohairs` which is the number of hairs in the array. 
 
 After changing these values, run each script by in the top directory: 
 
@@ -213,7 +204,7 @@ Matlab will rely on a standard file structure in order to create and save data. 
 
 ### Running Matlab simulations in parallel
 
-Matlab simulations are run on the RM partition in Bridges due to memory constraints. They are run using Matlab's `parloop` parallelization. Each RM node can support 8 simulations at a time, as the code is set up to execute 8 simulations for each job on Bridges. 
+Matlab simulations are run on the defq partition in the Keck cluster due to memory constraints. The regular nodes have 144 CPUs with 192043 MB or 257574 MB per node. They are run using Matlab's `parloop` parallelization. Each RM node can support 8 simulations at a time, as the code is set up to execute 8 simulations for each job on Bridges. 
 
 In order to set these up, you will need to change the run job file. Navigate to the `src/bridges` folder and enter the `runent-sniff.job` file and change the following lines: 
  - Line 13: array should equal the number of hairs in your array
