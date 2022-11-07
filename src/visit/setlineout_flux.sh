@@ -1,25 +1,19 @@
 #!/bin/bash
 
 WD=${1:?Please provide a top-level working directory}
-a=${2:?Provide the number of hairs in the array}
+startnum=${2:?Please provide a simulation start number}
+endnum=${3:?Please provide a simulation end number}
 
-if [ "$a" == 5 ]; then
-  filename="lineout_h5-h4.txt"
-elif [ "$a" != 5 ]; then
-  filename="lineout_h3-h2.txt"
-else
-  echo "ERROR: row number unknown"
-  exit 1
-fi
-
+a=3
+filename="lineout_h3-h2.txt"
 echo $filename
 
 numlines=$(grep -c "^" "$WD"/data/lineout-files/$filename)
 
 cd "${WD}"/results/visit/${a}hair_runs/
 
-# Clear hairline directories of curve files or make hairline directories. 
-for i in `seq 1 $numlines`; do
+echo "Clear hairline directories of curve files or make hairline directories."
+for i in `seq $startnum $endnum`; do
   if [ -d "sim${i}/hairline_flux" ]; then
     rm sim${i}/hairline_flux/*.curve
   else
@@ -27,7 +21,7 @@ for i in `seq 1 $numlines`; do
   fi
 done
 
-for i in `seq 1 $numlines`; do
+for i in `seq $startnum $endnum`; do
   if [ -d "sim${i}/Umean/" ]; then
     rm sim${i}/Umean/*.curve
   else
@@ -35,18 +29,29 @@ for i in `seq 1 $numlines`; do
   fi
 done
 
+# Clear hairline directories of curve files or make hairline directories. 
+for i in `seq 1 $b`; do
+  if [ -d "sim${i}/shear" ]; then
+    rm sim${i}/shear/*.curve
+  else
+    mkdir -p sim${i}/shear/
+  fi
+done
+
+echo "Switching to visit directory"
+
 cd "${WD}"/src/visit/
 
-# initialize variables
+echo "Initializing variables"
 HX=0
 HY=0
-DIST=0.002
-
+DIST1=0.002
+DIST2=0.004
 
 # For loop that interates over simulations
-for i in `seq 1 $numlines`; do
+for i in `seq $startnum $endnum`; do
 #for i in `seq 84 165`; do
-
+  
   # For loop that iterates over hairs 
   for j in `seq 1 ${a}`; do
   #for j in `seq 1 10`; do
@@ -57,7 +62,7 @@ for i in `seq 1 $numlines`; do
     HY=$(awk -v var="4" 'NR==var' hair.txt)
 
     /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout_flux.py \
-    "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/hairline_flux ${i} ${j} $HX $HY $DIST
+    "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/hairline_flux ${i} ${j} $HX $HY $DIST1
     
     for k in `seq 0 3`; do
       csplit "$WD"/results/visit/${a}hair_runs/sim${i}/hairline_flux/flux_hair${j}_000${k}.curve '/^\# curve/'
@@ -66,12 +71,16 @@ for i in `seq 1 $numlines`; do
     done
     
     /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s Umean.py \
-    "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/Umean ${j} $HX $HY $DIST
+    "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/Umean ${j} $HX $HY $DIST1
+    
+    /Applications/VisIt.app/Contents/Resources/bin/visit -nowin -cli -s lineout_shear.py \
+    "$WD"/results/ibamr/${a}hair_runs/viz_IB2d${i} "$WD"/results/visit/${a}hair_runs/sim${i}/shear ${i} ${j} $HX $HY $DIST2
+    
 
   done
   
-  rm "$WD"/results/visit/${a}hair_runs/sim${i}/hairline_flux/flux_hair?_000?.curve
-  rm "$WD"/results/visit/${a}hair_runs/sim${i}/hairline_flux/flux_hair??_000?.curve
+  #rm "$WD"/results/visit/${a}hair_runs/sim${i}/hairline_flux/flux_hair?_side?.curve
+  #rm "$WD"/results/visit/${a}hair_runs/sim${i}/hairline_flux/flux_hair??_side?.curve
 
 done
 
