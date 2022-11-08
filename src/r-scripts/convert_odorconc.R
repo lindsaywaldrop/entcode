@@ -19,12 +19,12 @@ init.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_arr
 #   all.data$c <- as.vector(conc.timedata[[i]])
 #   pdf(paste("conc_", run_id, "_", i, ".pdf", sep = ""))
 #   print({
-#     ggplot(all.data, aes(x = x, y = y, fill = c)) + geom_tile() + 
-#       scale_fill_distiller(name = "Conc", type = "seq", palette = "OrRd", direction = 1, 
-#                            limits = c(-0.01, max_fill)) +
-#       geom_point(data = hair.points, mapping = aes(x = x, y = y), pch = 19, size = 1,
-#                  col = "black", fill = "black") + 
-#       theme_bw()
+    ggplot(all.data, aes(x = x, y = y, fill = c)) + geom_tile() +
+      scale_fill_distiller(name = "Conc", type = "seq", palette = "OrRd", direction = 1,
+                           limits = c(-0.01, max_fill)) +
+      geom_point(data = hair.points, mapping = aes(x = x, y = y), pch = 19, size = 1,
+                 col = "black", fill = "black") +
+      theme_bw()
 #     })
 #   dev.off()
 # }
