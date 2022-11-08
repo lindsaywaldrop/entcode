@@ -10,5 +10,5 @@ t_steps = simulation.t_steps;
 print_time = parameters.print_time;
 
 %the default extension is .mat
-filename = [paths.pathbase_results, 'initdata_', parameters.run_id];
+filename = strcat(paths.pathbase_results, 'initdata_', parameters.run_id);
 save (filename, 'pcount', 'list_print_times', 't_steps', 'print_time', '-append');

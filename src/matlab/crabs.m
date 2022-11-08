@@ -36,17 +36,23 @@ disp('Starting first flick...')
 [simulation] = advect_c(parameters.dt_flick/2, 'dirichlet', 'weno', ...
 												parameters, simulation, velocities);
 disp('.')
-for timestep = 1:parameters.t_steps_flick
+
+new_capture = 1;
+total_captured = 0; 
+timestep = 0; 
+
+while(new_capture > parameters.stinkthreshold && simulation.t < parameters.timethreshold)
    
   %diffusion  
   %if first timestep then initialze the diffusion matrix   
-  if (timestep == 1) 
+  if (timestep == 0) 
       [simulation] = diffusion_c(parameters.dt_flick, 1, parameters.diffusionrhsbc_flick, parameters, simulation);
       disp('.')
   else
       [simulation] = diffusion_c(parameters.dt_flick, 0, parameters.diffusionrhsbc_flick, parameters, simulation); 
   end
   [simulation] = concentration_absorbed_by_hairs(simulation);
+  [total_captured, new_capture] = calculate_threshold(total_captured, simulation);
   %advection 
   %if not at the last timestep then step with dt but if at the last
   %timestep then step only dt/2    
@@ -60,6 +66,7 @@ for timestep = 1:parameters.t_steps_flick
   
   simulation.t = simulation.t + parameters.dt_flick; 
   simulation.t_steps = simulation.t_steps + 1; 
+  timestep = simulation.t_steps; 
   
   %saving data
   if (mod(simulation.t_steps, parameters.print_time)==0) 

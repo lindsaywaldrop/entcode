@@ -204,7 +204,7 @@ Matlab will rely on a standard file structure in order to create and save data. 
 
 ### Running Matlab simulations in parallel
 
-Matlab simulations are run on the defq partition in the Keck cluster due to memory constraints. The regular nodes have 144 CPUs with 192043 MB or 257574 MB per node. They are run using Matlab's `parloop` parallelization. Each RM node can support 8 simulations at a time, as the code is set up to execute 8 simulations for each job on Bridges. 
+Matlab simulations are run on the defq partition in the Keck cluster due to memory constraints. The regular nodes have 144 CPUs with 192043 MB (192 GB) or 257574 MB (275.5 GB) per node. They are run using Matlab's `parloop` parallelization. Each RM node can support 8 simulations at a time, as the code is set up to execute 8 simulations for each job on Bridges. 
 
 In order to set these up, you will need to change the run job file. Navigate to the `src/bridges` folder and enter the `runent-sniff.job` file and change the following lines: 
  - Line 13: array should equal the number of hairs in your array

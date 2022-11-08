@@ -1,22 +1,21 @@
 
 library(ggplot2)
+library(viridis)
 library(RColorBrewer)
 
-source("./src/R-scripts/analysis_functions.R")
+source("./src/R-scripts/datahandling_functions.R")
 
 run_id <- "0001"
-fluid <- "water"
-hairno <- 5
+hairno <- 3
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
 all.data <- convert_ibamr(run_id, fluid, 1, hairno)
 max_fill <- max(all.data$c)
 hair.points <- as.data.frame(t(hair.conc$hairs.positions))
 conc.timedata <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
-                               fluid, "/c_", run_id, ".mat", sep = ""))
-for (i in 1:10){
+                              "c_", run_id, ".mat", sep = ""))
+for (i in 1:25){
   all.data$c <- as.vector(conc.timedata[[i]])
-  png::png(filename = paste("conc_", run_id, "_", i, ".png", sep = ""), 
-      height = 3, width = 4, units = "in", res = 600)
+  pdf(paste("conc_", run_id, "_", i, ".pdf", sep = ""))
   print({
     ggplot(all.data, aes(x = x, y = y, fill = c)) + geom_tile() + 
       scale_fill_distiller(name = "Conc", type = "seq", palette = "OrRd", direction = 1, 
@@ -34,18 +33,17 @@ ggplot(all.data, aes(x = x, y = y, fill = w)) +
              pch = 19, size = 1, col = "white", fill = "white") 
 
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
-row.cols <- viridis(5, option = "C")
+row.cols <- viridis(hairno, option = "C")
 
 cols <- c(rep(row.cols[1], 3),
           rep(row.cols[2], 4),
           rep(row.cols[3], 5),
           rep(row.cols[4], 6),
           rep(row.cols[5], 7))
-plot(hair.conc$conc.data[, 1],
-     xlab = "time", ylab = "Odorant", pch = 19, col = cols[1], type = "l",
-     ylim = range(hair.conc$conc.data))
+plot(apply(hair.conc$conc.data, 1, sum),
+     xlab = "time", ylab = "Odorant", pch = 19, col = "black", type = "l")
 
-for (i in 2:length(hair.conc$conc.data[1, ])){
-  lines(hair.conc$conc.data[, i], pch = 19, col =cols[i])
+for (i in 1:length(hair.conc$conc.data[1, ])){
+  lines(hair.conc$conc.data[, i], lty = 1, col = row.cols[i])
 }
 

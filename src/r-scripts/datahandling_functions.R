@@ -110,8 +110,8 @@ check_completeness_save <- function(parameters, dat, nohairs, filename_base){
 
 convert_odorconc <- function(run_id, fluid, hairno) {
   require(R.matlab)
-  dat <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", fluid, 
-                       "/hairs_c_", run_id, ".mat", sep = ""))
+  dat <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
+                       "hairs_c_", run_id, ".mat", sep = ""))
   steps.number <- length(dat) - 2
   hairs.number <- length(dat$hairs.center[, 1])
   conc.data <- matrix(NA, ncol = hairs.number, nrow = steps.number)
@@ -138,12 +138,12 @@ magnitude <- function(u, v) {
 
 convert_ibamr <- function(run_id, fluid,t, hairno) {
   require(R.matlab)
-  loc.data <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", fluid, 
-                            "/initdata_", run_id, ".mat", sep = ""))
-  ibamr.data <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", fluid, 
-                              "/velocity_", run_id, ".mat", sep = ""))
-  conc.timedata <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", fluid, 
-                                 "/c_", run_id, ".mat", sep = ""))
+  loc.data <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
+                            "initdata_", run_id, ".mat", sep = ""))
+  ibamr.data <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
+                              "velocity_", run_id, ".mat", sep = ""))
+  conc.timedata <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
+                                 "c_", run_id, ".mat", sep = ""))
   u <- as.vector(ibamr.data$u.flick)
   v <- as.vector(ibamr.data$v.flick)
   x <- as.vector(matrix(loc.data$x, nrow = nrow(loc.data$x), ncol = nrow(loc.data$y)))

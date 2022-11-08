@@ -89,11 +89,12 @@ elseif strcmp(parameters.initc,'exp_right_small') %THIS ONE
     %%dist_frh = 0.0125;
     %dist_frh = 0.005;
     
-    if parameters.far_right_hair <= 0.005990
-    	exp_center = 0.005990+width/2; %far_right_hair + dist_frh + width/2; 
-    else
-		exp_center = parameters.far_right_hair+width/2; %far_right_hair + dist_frh + width/2; 
-	end
+    %if parameters.far_right_hair <= 0.005990
+    	%exp_center = 0.005990+width/2; %far_right_hair + dist_frh + width/2; 
+    %else
+		exp_center = parameters.far_right_hair + width/2 + ...
+            10*parameters.hairs_data_filename_interior.givenradius; %far_right_hair + dist_frh + width/2; 
+	%end
     c_Linf = 7; 
     c_max_constant = parameters.initconc; 
     parameters.c_max = c_max_constant/parameters.ylength; 
