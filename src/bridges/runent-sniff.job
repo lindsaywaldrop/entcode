@@ -17,10 +17,10 @@ array=3
 fluid=\'water\'
 
 # First number
-a=2
+a=1
 
 # Second number
-b=2
+b=1
 
 # Diffusion coefficient
 D=3.496961E-05
@@ -45,6 +45,8 @@ fi
 cd "${WD}"/src/matlab
 
 # add appropriate modules
+module purge
+module load slurm
 module load matlab
 
 # run matlab program
