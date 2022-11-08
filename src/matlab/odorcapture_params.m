@@ -72,7 +72,7 @@ elseif strcmp(parameters.fluid,'water')
 	%final time (s):                 
 	parameters.t_final_flick = 15; %0.1 s -> 200 s 
 	simulation.t_final_flick = parameters.t_final_flick;
-	parameters.stinkthreshold = 0.0001; 
+	parameters.stinkthreshold = 0.01; 
   parameters.timethreshold = 0.1;
   parameters.plot = 0;
    %t_final_factor_flick = 20000;
