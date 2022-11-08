@@ -11,11 +11,9 @@ function [fn,ind] = sortfiles(fn)
 
 if (~isempty(fn))
     class(fn)
-    [fn2,ind] = sort([fn{:}]);
-    class(fn2)
+    [fn,ind] = sort([fn{:}]);
     for i = 1:length(fn)
-	      fn2=fn(i);
-              [rind,q,tok] = regexp([fn2{1}],'(.*[^0-9])([0-9]+)[^0-9]*');
+              [rind,q,tok] = regexp(fn{1},'(.*[^0-9])([0-9]+)[^0-9]*');
         if (~isempty(rind))
             tok = tok{1};
             base{i} = fn{i}(tok(1,1):tok(1,2));
