@@ -10,15 +10,18 @@ function [fn,ind] = sortfiles(fn)
 % Copyright (c) 2010, Eric Tytell <tytell at jhu dot edu>
 
 if (~isempty(fn))
-    [fn,ind] = sort([fn{:}]);
+    class(fn)
+    [fn2,ind] = sort([fn{:}]);
+    class(fn2)
     for i = 1:length(fn)
-        [rind,q,tok] = regexp(fn{i},'(.*[^0-9])([0-9]+)[^0-9]*');
+	      fn2=fn(i);
+              [rind,q,tok] = regexp([fn2{1}],'(.*[^0-9])([0-9]+)[^0-9]*');
         if (~isempty(rind))
             tok = tok{1};
             base{i} = fn{i}(tok(1,1):tok(1,2));
             num(i) = str2num(fn{i}(tok(2,1):tok(2,2)));
         else
-            base{i} = fn{i};
+	  base{i} = fn(i);
         end
     end
 
