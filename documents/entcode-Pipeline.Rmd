@@ -164,29 +164,22 @@ where the first argument is the top working directory and the second is the numb
 
 ### Execution of R scripts for calculation of final flow values
 
-The final values for leakiness, shear around hairs, flux through hair area, and mean velocity around hairs are calculated in R. Each script should be changed in two places before execution, the value `n` which is the number of simulations in the set and `nohairs` which is the number of hairs in the array. 
+The final values for leakiness, shear around hairs, flux through hair area, and mean velocity around hairs are calculated in R. Each script should be changed in two places before execution, the value `n` which is the number of simulations in the set. 
 
 After changing these values, run each script by in the top directory: 
 
 `> setwd(getwd())`
 
-And then for leakiness:
+And then:
 
-`> source('src/r-scripts/R_analysis_leakiness.R')`
+`> source('src/r-scripts/R_analysis_visitflow.R')`
 
-Shear: 
+or in the command line: 
 
-`> source('src/r-scripts/R_analysis_shear.R')`
+`$ Rscript src/r-scripts/R_analysis_shear.R`
 
-Flux: 
 
-`> source('src/r-scripts/R_analysis_flux.R')`
-
-and mean velocity around hairs: 
-
-`> source('src/r-scripts/R_analysis_Umean.R')`
-
-Final values will be saved in csv files in `results/r-script-csv/nhair_results/` where n is the number of hairs in the array. 
+Final values will be saved in csv files in `results/r-script-csv/3hair_results/` if the run set is complete. 
 
 ## 5. The execution of Matlab code for advection-diffusion model
 
@@ -194,17 +187,17 @@ As a part of the full model, there is a set of scripts and functions that run a 
 
 ### Checking for IBAMR simulation set completeness and correct file structure
 
-If you have not already done so, check for the presence of all IBAMR viz_IB2d files by running the following script located in `src/visit`:
+If you have not already done so, check for the presence of all IBAMR viz_IB2d zip files by running the following script located in `src/visit`:
 
-`$ sh checkruns.sh "$WD" 25 165`
+`$ sh checkruns.sh "$WD" 2000 1`
 
-Any missing simulations should be rerun and placed in the correct directories. 
+Any missing simulations should be rerun and placed in the correct directories. You can also use option `0` in place of `1` to check for zip files. 
 
-Matlab will rely on a standard file structure in order to create and save data. These should be in the format: `$WD/resultsodorcapture/{num}hair_array/{fluid}` where `{num}` should be replaced with the number of hairs in the array and `{fluid}` should be replaced with the fluid you are running the simulation in, either air or water. If these directories don't exist, create them before running the Matlab code. 
+Matlab will rely on a standard file structure in order to create and save data. This should be in the format: `$WD/results/odorcapture/3hair_array/`. If this directory doesn't exist, create it before running the Matlab code. 
 
 ### Running Matlab simulations in parallel
 
-Matlab simulations are run on the defq partition in the Keck cluster due to memory constraints. The regular nodes have 144 CPUs with 192043 MB (192 GB) or 257574 MB (275.5 GB) per node. They are run using Matlab's `parloop` parallelization. Each RM node can support 8 simulations at a time, as the code is set up to execute 8 simulations for each job on Bridges. 
+Matlab simulations are run on the defq partition in the Keck cluster due to memory constraints. The regular nodes have 144 CPUs with 192043 MB (192 GB) or 257574 MB (275.5 GB) per node. They are run using Matlab's `parloop` parallelization. Each RM node can support 24 simulations at a time, as the code is set up to execute 24 simulations for each jobs on the Keck Cluster. 
 
 In order to set these up, you will need to change the run job file. Navigate to the `src/bridges` folder and enter the `runent-sniff.job` file and change the following lines: 
  - Line 13: array should equal the number of hairs in your array

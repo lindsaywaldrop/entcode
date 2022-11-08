@@ -3,7 +3,7 @@ calculate_maxshear <- function(nohairs, ignore, sim_no){
   shear_hair <- rep(NA, nohairs)
   for (hair in 1:nohairs){
     dat <- read.table(paste("./results/visit/", nohairs, "hair_runs/sim", sim_no,
-                            "/shear/shear_hair", hair, ".curve", sep = ""), 
+                            "/hairline_flux/flux_hair", hair, "_0003.curve", sep = ""), 
                       header = FALSE, skip = 1)
     len <- length(dat[, 1])
     shear <- matrix(NA, nrow = (len - 1), ncol = 2)

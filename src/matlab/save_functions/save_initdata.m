@@ -19,10 +19,10 @@ dt = parameters.dt;
 dt_flick = parameters.dt_flick;
 t_final_flick = parameters.t_final_flick;
 run_id = parameters.run_id;
-
+cmax = parameters.c_max;
 
 %the default extension is .mat
 filename = strcat(paths.pathbase_results, 'initdata_', run_id, '.mat');
 save(filename, 'dx','dy', 'Nx', 'Ny', 'xlength', ...
      'ylength', 'x', 'y','run_id', 'explicit_vel', 'D',...
-     'dt','dt_flick','t_final_flick');
+     'dt','dt_flick','t_final_flick','cmax');

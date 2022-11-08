@@ -73,7 +73,8 @@ elseif strcmp(parameters.fluid,'water')
 	parameters.t_final_flick = 15; %0.1 s -> 200 s 
 	simulation.t_final_flick = parameters.t_final_flick;
 	parameters.stinkthreshold = 0.0001; 
-    parameters.timethreshold = 0.1;
+  parameters.timethreshold = 0.1;
+  parameters.plot = 0;
    %t_final_factor_flick = 20000;
 else 
 	disp('unknown fluid type')
@@ -81,7 +82,7 @@ else
 end
 
 disp(['Running in ',parameters.fluid,' with D=', num2str(parameters.D), ' until change in odor capture is  less than'...
-    , num2str(parameters.threshold),'% total.'])
+    , num2str(parameters.stinkthreshold),'% total or at time ',num2str(parameters.timethreshold),'.'])
 disp(' ')
 
 %hairs  

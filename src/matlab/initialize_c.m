@@ -101,7 +101,9 @@ elseif strcmp(parameters.initc,'exp_right_small') %THIS ONE
     
     simulation.c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*parameters.c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));
     parameters.c_max
-    max(max(simulation.c))
+    parameters.c_total = sum(sum(simulation.c));
+    simulation.c_total = parameters.c_total;
+    parameters.c_total
     
     parameters.cplusx_dbc = 0; 
     parameters.diffusionrhsbc_flick = 'noflux'; 
@@ -127,7 +129,8 @@ elseif strcmp(parameters.initc,'exp_right_small_v2') %THIS ONE
     
     simulation.c = ((xx >= exp_center-width/2)&(xx <= exp_center+width/2)).*parameters.c_max.*exp((-c_Linf*((2*(xx-exp_center)/width)).^2));
     parameters.c_max
-    max(max(simulation.c))
+    parameters.c_total = sum(sum(simulation.c));
+    parameters.c_total
     
     parameters.cplusx_dbc = 0; 
     parameters.diffusionrhsbc_flick = 'noflux'; 

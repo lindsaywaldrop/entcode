@@ -81,6 +81,7 @@ simulation.t = 0;
 simulation.pcount = 1; 
 simulation.list_print_times = 0;  
 simulation.t_steps = 0; 
+simulation.dt = parameters.dt_flick;
 
 %initialize u and v 
 simulation.u = zeros(parameters.Nx+1,parameters.Ny+1);

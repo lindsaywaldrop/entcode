@@ -12,7 +12,7 @@ source("./src/r-scripts/datahandling_functions.R")
 #### Parameters ####
 nohairs <- 3     # Total number of hairs in the array. 
 # Options: 3, 5, 7, 12, 18, 25
-n <- 1		  # number of simulations to analyze
+n <- 849		  # number of simulations to analyze
 
 # Parameters that should not change
 ignore <- 3
