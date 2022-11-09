@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH -t 96:00:00
-#SBATCH -p cpu-long.q
+#SBATCH -t 24:00:00
+#SBATCH -p defq
 #SBATCH -N 1
 #SBATCH --ntasks-per-node 1
 #SBATCH --mail-type FAIL
@@ -23,7 +23,7 @@ a=1
 b=1
 
 # Diffusion coefficient
-D=3.496961E-15
+D=3.496961e-05
 
 #Stink width (width of odor stripe)
 width=0.02232773
