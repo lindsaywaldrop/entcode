@@ -23,7 +23,7 @@ a=1
 b=1
 
 # Diffusion coefficient
-D=3.496961E-05
+D=3.496961E-15
 
 #Stink width (width of odor stripe)
 width=0.02232773

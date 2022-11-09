@@ -42,7 +42,7 @@ total_captured_old = 0;
 total_captured_new = 0; 
 timestep = 0; 
 
-while(new_capture > parameters.stinkthreshold && simulation.t < parameters.timethreshold)
+while(new_capture > parameters.stinkthreshold || simulation.t < parameters.timethreshold)
    
   %diffusion  
   %if first timestep then initialze the diffusion matrix   
