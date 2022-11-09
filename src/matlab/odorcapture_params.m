@@ -73,9 +73,9 @@ elseif strcmp(parameters.fluid,'water')
 	parameters.t_final_flick = 15; %0.1 s -> 200 s 
 	simulation.t_final_flick = parameters.t_final_flick;
 	parameters.stinkthreshold = 0.01; 
-  parameters.timethreshold = 0.1;
-  parameters.plot = 0;
-   %t_final_factor_flick = 20000;
+    parameters.timethreshold = 0.1;
+    parameters.plot = 0;
+    %t_final_factor_flick = 20000;
 else 
 	disp('unknown fluid type')
 	return
@@ -92,6 +92,6 @@ parameters.hairs_data_filename = strcat('hairinfo',num2str(str2double(parameters
 parameters.hairs_data_filename_interior.filename = 'p';
 parameters.hairs_data_filename_interior.numofhairs = parameters.hairNum; 
 parameters.hairs_data_filename_interior.hairs = 'hairs'; 
-parameters.hairs_data_filename_interior.givenradius = 0.002; 
+parameters.hairs_data_filename_interior.givenradius = 0.001; 
 parameters.hairs_data_filename_interior.radius = 'radius_m'; 
 parameters.hairs_data_filename_interior.conversion_factor = 1; 

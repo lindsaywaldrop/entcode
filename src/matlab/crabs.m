@@ -72,6 +72,8 @@ while(new_capture > parameters.stinkthreshold && simulation.t < parameters.timet
   
   %saving data
   if (mod(simulation.t_steps, parameters.print_time)==0) 
+      disp(total_captured_old)
+      disp(new_capture)
     simulation.pcount = simulation.pcount + 1; 
     save_data(paths, parameters, simulation, 0);     
     simulation.list_print_times(simulation.pcount) = simulation.t; 
