@@ -15,18 +15,18 @@ conc.timedata <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair
 init.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
                               "initdata_", run_id, ".mat", sep = ""))
 
-# for (i in 1:9){
-#   all.data$c <- as.vector(conc.timedata[[i]])
-#   pdf(paste("conc_", run_id, "_", i, ".pdf", sep = ""))
-#   print({
-    ggplot(all.data, aes(x = x, y = y, fill = c)) + geom_tile() +
-      scale_fill_distiller(name = "Conc", type = "seq", palette = "OrRd", direction = 1,
-                           limits = c(-0.01, max_fill)) +
-      geom_point(data = hair.points, mapping = aes(x = x, y = y), pch = 19, size = 1,
-                 col = "black", fill = "black") +
-      theme_bw()
-#     })
-#   dev.off()
+# for (i in 1:22){
+#    all.data$c <- as.vector(conc.timedata[[i]])
+#    pdf(paste("conc_", run_id, "_", i, ".pdf", sep = ""))
+#    print({
+#     ggplot(all.data, aes(x = x, y = y, fill = c)) + geom_tile() +
+#       scale_fill_distiller(name = "Conc", type = "seq", palette = "OrRd", direction = 1,
+#                            limits = c(-0.01, max_fill)) +
+#       geom_point(data = hair.points, mapping = aes(x = x, y = y), pch = 19, size = 1,
+#                  col = "black", fill = "black") +
+#       theme_bw()
+#      })
+#    dev.off()
 # }
 
 #ggplot(all.data, aes(x = x, y = y, fill = w)) + 
@@ -57,5 +57,6 @@ for(i in 1:(length(hair.conc$conc.data[, 1]) - 1)){
     (500 * init.data$dt)
 }
 
-plot(slopes, xlab = "Print time", ylab = "Change in odorant",)
+plot(slopes, xlab = "Print time", ylab = "Change in odorant",ylim=c(0,max(slopes)))
+lines(slopes)
 lines(c(0, length(hair.conc$conc.data[, 1])), c(1e-1, 1e-1), col = "red", lty = 2)

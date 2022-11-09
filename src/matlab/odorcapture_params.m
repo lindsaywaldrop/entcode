@@ -74,7 +74,7 @@ elseif strcmp(parameters.fluid,'water')
 	simulation.t_final_flick = parameters.t_final_flick;
 	parameters.stinkthreshold = 0.01; 
     parameters.timethreshold = 0.1;
-    parameters.plot = 0;
+    parameters.plot = 1;
     %t_final_factor_flick = 20000;
 else 
 	disp('unknown fluid type')
