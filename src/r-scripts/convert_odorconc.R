@@ -15,24 +15,22 @@ conc.timedata <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair
 init.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
                               "initdata_", run_id, ".mat", sep = ""))
 
-# for (i in 1:22){
-#    all.data$c <- as.vector(conc.timedata[[i]])
-#    pdf(paste("conc_", run_id, "_", i, ".pdf", sep = ""))
-#    print({
-#     ggplot(all.data, aes(x = x, y = y, fill = c)) + geom_tile() +
-#       scale_fill_distiller(name = "Conc", type = "seq", palette = "OrRd", direction = 1,
-#                            limits = c(-0.01, max_fill)) +
-#       geom_point(data = hair.points, mapping = aes(x = x, y = y), pch = 19, size = 1,
-#                  col = "black", fill = "black") +
-#       theme_bw()
-#      })
-#    dev.off()
-# }
+for (i in 1:22){
+   all.data$c <- as.vector(conc.timedata[[i]])
+   ggplot(all.data, aes(x = x, y = y, fill = c)) + geom_tile() +
+      scale_fill_distiller(name = "Conc", type = "seq", palette = "OrRd", direction = 1,
+                           limits = c(-0.01, max_fill)) +
+      geom_point(data = hair.points, mapping = aes(x = x, y = y), pch = 19, size = 1,
+                 col = "black", fill = "black") +
+      theme_bw()
+   ggsave(paste0("conc_",run_id,"_",i,".png"),last_plot())
+}
 
-#ggplot(all.data, aes(x = x, y = y, fill = w)) + 
-#  geom_tile() + scale_fill_viridis() +
-#  geom_point(data = hair.points, mapping = aes(x = x, y = y), 
-#             pch = 19, size = 1, col = "white", fill = "white") 
+ggplot(all.data, aes(x = x, y = y, fill = w)) +
+ geom_tile() + scale_fill_viridis() +
+ geom_point(data = hair.points, mapping = aes(x = x, y = y),
+            pch = 19, size = 1, col = "white", fill = "white")+
+  theme_minimal()
 
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
 hair.conc$conc.data <- hair.conc$conc.data/sum(conc.timedata$c.1)
@@ -60,3 +58,5 @@ for(i in 1:(length(hair.conc$conc.data[, 1]) - 1)){
 plot(slopes, xlab = "Print time", ylab = "Change in odorant",ylim=c(0,max(slopes)))
 lines(slopes)
 lines(c(0, length(hair.conc$conc.data[, 1])), c(1e-1, 1e-1), col = "red", lty = 2)
+
+

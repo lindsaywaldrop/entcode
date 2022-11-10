@@ -21,12 +21,12 @@ save(strcat(paths.pathbase_data, '/hairinfo-files/', num2str(parameters.hairNum)
 
 %loads the location of the hairs
 flick_hairs = eval(['flickdata.' parameters.hairs_data_filename_interior.hairs])
-
+%hairdia = 2*parameters.hairs_data_filename_interior.givenradius;
 % Set domain limits based on hairs
-xLmin = min([flick_hairs.x]) - 0.05;
-xLmax = max([flick_hairs.x]) + 0.15;
-yLmin = min([flick_hairs.y]) - 0.05;
-yLmax = max([flick_hairs.y]) + 0.05;
+xLmin = min([flick_hairs.x]) - 0.02;
+xLmax = max([flick_hairs.x]) + 0.10;
+yLmin = min([flick_hairs.y]) - 0.02;
+yLmax = max([flick_hairs.y]) + 0.02;
 parameters.domainlimits = [xLmin, xLmax, yLmin, yLmax];
 
 if (parameters.hairs_data_filename_interior.givenradius)

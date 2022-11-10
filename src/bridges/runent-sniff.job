@@ -16,11 +16,8 @@ array=3
 # Fluid
 fluid=\'water\'
 
-# First number
+# Simulation number
 a=1
-
-# Second number
-b=1
 
 # Diffusion coefficient
 D=3.496961e-05
@@ -50,7 +47,7 @@ module load slurm
 module load matlab
 
 # run matlab program
-matlab -nodesktop -nosplash -r "entsniff(${MatWD},$array,${fluid},$a:$b,1,$D,$width,$initconc);exit"
+matlab -nodesktop -nosplash -r "entsniff(${MatWD},$array,${fluid},$a,1,$D,$width,$initconc);exit"
 
 wait
 
