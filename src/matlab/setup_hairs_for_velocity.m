@@ -24,7 +24,7 @@ flick_hairs = eval(['flickdata.' parameters.hairs_data_filename_interior.hairs])
 %hairdia = 2*parameters.hairs_data_filename_interior.givenradius;
 % Set domain limits based on hairs
 xLmin = min([flick_hairs.x]) - 0.02;
-xLmax = max([flick_hairs.x]) + 0.10;
+xLmax = max([flick_hairs.x]) + 0.065;
 yLmin = min([flick_hairs.y]) - 0.02;
 yLmax = max([flick_hairs.y]) + 0.02;
 parameters.domainlimits = [xLmin, xLmax, yLmin, yLmax];
