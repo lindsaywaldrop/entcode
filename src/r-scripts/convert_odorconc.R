@@ -4,7 +4,7 @@ library(RColorBrewer)
 
 source("./src/R-scripts/datahandling_functions.R")
 
-run_id <- "0001"
+run_id <- "0004"
 hairno <- 3
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
 all.data <- convert_ibamr(run_id, fluid, 1, hairno)
@@ -15,7 +15,8 @@ conc.timedata <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair
 init.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
                               "initdata_", run_id, ".mat", sep = ""))
 
-for (i in 1:22){
+#for (i in 1:22){
+  i=1
    all.data$c <- as.vector(conc.timedata[[i]])
    ggplot(all.data, aes(x = x, y = y, fill = c)) + geom_tile() +
       scale_fill_distiller(name = "Conc", type = "seq", palette = "OrRd", direction = 1,
@@ -24,7 +25,7 @@ for (i in 1:22){
                  col = "black", fill = "black") +
       theme_bw()
    ggsave(paste0("conc_",run_id,"_",i,".png"),last_plot())
-}
+#}
 
 ggplot(all.data, aes(x = x, y = y, fill = w)) +
  geom_tile() + scale_fill_viridis() +

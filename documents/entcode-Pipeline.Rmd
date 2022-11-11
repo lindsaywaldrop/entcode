@@ -2,7 +2,9 @@
 title: "entcode 3-hair master project -- pipeline"
 author: "Lindsay Waldrop"
 date: "`r Sys.Date()`"
-output: pdf_document
+output:
+  pdf_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}

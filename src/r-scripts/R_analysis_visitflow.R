@@ -12,7 +12,7 @@ source("./src/r-scripts/datahandling_functions.R")
 #### Parameters ####
 nohairs <- 3     # Total number of hairs in the array. 
 # Options: 3, 5, 7, 12, 18, 25
-n <- 849		  # number of simulations to analyze
+n <- 2000		  # number of simulations to analyze
 
 # Parameters that should not change
 ignore <- 3
@@ -53,6 +53,6 @@ for (j in 1:n){		# Main loop over simulations
 
 #### Checking data sets for completeness and saving ####
 all_numbers <- cbind(shear_hair, flux, Umean, leakiness)
-all_numbers2 <- check_completeness_save(parameters, all_numbers, "flowdata")
+all_numbers2 <- check_completeness_save(parameters, all_numbers, nohairs, "flowdata")
 
 #################################################################################################################
