@@ -22,7 +22,8 @@ save_data(paths, parameters, simulation, 1);
 %FLICK
 disp('Creating and saving velocity data')
 disp('  ')
-[velocities] = get_velocities(parameters.dt_flick/2,simulation.t,parameters.explicit_vel,'flick', paths, parameters, simulation);
+[velocities] = get_velocities(parameters.dt_flick/2, simulation.t, ...
+    parameters.explicit_vel, 'flick', paths, parameters, simulation);
 save_data_vel(1, 'flick', paths, parameters, velocities);
 disp('Done!')
 disp(' ')
@@ -37,23 +38,32 @@ disp('Starting first flick...')
 												parameters, simulation, velocities);
 disp('.')
 
+% Set threshold for stopping simulation based on odor captured 
+%stink_threshold = parameters.stinkthreshold*parameters.c_total;
+stink_threshold = parameters.stinkthreshold
+% Initialize counters
 new_capture = 1;
 total_captured_old = 0; 
 total_captured_new = 0; 
 timestep = 0; 
 
-while(new_capture > parameters.stinkthreshold || simulation.t < parameters.timethreshold)
-   
+while(simulation.t < parameters.t_final_flick)
+   if (simulation.t > parameters.timethreshold_min && ...
+       new_capture < stink_threshold ) 
+       break
+   end
   %diffusion  
   %if first timestep then initialze the diffusion matrix   
   if (timestep == 0) 
-      [simulation] = diffusion_c(parameters.dt_flick, 1, parameters.diffusionrhsbc_flick, parameters, simulation);
+      [simulation] = diffusion_c(parameters.dt_flick, 1, ... 
+          parameters.diffusionrhsbc_flick, parameters, simulation);
       disp('.')
   else
-      [simulation] = diffusion_c(parameters.dt_flick, 0, parameters.diffusionrhsbc_flick, parameters, simulation); 
+      [simulation] = diffusion_c(parameters.dt_flick, 0, ...
+          parameters.diffusionrhsbc_flick, parameters, simulation); 
   end
-  [simulation] = concentration_absorbed_by_hairs(simulation);
   [total_captured_new, new_capture] = calculate_threshold(total_captured_old, simulation);
+  [simulation] = concentration_absorbed_by_hairs(simulation);
   %advection 
   %if not at the last timestep then step with dt but if at the last
   %timestep then step only dt/2    

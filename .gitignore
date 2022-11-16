@@ -21,3 +21,4 @@ src/matlab/matlab-tytell/.hg/*
 *visitlog*.py
 results/ibamr*
 results/odor*
+results/visit*

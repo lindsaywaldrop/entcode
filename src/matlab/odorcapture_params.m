@@ -45,44 +45,27 @@ parameters.piv_data_filename_interior.forcedivfree = 0;
 parameters.usegmres = 0; %0 if LU decomposition and 1 if gmres iterative solver
                      
 
-if strcmp(parameters.fluid,'air')
-	%initializing the bulk surfactants
-	parameters.initc = 'half_exp';
-	%diffusion coefficient (m^2/s)	
-	parameters.D = 2000*6.02e-6;       %caproic acid in air  - in m^2/s -> correspond to half_exp IC 
-	simulation.D = parameters.D;
-	%print every print_time timesteps 
-	parameters.print_time = 500;  
-	simulation.print_time = parameters.print_time;
-	%final time (s):                 
-	parameters.t_final_flick = 0.5; %0.1 s -> 200 s 
-	simulation.t_final_flick = parameters.t_final_flick;
-	%t_final_factor_flick = 20000;
+%initializing the bulk surfactants
+parameters.initc = 'exp_right_small';
+%diffusion coefficient (m^2/s)
+%parameters.D = 2000*7.84e-10;     %caproic acid in water - in m^2/s -> corresponds to exp_right_small IC 
+parameters.D = parameters.D*2000;
+simulation.D = parameters.D;
+%print every print_time timesteps 
+parameters.print_time = 100;  
+simulation.print_time = parameters.print_time;
+%final time (s):                 
+parameters.t_final_flick = 15; %0.1 s -> 200 s 
+simulation.t_final_flick = parameters.t_final_flick;
+parameters.stinkthreshold = 9.5e12; 
+parameters.timethreshold_min = 0.01;
+parameters.plot = 1;
+%t_final_factor_flick = 20000;
 
-elseif strcmp(parameters.fluid,'water')
-	%initializing the bulk surfactants
-	parameters.initc = 'exp_right_small';
-	%diffusion coefficient (m^2/s)
-	%parameters.D = 2000*7.84e-10;     %caproic acid in water - in m^2/s -> corresponds to exp_right_small IC 
-	parameters.D = parameters.D*2000;
-	simulation.D = parameters.D;
-	%print every print_time timesteps 
-	parameters.print_time = 100;  
-	simulation.print_time = parameters.print_time;
-	%final time (s):                 
-	parameters.t_final_flick = 15; %0.1 s -> 200 s 
-	simulation.t_final_flick = parameters.t_final_flick;
-	parameters.stinkthreshold = 0.01; 
-    parameters.timethreshold = 0.1;
-    parameters.plot = 1;
-    %t_final_factor_flick = 20000;
-else 
-	disp('unknown fluid type')
-	return
-end
-
-disp(['Running in ',parameters.fluid,' with D=', num2str(parameters.D), ' until change in odor capture is  less than'...
-    , num2str(parameters.stinkthreshold),'% total or at time ',num2str(parameters.timethreshold),'.'])
+disp(['Running in ',parameters.fluid,' with D=', num2str(parameters.D), ...
+    ' until change in odor capture is  less than'...
+    , num2str(parameters.stinkthreshold),'% total or at time ', ...
+    num2str(parameters.timethreshold_min),'.'])
 disp(' ')
 
 %hairs  

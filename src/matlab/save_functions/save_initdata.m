@@ -17,12 +17,14 @@ explicit_vel = parameters.explicit_vel;
 D = parameters.D;
 dt = parameters.dt; 
 dt_flick = parameters.dt_flick;
-t_final_flick = parameters.t_final_flick;
+t_max = parameters.t_final_flick;
 run_id = parameters.run_id;
 cmax = parameters.c_max;
+ctotal = parameters.c_total;
+print_time = parameters.print_time;
 
 %the default extension is .mat
 filename = strcat(paths.pathbase_results, 'initdata_', run_id, '.mat');
 save(filename, 'dx','dy', 'Nx', 'Ny', 'xlength', ...
      'ylength', 'x', 'y','run_id', 'explicit_vel', 'D',...
-     'dt','dt_flick','t_final_flick','cmax');
+     'dt','print_time','t_max','cmax', 'ctotal');
