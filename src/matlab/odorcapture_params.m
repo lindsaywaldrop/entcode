@@ -57,7 +57,7 @@ simulation.print_time = parameters.print_time;
 %final time (s):                 
 parameters.t_final_flick = 15; %0.1 s -> 200 s 
 simulation.t_final_flick = parameters.t_final_flick;
-parameters.stinkthreshold = 9.5e12; 
+parameters.stinkthreshold = 0.001; 
 parameters.timethreshold_min = 0.01;
 parameters.plot = 1;
 %t_final_factor_flick = 20000;

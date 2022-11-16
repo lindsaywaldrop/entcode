@@ -39,8 +39,8 @@ disp('Starting first flick...')
 disp('.')
 
 % Set threshold for stopping simulation based on odor captured 
-%stink_threshold = parameters.stinkthreshold*parameters.c_total;
-stink_threshold = parameters.stinkthreshold
+stink_threshold = parameters.stinkthreshold*parameters.c_total;
+%stink_threshold = parameters.stinkthreshold
 % Initialize counters
 new_capture = 1;
 total_captured_old = 0; 
