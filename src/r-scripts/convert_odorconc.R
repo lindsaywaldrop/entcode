@@ -6,7 +6,6 @@ source("./src/R-scripts/datahandling_functions.R")
 
 run_id <- "0004"
 hairno <- 3
-print.time <- 100
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
 all.data <- convert_ibamr(run_id, fluid, 1, hairno)
 max_fill <- max(all.data$c)
@@ -36,6 +35,8 @@ conc.timedata <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair
 init.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
                                      "initdata_", run_id, ".mat", sep = ""))
 
+print.time <- init.data$print.time
+threshold <- init.data$ctotal*0.01
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
 #hair.conc$conc.data <- hair.conc$conc.data/sum(conc.timedata$c.1)
 row.cols <- viridis(hairno, option = "C")
@@ -63,8 +64,12 @@ for(i in 1:(length(plot.conc) - 1)){
 plot(y=slopes, x = seq(1,length(slopes))*as.numeric(init.data$dt*print.time),
      xlab = "Print time", ylab = "Change in odorant", 
      ylim=c(0,max(slopes)),
-     xlim=c(0, 5e-2),
+     #xlim=c(0, 5e-2),
      main = paste0("Simulation ", run_id))
-lines(slopes)
-lines(c(0, length(hair.conc$conc.data[, 1])), c(9.5e12, 9.5e12), col = "red", lty = 2)
-lines(c(5e-2,5e-2), c(0, 5e14), col="blue")
+lines(y=slopes, x = seq(1,length(slopes))*as.numeric(init.data$dt*print.time))
+lines(c(0, length(hair.conc$conc.data[, 1])), c(threshold, threshold), col = "red", lty = 2)
+lines(c(1e-2,1e-2), c(0, 1000*init.data$ctotal), col="blue")
+
+plot(slopes/threshold, ylim=c(0,20),type="l")
+lines(c(0,2000), c(1,1))
+
