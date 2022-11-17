@@ -40,7 +40,9 @@ disp('.')
 
 % Set threshold for stopping simulation based on odor captured 
 stink_threshold = parameters.stinkthreshold*parameters.c_total;
+time_threshold = parameters.timethreshold_min*parameters.dt;
 %stink_threshold = parameters.stinkthreshold
+
 % Initialize counters
 new_capture = 1;
 total_captured_old = 0; 
@@ -48,7 +50,7 @@ total_captured_new = 0;
 timestep = 0; 
 
 while(simulation.t < parameters.t_final_flick)
-   if (simulation.t > parameters.timethreshold_min && ...
+   if (simulation.t > time_threshold && ...
        new_capture < stink_threshold ) 
        break
    end
