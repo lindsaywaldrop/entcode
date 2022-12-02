@@ -1,6 +1,7 @@
 #### Installs required R packages ####
 
-packages <- c("pracma", "useful", "data.table", "ggplot2", "R.matlab", "viridis")
+packages <- c("pracma", "useful", "data.table", "ggplot2", "R.matlab", 
+              "viridis", "stringr")
 
 package.check <- lapply(
   packages,

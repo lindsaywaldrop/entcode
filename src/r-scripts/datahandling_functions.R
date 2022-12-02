@@ -105,12 +105,15 @@ check_completeness_save <- function(parameters, dat, nohairs, filename_base){
   } else {
     message("Set not complete, did not save")
   }
-  return(dat2)
+  invisible(dat2)
 }
 
 convert_odorconc <- function(run_id, fluid, hairno) {
-  require(R.matlab)
-  dat <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
+  init.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
+                                       "initdata_", run_id, ".mat", sep = ""))
+  threshold <- init.data$ctotal*0.01
+  print.time <- init.data$print.time
+  dat <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
                        "hairs_c_", run_id, ".mat", sep = ""))
   steps.number <- length(dat) - 2
   hairs.number <- length(dat$hairs.center[, 1])
@@ -128,6 +131,18 @@ convert_odorconc <- function(run_id, fluid, hairno) {
     }
   }
   extracted <- list(hairs.positions = hairs.positions, conc.data = conc.data)
+  plot.conc <- apply(extracted$conc.data, 1, sum)
+  slopes <- rep(NA, length(plot.conc) - 1)
+  for(i in 1:(length(plot.conc) - 1)){
+    slopes[i] <- (plot.conc[i + 1] - plot.conc[i]) / 
+      (init.data$dt*print.time)
+  }
+  if(slopes[length(slopes)] < threshold) {
+    extracted$threshold <- TRUE
+  } else {
+    warning(paste0("Simulation ",run_id," did not finish!"))
+    extracted$threshold <- FALSE
+  }
   return(extracted)
 }
 
@@ -137,12 +152,11 @@ magnitude <- function(u, v) {
 }
 
 convert_ibamr <- function(run_id, fluid,t, hairno) {
-  require(R.matlab)
-  loc.data <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
+  loc.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
                             "initdata_", run_id, ".mat", sep = ""))
-  ibamr.data <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
+  ibamr.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
                               "velocity_", run_id, ".mat", sep = ""))
-  conc.timedata <- readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
+  conc.timedata <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
                                  "c_", run_id, ".mat", sep = ""))
   u <- as.vector(ibamr.data$u.flick)
   v <- as.vector(ibamr.data$v.flick)
@@ -153,7 +167,6 @@ convert_ibamr <- function(run_id, fluid,t, hairno) {
   all.data <- data.frame(x = x, y = y, u = u, v = v, w = magnitude(u, v), c = c1)
   return(all.data)
 }
-
 
 load_parameters <- function(){
   parameters <- read.table(paste("./data/parameters/data_uniform_2000.txt", sep = ""), 
