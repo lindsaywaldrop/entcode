@@ -10,7 +10,7 @@ source("./src/r-scripts/datahandling_functions.R")
 hairno <- 3  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 startn <- 1
-n <- 300				  # number of simulations to analyze
+n <- 10				  # number of simulations to analyze
 fluid <- "water"  # fluid of simulation, options: air, water
 
 # Loading parameter file
@@ -27,9 +27,9 @@ dir.create(file.path(mainDir1, subDir1), showWarnings = FALSE)
 
 # Pre-allocating space
 total.conc <- rep(NA, length = nrow(parameters))
+norm.conc <- rep(NA, length = nrow(parameters))
 totals.hairs <- matrix(data = NA, nrow = nrow(parameters), ncol = hairno)
 totals.rows <- matrix(data = NA, nrow = nrow(parameters), ncol = rowno)
-
 
 for(i in startn:n){
   run_id <- stringr::str_pad(i, 4, pad = "0")
@@ -46,6 +46,7 @@ for(i in startn:n){
       last.timestep <- length(hair.conc[["conc.data"]][,1])
       # Calculating total concentration captured by the array:
       total.conc[i] <- sum(hair.conc[["conc.data"]][last.timestep,])
+      norm.conc[i] <- total.conc[i]/hair.conc$cmax
       for(j in 1:hairno){
         # Calculating totals for each hair:
         totals.hairs[i,j] <- hair.conc[["conc.data"]][last.timestep,j]
@@ -72,7 +73,6 @@ for(i in startn:n){
     } # threshold else end
     if(i==n) col_hair_names <- colnames(hair.conc[["hairs.positions"]])
     rm(hair.conc)
-    gc()
   } #main else end
 }
 
@@ -81,7 +81,7 @@ colnames(totals.hairs) <- col_hair_names
 leaknames <- as.character(rep(0, rowno)) # Allocates space for names 
 for (i in 1:rowno) leaknames[i] <- paste("row", i, sep = "") # Assigns name for each hair
 colnames(totals.rows) <- leaknames
-norm.conc <- total.conc/parameters$init_conc
+#norm.conc <- total.conc/parameters$init_conc
 conctotals <- data.frame(parameters, total.conc, norm.conc, totals.hairs, totals.rows)
 
 #### Checking and Saving Data ####

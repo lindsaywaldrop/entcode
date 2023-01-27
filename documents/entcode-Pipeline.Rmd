@@ -212,11 +212,15 @@ To submit a job, use the following:
 
 Jobs will be submitted to Bridges in sets of 8 per job ID. If you enter a non-multiple of 8, the remainder will be submitted as its own job. 
 
+### Checking for Matlab simulation files results completeness
+
+To check that Matlab simulations provided a complete data set for R to do final calculations, run the following script in the src/bridges directory: 
+
+`$ sh checkmatlab.sh "$WD" 3 2000`
+
+where the first argument is the top working directory and the second is the number of hairs in the array, and third is the number of simulations to check. This script will provide a list of matlab data files with the prefixes `c_`, `hairs_c_`, `initdata_`, and `velocity_` are missing so you can check individual simulations and rerun as necessary. 
+
 ### Running final R code to calculate values
-
-First, check to see if all hair concentration files are present in the necessary directory before running the R code:
-
-``for i in `seq -f "%04g" 1 165`;do if [ ! -f hairs_c_${i}.mat ]; then echo "File ${i} not found"; fi; done``
 
 The R script in `src/r-scripts` can be run either on your own machine (after downloading the resulting mat files in the form `hairs_c_*.mat`) or on Bridges. To do so, simply open R and source the script: 
 

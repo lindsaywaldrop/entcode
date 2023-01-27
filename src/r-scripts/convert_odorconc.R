@@ -4,7 +4,7 @@ library(RColorBrewer)
 
 source("./src/R-scripts/datahandling_functions.R")
 
-run_id <- "0866"
+run_id <- "0005"
 hairno <- 3
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
 all.data <- convert_ibamr(run_id, fluid, 1, hairno)
@@ -15,14 +15,14 @@ conc.timedata <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair
 dir.create("documents/viz/")
 dir.create(paste0("documents/viz/run",run_id))
 # for (i in 1:length(conc.timedata)){
-#   #i=1
-#    all.data$c <- as.vector(conc.timedata[[i]])
-#    ggplot(all.data, aes(x = x, y = y, fill = c)) + geom_tile() +
-#       scale_fill_distiller(name = "Conc", type = "seq", palette = "OrRd", direction = 1,
-#                            limits = c(-0.01, max_fill)) +
-#       geom_point(data = hair.points, mapping = aes(x = x, y = y), pch = 19, size = 1,
-#                  col = "black", fill = "black") +
-#       theme_bw()
+  i=1
+   all.data$c <- as.vector(conc.timedata[[i]])
+   ggplot(all.data, aes(x = x, y = y, fill = c)) + geom_tile() +
+      scale_fill_distiller(name = "Conc", type = "seq", palette = "OrRd", direction = 1,
+                           limits = c(-0.01, max_fill)) +
+      geom_point(data = hair.points, mapping = aes(x = x, y = y), pch = 19, size = 1,
+                 col = "black", fill = "black") +
+      theme_bw()
 #    ggsave(paste0("documents/viz/run",run_id,"/conc_",run_id,"_",i,".png"),last_plot())
 # }
 
@@ -79,8 +79,8 @@ checkruns<-function(run_id){
   lines(c(1e-2,1e-2), c(0, 1000*init.data$ctotal), col="blue")
   
   plot(slopes/threshold, ylim=c(0,20),type="l")
-  lines(c(0,2000), c(1,1))
+  lines(c(0,4000), c(1,1))
   slopes[length(slopes)] < threshold
 }
 
-checkruns("0019")
+checkruns("0416")

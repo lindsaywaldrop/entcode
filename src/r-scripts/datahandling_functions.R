@@ -111,6 +111,8 @@ check_completeness_save <- function(parameters, dat, nohairs, filename_base){
 convert_odorconc <- function(run_id, fluid, hairno) {
   init.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
                                        "initdata_", run_id, ".mat", sep = ""))
+  ctotal <- init.data$ctotal
+  cmax <-init.data$cmax
   threshold <- init.data$ctotal*0.01
   print.time <- init.data$print.time
   dat <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
@@ -130,7 +132,8 @@ convert_odorconc <- function(run_id, fluid, hairno) {
       else {conc.data[i, j] <- sum(dat[[paste("hairs.c.", i, sep = "")]][[j]][[1]])}
     }
   }
-  extracted <- list(hairs.positions = hairs.positions, conc.data = conc.data)
+  extracted <- list(hairs.positions = hairs.positions, conc.data = conc.data, 
+                    ctotal = ctotal, cmax = cmax)
   plot.conc <- apply(extracted$conc.data, 1, sum)
   slopes <- rep(NA, length(plot.conc) - 1)
   for(i in 1:(length(plot.conc) - 1)){
