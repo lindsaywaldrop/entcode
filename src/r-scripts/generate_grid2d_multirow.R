@@ -18,7 +18,7 @@ plotit <- 0
 # plot the hairs? yes = 1, no = 0
 startrun <- 1
 endrun <- 2000
-nohairs <- 3  # 2 row: 7; 3 row: 12; 4 row: 18; 5 row: 25
+nohairs <- 25  # 2 row: 7; 3 row: 12; 4 row: 18; 5 row: 25
 
 mainDir1 <- "./data/vertex-files"
 mainDir2 <- "./data/csv-files"
@@ -168,7 +168,11 @@ makehairs <- function(th, GtD, AtD, dist, number, nohairs, plotit = 0){
   ant <- circle(c(0, 0), 0.5 * adia, L, dx);  # Produces points that define antennule
   aN <- size(ant$X, 2)                   # Records number of points inside antennule
   if(plotit == 1){
-    plot(ant$X, ant$Y, col = "blue", type = "p", xlim = c(-(adia+width+2*hdia),adia+width+2*hdia), ylim = c(-(adia+width+hdia), adia+width+hdia), 
+    plot(ant$X, ant$Y, col = "blue", type = "p", 
+         #xlim = c(-(adia+width+2*hdia),adia+width+2*hdia), 
+         #ylim = c(-(adia+width+hdia), adia+width+hdia), 
+         xlim = domain$x,
+         ylim = domain$y,
          pch = '.', main = paste("Simulation", number))
     #plot(0, 0, xlim = domain$x, ylim = domain$y, 
     #     pch = 19, cex = 4.5) #Plots antennule
