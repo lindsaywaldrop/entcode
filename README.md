@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The entcode 3-hair master project is a computational fluid dynamic simulation of odor capture by a chemosensory hair array consisting of three hairs and a supporting, non-chemosensory antenna. The simulations are in two dimensions, representing a cross-section of the array. The project consists of setup for 2,000 individual simulations, each representing a unique combination of the following parameters: 
+The entcode master project is a computational fluid dynamic simulation of odor capture by a chemosensory hair array consisting of three or twenty-five hairs and a supporting, non-sensory antenna. The simulations are in two dimensions, representing a cross-section of the array. The project consists of setup for 2,000 individual simulations, each representing a unique combination of the following parameters: 
 
  * Angle of array to oncoming flow: 0 to 180 degrees
  * Gap-to-hair-diameter ratio of the gaps between chemosensory hairs to their widths: 1 to 50
