@@ -9,8 +9,8 @@ source("./src/r-scripts/datahandling_functions.R")
 ####  Parameters  ####
 hairno <- 3  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
-startn <- 1
-n <- 10				  # number of simulations to analyze
+startn <- 1402
+n <- 2000				  # number of simulations to analyze
 fluid <- "water"  # fluid of simulation, options: air, water
 
 # Loading parameter file
@@ -40,7 +40,7 @@ for(i in startn:n){
   }else{
     print(paste("Simulation",run_id))
     hair.conc <- convert_odorconc(run_id, fluid, hairno)
-    if(!hair.conc$threshold){
+    if(!hair.conc$threshold & run_id != "0531"){
       paste("Simulation",run_id,"did not finish.")
     } else{
       last.timestep <- length(hair.conc[["conc.data"]][,1])

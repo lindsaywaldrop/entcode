@@ -140,7 +140,10 @@ convert_odorconc <- function(run_id, fluid, hairno) {
     slopes[i] <- (plot.conc[i + 1] - plot.conc[i]) / 
       (init.data$dt*print.time)
   }
-  if(slopes[length(slopes)] < threshold) {
+  if(length(slopes[length(slopes)]) == 0 || length(slopes[length(slopes)]) == 1){
+    warning(paste0("Simulation ",run_id," has something wrong!"))
+    extracted$threshold <- FALSE
+  } else if (slopes[length(slopes)] < threshold) {
     extracted$threshold <- TRUE
   } else {
     warning(paste0("Simulation ",run_id," did not finish!"))

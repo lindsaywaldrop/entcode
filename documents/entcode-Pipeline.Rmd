@@ -1,5 +1,5 @@
 ---
-title: "entcode 3-hair master project -- pipeline"
+title: "entcode master project -- pipeline"
 author: "Lindsay Waldrop"
 date: "`r Sys.Date()`"
 output:
@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-The entcode 3-hair master project is a computational fluid dynamic simulation of odor capture by a chemosensory hair array consisting of three hairs and a supporting, non-chemosensory antenna. The simulations are in two dimensions, representing a cross-section of the array. The project consists of setup for 2,000 individual simulations, each representing a unique combination of the following parameters: 
+The entcode master project is a computational fluid dynamic simulation of odor capture by a chemosensory hair array consisting of three hairs and a supporting, non-chemosensory antenna. The simulations are in two dimensions, representing a cross-section of the array, and represent arrays with either 3 or 25 hairs. The project consists of setup for 2,000 individual simulations, each representing a unique combination of the following parameters: 
 
  * Angle of array to oncoming flow: 0 to 180 degrees
  * Gap-to-hair-diameter ratio of the gaps between chemosensory hairs to their widths: 1 to 50
@@ -24,7 +24,7 @@ The entcode 3-hair master project is a computational fluid dynamic simulation of
  * Width of the initial odor stripe: 0.5 to 5 % of the domain width
  * Initial odor concentration: 1e3 to 1e7 (no units)
  
-This simulation and data analysis pipeline for the entcode 3-hair master project. It includes all the steps necessary to generate results through each step of the pipeline from cloning the project on Github to figures for publication. 
+This simulation and data analysis pipeline for the entcode master project. It includes all the steps necessary to generate results through each step of the pipeline from cloning the project on Github to figures for publication. 
 
 ## Overview of the Pipeline
 
