@@ -1,0 +1,23 @@
+#!/bin/bash
+#SBATCH -p defq
+#SBATCH -t 24:00:00
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=1
+#SBATCH --mail-type=FAIL
+
+# echo commands to stdout
+set -x 
+
+# Set path 
+WD="/home/waldrop@chapman.edu/entcode"
+
+# move to working directory
+cd "${WD}"
+
+# add appropriate modules
+module load R
+
+# run R script
+#srun Rscript 'src/r-scripts/generate_grid2d_multirow.R'
+srun Rscript 'src/r-scripts/install_R_packages.R'
+srun Rscript 'src/r-scripts/R_analysis_totalodor.R'
