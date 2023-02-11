@@ -4,7 +4,7 @@ library(RColorBrewer)
 
 source("./src/R-scripts/datahandling_functions.R")
 
-run_id <- "1421"
+run_id <- "1448"
 hairno <- 3
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
 all.data <- convert_ibamr(run_id, fluid, 1, hairno)

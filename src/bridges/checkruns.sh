@@ -1,11 +1,13 @@
 #!/bin/bash
 
 WD=${1:?Provide a top-level directory path}
-b1=${2:?Provide the start number of simulations to check}
-b2=${3:?Provide the end number of simulations to check}
+a=${2:?Provide the number of hairs in the array}
+b2=${3:?Provide the number of simulations to check}
+#b2=${3:?Provide the end number of simulations to check}
 w=${4:?Check zip or folders? 1 for folders}
 
-a=3
+b1=1
+#a=3
 cd "${WD}"/results/ibamr/3hair_runs/
 
 
