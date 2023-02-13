@@ -9,7 +9,7 @@ source("./src/r-scripts/datahandling_functions.R")
 ####  Parameters  ####
 hairno <- 3  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
-startn <- 1500
+startn <- 1
 n <- 2000				  # number of simulations to analyze
 fluid <- "water"  # fluid of simulation, options: air, water
 
