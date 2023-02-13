@@ -191,9 +191,9 @@ As a part of the full model, there is a set of scripts and functions that run a 
 
 If you have not already done so, check for the presence of all IBAMR viz_IB2d zip files by running the following script located in `src/visit`:
 
-`$ sh checkruns.sh "$WD" 2000 1`
+`$ sh checkruns.sh "$WD" 3 2000 1`
 
-Any missing simulations should be rerun and placed in the correct directories. You can also use option `0` in place of `1` to check for zip files. 
+Put the number of hairs in the array after the working directory. Any missing simulations should be rerun and placed in the correct directories. You can also use option `0` in place of `1` to check for zip files. 
 
 Matlab will rely on a standard file structure in order to create and save data. This should be in the format: `$WD/results/odorcapture/3hair_array/`. If this directory doesn't exist, create it before running the Matlab code. 
 
@@ -202,7 +202,7 @@ Matlab will rely on a standard file structure in order to create and save data. 
 Matlab simulations are run individually on the cpu-long.q partition in the Keck cluster due to memory and wall-time constraints. The regular nodes have 144 CPUs with 192043 MB (192 GB) or 257574 MB (275.5 GB) per node. They are run individually, although the code does support using Matlab's `parloop` parallelization for running multiple simulations on a single job. The code is set up to execute 1 simulation for each jobs on the Keck Cluster. 
 
 In order to set these up, you will need to change the run job file. Navigate to the `src/bridges` folder and enter the `runent-sniff.job` file and change the following lines: 
- - Line 13: array should equal the number of hairs in your array
+ - Line 14: array should equal the number of hairs in your array
 
 To submit a job, use the following: 
 

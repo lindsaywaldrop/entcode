@@ -11,7 +11,7 @@
 set -x 
 
 # Number of hairs in the array
-array=3
+array=25
 
 # Fluid
 fluid=\'water\'
@@ -33,7 +33,7 @@ WD=/home/waldrop@chapman.edu/entcode
 MatWD=\'$WD\'
 
 # move to IBAMR results and unzip appropriate file
-cd "${WD}"/results/ibamr/3hair_runs
+cd "${WD}"/results/ibamr/${array}hair_runs
 if test ! -d viz_IB2d${a}/;then 
     unzip viz_IB2d${a}.zip;
 fi
@@ -52,6 +52,6 @@ matlab -nodesktop -nosplash -r "entsniff(${MatWD},$array,${fluid},$a,1,$D,$width
 wait
 
 # Clean up 
-cd "${WD}"/results/ibamr/3hair_runs
+cd "${WD}"/results/ibamr/${array}hair_runs
 rm -r viz_IB2d${a}/
 
