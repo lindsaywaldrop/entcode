@@ -1,4 +1,27 @@
 
+register_backend <- function(copl, windows = FALSE) {
+  require(parallel)
+  require(doParallel)
+  co <- detectCores()
+  if (windows == TRUE) {
+    if (copl > co ) {
+      cluster <- makePSOCKcluster(co)
+      message("Cores requested exceed the number available, using max detected.")
+    } else {
+      cluster <- makePSOCKcluster(copl)
+    }
+    return(cluster)
+  } else {
+    if (copl > co ) {
+      registerDoParallel(cores = co)
+      message("Cores requested exceed the number available, using max detected.")
+    } else {
+      registerDoParallel(cores = copl)
+    }
+    invisible(NULL)
+  }
+}
+
 calculate_maxshear <- function(nohairs, ignore, sim_no){
   shear_hair <- rep(NA, nohairs)
   for (hair in 1:nohairs){
@@ -90,22 +113,33 @@ create_hair_names <- function(nohairs, filename_base){
   return(Hair_names)
 }
 
-check_completeness_save <- function(parameters, dat, nohairs, filename_base){
-  dat2 <- cbind(parameters, dat)
-  #### Checking and Saving Data ####
-  complete <- as.numeric(sum(is.na(dat2)))
-  message("~.*^*~Completeness check~*^*~.~\n",
-          "Number of NAs: ", complete)
-  if (complete == 0){
-    message("Set complete. Saving now!")
-    write.table(dat2, file = paste("./results/r-csv-files/", nohairs, 
-                                   "hair_results/", filename_base, "_", Sys.Date(),
-                                   ".csv", sep = ""),
-                sep = ",", row.names = FALSE)
+check_completeness <- function(dat, parameters){
+  message("~.*^*~Completeness check~*^*~.~\n")
+  #### Checking for missing simulations ####
+  message("Checking for missing simulations...")
+  vec_sims <- 1:nrow(parameters)
+  vec_check <- vec_sims %in% dat$simulation_number
+  complete <- all(vec_check)
+  if (complete){
+    message("All simulations are present.")
   } else {
-    message("Set not complete, did not save")
+    message("Set not complete, missing simulations:")
+    print(vec_sims[!vec_check])
+    return(vec_sims[!vec_check])
   }
-  invisible(dat2)
+  #### Checking for duplicate entries ####
+  message("Checking for duplicate entries...")
+  dups <- duplicated(dat$simulation_number)
+  if(any(dups)){
+    message("Duplicate entries found!!")
+    message("Removing duplicates...")
+    dat <- dat[!dups,]
+    message("Returning cleaned data set, be sure to re-save data!")
+    return(dat)
+  } else {
+    message("No duplicates found.")
+    return(NULL)
+  }
 }
 
 convert_odorconc <- function(run_id, fluid, hairno) {
@@ -152,8 +186,9 @@ convert_odorconc <- function(run_id, fluid, hairno) {
   return(extracted)
 }
 
-checkruns<-function(run_id){
-  hairno <- 3
+checkruns<-function(hairno, run_id){
+  require(viridis)
+  require(ggplot2)
   init.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
                                        "initdata_", run_id, ".mat", sep = ""))
   
@@ -163,11 +198,11 @@ checkruns<-function(run_id){
   hair.conc <- convert_odorconc(run_id, fluid, hairno)
   #hair.conc$conc.data <- hair.conc$conc.data/sum(conc.timedata$c.1)
   row.cols <- viridis(hairno, option = "C")
-  cols <- c(rep(row.cols[1], 3),
-            rep(row.cols[2], 4),
-            rep(row.cols[3], 5),
-            rep(row.cols[4], 6),
-            rep(row.cols[5], 7))
+  #cols <- c(rep(row.cols[1], 3),
+  #          rep(row.cols[2], 4),
+  #          rep(row.cols[3], 5),
+  #          rep(row.cols[4], 6),
+  #          rep(row.cols[5], 7))
   plot.conc <- apply(hair.conc$conc.data, 1, sum)
   plot(y = plot.conc, x = seq(1,length(plot.conc))*as.numeric(init.data$dt*print.time),
        xlab = "Simulation time", ylab = "Odorant", pch = 19, col = "black", type = "l", 
@@ -175,8 +210,8 @@ checkruns<-function(run_id){
   for (i in 1:length(hair.conc$conc.data[1, ])){
     lines(x = seq(1,length(plot.conc))*as.numeric(init.data$dt*print.time), y = hair.conc$conc.data[, i], lty = 1, col = row.cols[i])
   }
-  legend("topleft", legend = c("total", "hair 1", "hair 2", "hair 3"), 
-         col = c("black", row.cols), lty = rep(1,4))
+  legend("topleft", legend = c("total", "ind hairs"), 
+         col = c("black", row.cols[25]), lty = rep(1,4))
   
   slopes <- rep(NA, length(plot.conc) - 1)
   for(i in 1:(length(plot.conc) - 1)){

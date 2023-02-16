@@ -4,8 +4,8 @@ library(RColorBrewer)
 
 source("./src/R-scripts/datahandling_functions.R")
 
-run_id <- "1448"
-hairno <- 3
+run_id <- "0001"
+hairno <- 25
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
 all.data <- convert_ibamr(run_id, fluid, 1, hairno)
 max_fill <- max(all.data$c)
@@ -28,11 +28,11 @@ dir.create(paste0("documents/viz/run",run_id))
 
 
 # Plot velocity field
-# ggplot(all.data, aes(x = x, y = y, fill = w)) +
-#   geom_tile() + scale_fill_viridis() +
-#   geom_point(data = hair.points, mapping = aes(x = x, y = y),
-#              pch = 19, size = 1, col = "white", fill = "white")+
-#   theme_minimal()
+ ggplot(all.data, aes(x = x, y = y, fill = w)) +
+   geom_tile() + scale_fill_viridis() +
+   geom_point(data = hair.points, mapping = aes(x = x, y = y),
+              pch = 19, size = 1, col = "white", fill = "white")+
+   theme_minimal()
 
 
 
