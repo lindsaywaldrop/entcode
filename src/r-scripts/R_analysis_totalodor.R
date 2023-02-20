@@ -14,10 +14,11 @@ cores <- detectCores()
 cluster <- register_backend(cores, F)
 
 ####  Parameters  ####
+today_date <- "2023-02-16"
 hairno <- 3  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
-startn <- 1211
-n <- 1400				  # number of simulations to analyze
+startn <- 1569
+n <- 1569				  # number of simulations to analyze
 fluid <- "water"  # fluid of simulation, options: air, water
 
 # Loading parameter file
@@ -29,7 +30,7 @@ rowno <- findnorows(hairno)
 mainDir1 <- "./results/r-csv-files"
 subDir1 <- paste(hairno,"hair_results",sep="")
 dir.create(file.path(mainDir1, subDir1), showWarnings = FALSE)
-filename <- paste0("totalconc_",hairno,"hairs_",Sys.Date())
+filename <- paste0("totalconc_",hairno,"hairs_",today_date)
 
 
 # Pre-allocating space
@@ -43,7 +44,7 @@ dat_cols <- sum(1,ncol(parameters),1,1,hairno,rowno)
 if(file.exists(file.path(mainDir1, subDir1, paste0(filename, ".csv")))) {
   message("This file already exists, and will be added to!!")  
 } else {
-  cat(as.character(paste0("Total Odor Concentration -- Started on ", Sys.Date())), 
+  cat(as.character(paste0("Total Odor Concentration -- Started on ", today_date)), 
       sep = "\n", 
       file = paste0(mainDir1, "/", subDir1, "/",filename, ".csv"), 
       append = FALSE)
@@ -124,7 +125,6 @@ dat <- read.csv(file = paste0(mainDir1, "/", subDir1, "/",filename, ".csv"), ski
 #### Checking Data ####
 out_check <- check_completeness(dat,parameters)
 if(!is.null(out_check) & is.data.frame(out_check)){
-  write.csv(file = paste0(mainDir1, "/", subDir1, "/", filename, "_cleaned.csv"), 
-                                         append = FALSE)
+  write.csv(out_check, file = paste0(mainDir1, "/", subDir1, "/", filename, "_cleaned.csv"))
 }
 
