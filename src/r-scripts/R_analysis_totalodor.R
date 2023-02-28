@@ -14,11 +14,11 @@ cores <- detectCores()
 cluster <- register_backend(cores, F)
 
 ####  Parameters  ####
-today_date <- "2023-02-16"
-hairno <- 3  # Total number of hairs in the array. 
+today_date <- "2023-02-20"
+hairno <- 25  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
-startn <- 1569
-n <- 1569				  # number of simulations to analyze
+startn <- 44
+n <- 155				  # number of simulations to analyze
 fluid <- "water"  # fluid of simulation, options: air, water
 
 # Loading parameter file

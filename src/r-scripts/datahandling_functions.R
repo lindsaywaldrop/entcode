@@ -229,7 +229,7 @@ checkruns<-function(hairno, run_id){
   lines(c(1e-2,1e-2), c(0, 1000*init.data$ctotal), col="blue")
   
   plot(slopes/threshold, ylim=c(0,20),type="l")
-  lines(c(0,4000), c(1,1))
+  lines(c(0,10000), c(1,1))
   slopes[length(slopes)] < threshold
 }
 
