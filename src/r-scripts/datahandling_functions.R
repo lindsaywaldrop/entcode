@@ -125,7 +125,7 @@ check_completeness <- function(dat, parameters){
   } else {
     message("Set not complete, missing simulations:")
     print(vec_sims[!vec_check])
-    return(vec_sims[!vec_check])
+    invisible(vec_sims[!vec_check])
   }
   #### Checking for duplicate entries ####
   message("Checking for duplicate entries...")
@@ -138,7 +138,7 @@ check_completeness <- function(dat, parameters){
     return(dat)
   } else {
     message("No duplicates found.")
-    return(NULL)
+    invisible(NULL)
   }
 }
 

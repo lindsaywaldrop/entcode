@@ -119,9 +119,9 @@ In order to make calculations on flow speed, we need to extract velocities from 
 
 ### Checking for simulation set completeness 
 
-All simulations must be complete, unzipped, and in the appropriate directory before running data analysis in VisIt. To check for completeness of the simulations, run the shell script `checkruns.sh` in command-line bash using the top-level directory as the first argument, the number of simulations as the second, and whether you want to check for folders (1) or zip files (other).
+All simulations must be complete, unzipped, and in the appropriate directory before running data analysis in VisIt. To check for completeness of the simulations, run the shell script `checkruns.sh` in command-line bash using the top-level directory as the first argument, the number of hairs in the array as the second, the number of simulations as the third, and whether you want to check for folders (1) or zip files (other).
 
-`$ sh checkruns.sh "$WD" 2000 1`
+`$ sh checkruns.sh "$WD" 25 2000 1`
 
 This script will return "Simulation found" if it exists. If these conditions are not met, it will return the number of the simulation missing. All simulations need to be unzipped and complete for the VisIt analysis to work properly. 
 

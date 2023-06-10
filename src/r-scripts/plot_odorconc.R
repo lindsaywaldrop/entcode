@@ -4,7 +4,7 @@ library(RColorBrewer)
 
 source("./src/R-scripts/datahandling_functions.R")
 
-run_id <- "0001"
+run_id <- "0866"
 hairno <- 25
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
 all.data <- convert_ibamr(run_id, fluid, 1, hairno)
@@ -23,7 +23,7 @@ dir.create(paste0("documents/viz/run",run_id))
       geom_point(data = hair.points, mapping = aes(x = x, y = y), pch = 19, size = 1,
                  col = "black", fill = "black") +
       theme_bw()
-#    ggsave(paste0("documents/viz/run",run_id,"/conc_",run_id,"_",i,".png"),last_plot())
+    ggsave(paste0("documents/viz/run",run_id,"/conc_",run_id,"_",i,".png"),last_plot())
 }
 
 

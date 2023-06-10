@@ -17,8 +17,8 @@ cluster <- register_backend(cores, F)
 today_date <- "2023-02-20"
 hairno <- 25  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
-startn <- 44
-n <- 155				  # number of simulations to analyze
+startn <- 1838
+n <- 	2000 		  # number of simulations to analyze
 fluid <- "water"  # fluid of simulation, options: air, water
 
 # Loading parameter file
@@ -74,7 +74,7 @@ foreach(i=startn:n) %dopar% {
   }else{
     print(paste("Simulation",run_id))
     hair.conc <- convert_odorconc(run_id, fluid, hairno)
-    if(run_id == "0531") hair.conc$threshold <- TRUE
+    if(run_id == "0531" | run_id == "0866") hair.conc$threshold <- TRUE
     if(!hair.conc$threshold){
       print(paste("Simulation",run_id,"did not finish."))
     } else{

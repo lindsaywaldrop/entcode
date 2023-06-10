@@ -11,7 +11,7 @@
 # - Rscript src/r-scripts/generate_lineouts.R
 #
 
-nohairs <- 3  # 1 row: 5, 3 row: 12, 4 row: 18, 5 row: 25
+nohairs <- 25  # 1 row: 5, 3 row: 12, 4 row: 18, 5 row: 25
 
 startrun <- 1
 endrun <- 2000

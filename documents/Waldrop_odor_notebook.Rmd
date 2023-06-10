@@ -13,13 +13,19 @@ fig_width: 8.5
 Loading data and shaping data frame:
 ```{r echo=TRUE, message=TRUE, warning=FALSE}
 library(ggplot2) # for ggplots
+library(tidyr)
+library(patchwork)
 library(cowplot) # for plot_grid()
 library(viridis) # for the viridis color palette
 
 # Sourcing data handling functions
 source("./src/r-scripts/datahandling_functions.R")
 
-three_dat <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2023-02-16_cleaned.csv", skip = 0, header=T, row.names = 1)
+three_dat <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2023-02-16_cleaned.csv", 
+                      skip = 0, header = T, row.names = 1)
+twofive_dat <- read.csv("./results/r-csv-files/25hair_results/totalconc_25hairs_2023-02-20_cleaned.csv", 
+                        skip = 0, header = T, row.names = 1)
+
 
 ```
 
@@ -29,104 +35,225 @@ We created six hair arrays with different numbers of hairs and configurations. T
 
 ```{r, echo=FALSE}
 
-
+plot_parameter <- function(three_dat, twofive_dat, parameter, output){
+  # 3 hair
+  p3 <- ggplot(three_dat, aes_string(parameter, output)) + geom_point() +
+    ggtitle("3 hair") + theme_minimal()
+  # 25 hair
+  p25 <- ggplot(twofive_dat, aes_string(parameter, output)) + geom_point() + 
+    ggtitle("25 hair") + theme_minimal()
+  return(p3 + p25)
+}
 ```
 
 ## Preliminary Results
 
 #### Total concentration graphs
 
-Plotting angle, gap width and total concentration. 
+Plotting gap width and total concentration. 
 
 ```{r}
-ggplot(three_dat, aes(angle, gap, color = total_conc)) + 
-  geom_point() + scale_color_gradient(low = "black", high = "yellow")
-ggplot(three_dat, aes(angle, total_conc)) + geom_point()
-ggplot(three_dat, aes(gap, total_conc)) + geom_point()
+plot_parameter(three_dat, twofive_dat, "gap", "total_conc")
+```
+Plotting angle and total concentration
+```{r}
+plot_parameter(three_dat, twofive_dat, "angle", "total_conc")
 ```
 
-Plotting gap width, $Re$ and total concentration. 
+Plotting antenna width and total concentration
+```{r}
+plot_parameter(three_dat, twofive_dat, "ant", "total_conc")
+```
+
+Plotting distance from antenna and total concentration
+```{r}
+plot_parameter(three_dat, twofive_dat, "dist", "total_conc")
+```
+Plotting Reynolds number and total concentration
+```{r}
+plot_parameter(three_dat, twofive_dat, "re", "total_conc")
+```
+
+Plotting diffusion coefficient and total concentration
+```{r}
+plot_parameter(three_dat, twofive_dat, "diff_coef", "total_conc")
+```
+
+Plotting stripe width and total concentration
+```{r}
+plot_parameter(three_dat, twofive_dat, "stink_width", "total_conc")
+```
+
+Plotting initial concentration and total concentration
+```{r}
+plot_parameter(three_dat, twofive_dat, "init_conc", "total_conc")
+```
+
+#### Normalized concentration graphs
+
+Plotting gap width and normalized concentration. 
 
 ```{r}
-ggplot(three_dat, aes(gap, re, color = total_conc)) + 
-  geom_point() + scale_color_gradient(low = "black", high = "yellow")
-ggplot(three_dat, aes(gap, total_conc)) + geom_point()
-ggplot(three_dat, aes(re, total_conc)) + geom_point()
+plot_parameter(three_dat, twofive_dat, "gap", "norm_conc")
 ```
 
-Plotting ant width, distance from ant and total concentration. 
+Plotting angle and normalized concentration. 
 
 ```{r}
-ggplot(three_dat, aes(ant, dist, color = total_conc)) + 
-  geom_point() + scale_color_gradient(low = "black", high = "yellow")
-ggplot(three_dat, aes(ant, total_conc)) + geom_point()
-ggplot(three_dat, aes(dist, total_conc)) + geom_point()
+plot_parameter(three_dat, twofive_dat, "angle", "norm_conc")
 ```
 
-Plotting $Re$, diffusion coefficient and total concentration. 
+Plotting antenna width and normalized concentration. 
 
 ```{r}
-ggplot(three_dat, aes(re, diff_coef, color = total_conc)) + 
-  geom_point() + scale_color_gradient(low = "black", high = "yellow")
-ggplot(three_dat, aes(re, total_conc)) + 
-  geom_point() 
-ggplot(three_dat, aes(diff_coef, total_conc, color = init_conc)) + 
-  geom_point() + scale_color_gradient(low = "black", high = "yellow")
+plot_parameter(three_dat, twofive_dat, "ant", "norm_conc")
 ```
-Plotting stink width, initial concentration and total concentration. 
+
+Plotting distance from antenna and normalized concentration. 
 
 ```{r}
-ggplot(three_dat, aes(stink_width, init_conc, color = total_conc)) + 
-  geom_point() + scale_color_gradient(low = "black", high = "yellow")
-ggplot(three_dat, aes(stink_width, total_conc, color = init_conc)) + 
-  geom_point() + scale_color_gradient(low = "black", high = "yellow")
-ggplot(three_dat, aes(init_conc, total_conc)) + geom_point()
+plot_parameter(three_dat, twofive_dat, "dist", "norm_conc")
 ```
 
-
-#### Normalized concentration
-
-Plotting stink width, initial concentration and normalized concentration. 
+Plotting Reynolds number and normalized concentration. 
 
 ```{r}
-ggplot(three_dat, aes(stink_width, init_conc, color = norm_conc)) + 
-  geom_point() + scale_color_gradient(low = "black", high = "yellow")
-ggplot(three_dat, aes(stink_width, norm_conc, color = init_conc)) + 
-  geom_point() + scale_color_gradient(low = "black", high = "yellow")
-ggplot(three_dat, aes(init_conc, norm_conc)) + geom_point()
+plot_parameter(three_dat, twofive_dat, "re", "norm_conc")
 ```
 
-Plotting angle, gap width and normalized concentration. 
+Plotting diffusion coefficient and normalized concentration. 
 
 ```{r}
-ggplot(three_dat, aes(gap, angle, color = norm_conc)) + 
-  geom_point() + scale_color_gradient(low = "blue", high = "red")
-ggplot(three_dat, aes(angle, norm_conc, color = gap)) + 
-  geom_point() + scale_color_gradient(low = "blue", high = "red") 
-ggplot(three_dat, aes(gap, norm_conc, color = angle)) + 
-  geom_point() + scale_color_gradient(low = "blue", high = "red")
+plot_parameter(three_dat, twofive_dat, "diff_coef", "norm_conc")
 ```
 
-Plotting diffision coefficient, gap width and normalized concentration. 
+Plotting stripe width and normalized concentration. 
 
 ```{r}
-ggplot(three_dat, aes(gap, diff_coef, color = norm_conc)) + 
-  geom_point() + scale_color_gradient(low = "black", high = "yellow")
-ggplot(three_dat, aes(gap, norm_conc, color = stink_width)) + 
-  geom_point() + scale_color_gradient(low = "black", high = "yellow")
-ggplot(three_dat, aes(diff_coef, norm_conc, color = gap)) + 
-  geom_point() + scale_color_gradient(low = "black", high = "yellow")
+plot_parameter(three_dat, twofive_dat, "stink_width", "norm_conc")
 ```
+
+Plotting initial concentration and normalized concentration. 
+
+```{r}
+plot_parameter(three_dat, twofive_dat, "init_conc", "norm_conc")
+```
+
+
 
 #### Individual Hairs
 
 Plotting angle, gap width and individual hairs. 
 
 ```{r}
-hairs_3dat <- tidyr::pivot_longer(three_dat, cols = c("hair1", "hair2", "hair3"), names_to = "variable", values_to = "value")
+hairs_3dat <- tidyr::pivot_longer(three_dat, cols = starts_with("hair"), names_to = "hair_number", values_to = "hair_value")
+hair_names <- paste0(rep("hair", 3), seq(1,3))
+hairs_3dat$hair_number <- factor(hairs_3dat$hair_number, levels = hair_names, ordered = T)
+hairs_3dat$row_number <- rep(1, nrow(hairs_3dat))
 
-ggplot(hairs_3dat, aes(angle, value, color = variable))+ 
-  geom_point(alpha=0.2) + geom_smooth(method = "loess") + 
+hairs_25dat <- tidyr::pivot_longer(twofive_dat, cols = starts_with("hair"), names_to = "hair_number", values_to = "hair_value")
+hair_names <- paste0(rep("hair", 25), seq(1,25))
+hairs_25dat$hair_number <- factor(hairs_25dat$hair_number, levels = hair_names, ordered = T)
+hairs_25dat$row_number <- rep(NA, nrow(hairs_25dat))
+for(i in 1:nrow(hairs_25dat)){
+  hairs_25dat$row_number[i] <- switch(as.character(hairs_25dat$hair_number[i]),
+                                 "hair1" = 1, "hair2" = 1, "hair3" = 1,
+                                 "hair4" = 2, "hair5" = 2, "hair6" = 2, "hair7" = 2,
+                                 "hair8" = 3, "hair9" = 3, "hair10" = 3, "hair11" = 3, "hair12" = 3,
+                                 "hair13" = 4, "hair14" = 4, "hair15" = 4, "hair16" = 4, "hair17" = 4, "hair18" = 4,
+                                 "hair19" = 5, "hair20" = 5, "hair21" = 5, "hair22" = 5, "hair23" = 5, "hair24" = 5, "hair25" = 5,
+                                 NA)
+
+}  
+  
+p3_1 <- ggplot(hairs_3dat, aes(angle, hair_value, color = hair_number))+ 
+  geom_point(alpha = 0.2, pch = 19) + geom_smooth(method = "loess") + 
+  scale_color_viridis(discrete = T) + 
   theme_minimal()
+
+
+p25_1 <- ggplot(hairs_25dat, aes(angle, hair_value, color = hair_number))+ 
+  geom_point(alpha=0.2, pch = 19) + geom_smooth(method = "loess") + 
+  scale_color_viridis(discrete = T) + 
+  theme_minimal()
+
+p3_1 + p25_1
 ```
 
+```{r}
+p3_1 <- ggplot(hairs_3dat, aes(hair_number, hair_value, as.factor(row_number), fill = as.factor(row_number)))+ 
+  geom_violin(alpha = 0.1) +
+  #geom_point(alpha = 0.2, pch = 19) + 
+  scale_color_viridis(discrete = T) + 
+  scale_fill_viridis(discrete = T) + 
+  ylim(0,2.2e12) + 
+  theme_minimal() + theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+p25_1 <- ggplot(hairs_25dat, aes(hair_number, hair_value, color = as.factor(row_number), fill = as.factor(row_number)))+ 
+  geom_violin(alpha = 0.1) +
+  #geom_point(alpha = 0.2, pch = 19) + 
+  scale_color_viridis(discrete = T) + 
+  scale_fill_viridis(discrete = T) + 
+  ylim(0,2.2e12) + 
+  theme_minimal() + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+p3_1 / p25_1
+```
+
+
+```{r}
+
+p3_1 <- ggplot(hairs_3dat, aes(gap, hair_value, color = hair_number))+ 
+  geom_point(alpha = 0.2, pch = 19) + geom_smooth(method = "loess") + 
+  scale_color_viridis(discrete = T) + 
+  theme_minimal()
+
+
+p25_1 <- ggplot(hairs_25dat, aes(gap, hair_value, color = hair_number))+ 
+  geom_point(alpha=0.2, pch = 19) + geom_smooth(method = "loess") + 
+  scale_color_viridis(discrete = T) + 
+  theme_minimal()
+
+p3_1 + p25_1
+```
+
+## Individual rows
+
+```{r}
+rows_3dat <- tidyr::pivot_longer(three_dat, cols = starts_with("row"), names_to = "row_number", values_to = "row_value")
+row_names <- paste0(rep("row", 1), seq(1,1))
+rows_3dat$row_number <- factor(rows_3dat$row_number, levels = row_names, ordered = T)
+
+rows_25dat <- tidyr::pivot_longer(twofive_dat, cols = starts_with("row"), names_to = "row_number", values_to = "row_value")
+row_names <- paste0(rep("row", 5), seq(1,5))
+rows_25datrow_number <- factor(rows_25dat$row_number, levels = row_names, ordered = T)
+
+p3_1 <- ggplot(rows_3dat, aes(angle, row_value, color = row_number))+ 
+  geom_point(alpha = 0.2, pch = 19) + geom_smooth(method = "loess") + 
+  scale_color_viridis(discrete = T) + 
+  theme_minimal()
+
+
+p25_1 <- ggplot(rows_25dat, aes(angle, row_value, color = row_number))+ 
+  geom_point(alpha=0.2, pch = 19) + geom_smooth(method = "loess") + 
+  scale_color_viridis(discrete = T) + 
+  theme_minimal()
+
+p3_1 + p25_1
+
+```
+
+```{r}
+p3_1 <- ggplot(rows_3dat, aes(gap, row_value, color = row_number))+ 
+  geom_point(alpha = 0.2, pch = 19) + geom_smooth(method = "loess") + 
+  scale_color_viridis(discrete = T) + 
+  theme_minimal()
+
+
+p25_1 <- ggplot(rows_25dat, aes(gap, row_value, color = row_number))+ 
+  geom_point(alpha=0.2, pch = 19) + geom_smooth(method = "loess") + 
+  scale_color_viridis(discrete = T) + 
+  theme_minimal()
+
+p3_1 + p25_1
+
+```

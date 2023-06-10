@@ -5,14 +5,14 @@
 # folder. Use the last time step in a steady-state leakiness calculation.
 
 WD=${1:?Please provide a top-level working directory}
-#a=${2:?Provide the number of hairs in the array}
-#row=${3:?Provide the row number to process}
-startrun=${2:?Provide a starting run}
-endrun=${3:?Provide an ending run}
+a=${2:?Provide the number of hairs in the array}
+row=${3:?Provide the row number to process}
+startrun=${4:?Provide a starting run}
+endrun=${5:?Provide an ending run}
 
 # Setting variables for 3-hair only
-a=3
-row=1
+#a=3
+#row=1
 
 if [ "$row" == 1 ] && [ "$a" == 5 ]; then
   filename="lineout_h5-h4.txt"
