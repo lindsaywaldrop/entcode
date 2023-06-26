@@ -1,10 +1,10 @@
 #!/bin/bash
 
 WD=${1:?Please provide a top-level working directory}
-startnum=${2:?Please provide a simulation start number}
-endnum=${3:?Please provide a simulation end number}
+a=${2:?Provide the number of hairs in the array}
+startnum=${3:?Please provide a simulation start number}
+endnum=${4:?Please provide a simulation end number}
 
-a=3
 filename="lineout_h3-h2.txt"
 echo $filename
 

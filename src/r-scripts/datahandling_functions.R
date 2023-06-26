@@ -146,7 +146,11 @@ convert_odorconc <- function(run_id, fluid, hairno) {
   init.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
                                        "initdata_", run_id, ".mat", sep = ""))
   ctotal <- init.data$ctotal
-  cmax <-init.data$cmax
+  cmax <- init.data$cmax
+  dx <- init.data$dx
+  dy <- init.data$dy
+  xlength <- init.data$xlength
+  ylength <- init.data$ylength
   threshold <- init.data$ctotal*0.01
   print.time <- init.data$print.time
   dat <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
@@ -157,17 +161,24 @@ convert_odorconc <- function(run_id, fluid, hairno) {
   colnames(conc.data) <- paste("hair", as.character(1:hairs.number), sep = "")
   rownames(conc.data) <- as.character(1:steps.number)
   hairs.positions <- t(dat$hairs.center)
+  hair.dots <- rep(NA, hairs.number)
+  for (j in 1:hairs.number) hair.dots[j] <- length(dat[[paste("hairs.c.", 1, sep = "")]][[j]][[1]])
   colnames(hairs.positions) <- paste("hair", as.character(1:hairs.number), sep = "")
   rownames(hairs.positions) <- c("x", "y")
   for (i in 1:steps.number){
     for (j in 1:hairs.number){
       a <- dat[[paste("hairs.c.", i, sep = "")]][[j]][[1]]
-      if (length(a) == 0) { conc.data[i, j] <- 0 }
-      else {conc.data[i, j] <- sum(dat[[paste("hairs.c.", i, sep = "")]][[j]][[1]])}
+      if (length(a) == 0) { 
+        conc.data[i, j] <- 0 
+      } else {
+        conc.data[i, j] <- sum(dat[[paste("hairs.c.", i, sep = "")]][[j]][[1]])
+      }
     }
   }
   extracted <- list(hairs.positions = hairs.positions, conc.data = conc.data, 
-                    ctotal = ctotal, cmax = cmax)
+                    ctotal = ctotal, cmax = cmax, 
+                    xlength = xlength, ylength = ylength, dx = dx, dy = dy,
+                    hairdots = hair.dots)
   plot.conc <- apply(extracted$conc.data, 1, sum)
   slopes <- rep(NA, length(plot.conc) - 1)
   for(i in 1:(length(plot.conc) - 1)){
@@ -204,7 +215,7 @@ checkruns<-function(hairno, run_id){
   #          rep(row.cols[4], 6),
   #          rep(row.cols[5], 7))
   plot.conc <- apply(hair.conc$conc.data, 1, sum)
-  plot(y = plot.conc, x = seq(1,length(plot.conc))*as.numeric(init.data$dt*print.time),
+  plot(y = plot.conc/init.data$ctotal, x = seq(1,length(plot.conc))*as.numeric(init.data$dt*print.time),
        xlab = "Simulation time", ylab = "Odorant", pch = 19, col = "black", type = "l", 
        main = paste0("Simulation ", run_id))
   for (i in 1:length(hair.conc$conc.data[1, ])){

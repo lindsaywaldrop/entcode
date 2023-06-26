@@ -14,10 +14,10 @@ cores <- detectCores()
 cluster <- register_backend(cores, F)
 
 ####  Parameters  ####
-today_date <- "2023-02-20"
+today_date <- "2023-06-26"
 hairno <- 25  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
-startn <- 1838
+startn <- 1
 n <- 	2000 		  # number of simulations to analyze
 fluid <- "water"  # fluid of simulation, options: air, water
 
@@ -38,7 +38,9 @@ total.conc <- rep(NA, length = nrow(parameters))
 norm.conc <- rep(NA, length = nrow(parameters))
 totals.hairs <- matrix(data = NA, nrow = nrow(parameters), ncol = hairno)
 totals.rows <- matrix(data = NA, nrow = nrow(parameters), ncol = rowno)
-
+cmax <- rep(NA, length = nrow(parameters))
+ctotal <- rep(NA, length = nrow(parameters))
+area <- rep(NA, length = nrow(parameters))
 dat_cols <- sum(1,ncol(parameters),1,1,hairno,rowno)
 
 if(file.exists(file.path(mainDir1, subDir1, paste0(filename, ".csv")))) {
@@ -54,8 +56,10 @@ if(file.exists(file.path(mainDir1, subDir1, paste0(filename, ".csv")))) {
   leaknames <- as.character(rep(0, rowno)) # Allocates space for names 
   for (i in 1:rowno) leaknames[i] <- paste("row", i, sep = "") # Assigns name for each hair
   colnames(totals.rows) <- leaknames
-  cat(as.character(paste("simulation_number", paste(colnames(parameters), collapse=","), "total_conc", 
-                         "norm_conc", paste(colnames(totals.hairs), collapse=","), paste(colnames(totals.rows), collapse = ","),
+  cat(as.character(paste("simulation_number", paste(colnames(parameters), collapse = ","), 
+                         "total_conc", "norm_conc", 
+                         paste(colnames(totals.hairs), collapse = ","), 
+                         paste(colnames(totals.rows), collapse = ","),
                          sep = ",")),
       sep = "\n", 
       file = paste0(mainDir1, "/", subDir1, "/",filename, ".csv"),
@@ -76,26 +80,30 @@ foreach(i=startn:n) %dopar% {
     hair.conc <- convert_odorconc(run_id, fluid, hairno)
     if(run_id == "0531" | run_id == "0866") hair.conc$threshold <- TRUE
     if(!hair.conc$threshold){
-      print(paste("Simulation",run_id,"did not finish."))
+      print(paste("Simulation", run_id, "did not finish."))
     } else{
-      last.timestep <- length(hair.conc[["conc.data"]][,1])
+      last.timestep <- length(hair.conc[["conc.data"]][, 1])
       # Calculating total concentration captured by the array:
-      total.conc[i] <- sum(hair.conc[["conc.data"]][last.timestep,])
+      total.conc[i] <- sum(hair.conc[["conc.data"]][last.timestep, ]*
+                             (rep(hair.conc$dx*hair.conc$dy,hairno)*hair.conc$hairdots))
       norm.conc[i] <- total.conc[i]/hair.conc$cmax
+      cmax[i] <- hair.conc$cmax
+      ctotal[i] <- hair.conc$ctotal
+      area[i] <- hair.conc$xlength*hair.conc$ylength
       for(j in 1:hairno){
         # Calculating totals for each hair:
-        totals.hairs[i,j] <- hair.conc[["conc.data"]][last.timestep,j]
+        totals.hairs[i, j] <- hair.conc[["conc.data"]][last.timestep, j]
         # Calculating totals for each row:
         if(hairno == 5){
-          totals.rows[i,1] <- sum(hair.conc[["conc.data"]][last.timestep,1:5])
+          totals.rows[i, 1] <- sum(hair.conc[["conc.data"]][last.timestep, 1:5])
         }else {
           if(j >= 1 && j < 4) {
-            totals.rows[i,1] <- sum(hair.conc[["conc.data"]][last.timestep,1:3])
+            totals.rows[i, 1] <- sum(hair.conc[["conc.data"]][last.timestep, 1:3])
             
           }else if(j >= 4 && j < 8) {
-            totals.rows[i,2] <- sum(hair.conc[["conc.data"]][last.timestep,4:7])
+            totals.rows[i, 2] <- sum(hair.conc[["conc.data"]][last.timestep, 4:7])
           }else if(j >= 8 && j < 13){
-            totals.rows[i,3] <- sum(hair.conc[["conc.data"]][last.timestep,8:12])
+            totals.rows[i, 3] <- sum(hair.conc[["conc.data"]][last.timestep, 8:12])
           }else if(j >= 13 && j < 19){
             totals.rows[i, 4] <- sum(hair.conc[["conc.data"]][last.timestep, 13:18])
           }else if(j >= 19 && j <= 25){
@@ -105,14 +113,14 @@ foreach(i=startn:n) %dopar% {
           }
         } #hairno else end
       } #for hairno loop end
-      cat(as.character(paste(i, paste(parameters[i,], collapse=","), 
+      cat(as.character(paste(i, paste(parameters[i, ], collapse = ","), 
                              total.conc[i], 
                              norm.conc[i], 
-                             paste(totals.hairs[i,], collapse=","), 
-                             paste(totals.rows[i,], collapse = ","),
+                             paste(totals.hairs[i, ], collapse = ","), 
+                             paste(totals.rows[i, ], collapse = ","),
                              sep = ",")),
           sep = "\n", 
-          file = paste0(mainDir1, "/", subDir1, "/",filename, ".csv"),
+          file = paste0(mainDir1, "/", subDir1, "/", filename, ".csv"),
           append = TRUE)
     } # threshold else end
   } #main else end
