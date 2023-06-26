@@ -257,3 +257,27 @@ p25_1 <- ggplot(rows_25dat, aes(gap, row_value, color = row_number))+
 p3_1 + p25_1
 
 ```
+
+### Comparing to previous paper
+
+Subsetting data to just the "water" and "air" conditions: 
+```{r}
+# Restricting data to less than a specific diffision coefficient and stripe width
+water_twofivesub_dat <- twofive_dat[twofive_dat$diff_coef < 5e-6 & 
+                                      twofive_dat$stink_width < 0.009,]
+water_threesub_dat <- three_dat[three_dat$diff_coef < 5e-6 & 
+                                  three_dat$stink_width < 0.009,]
+# Restricting data to greater than a specific diffision coefficient and stripe width
+air_twofivesub_dat <- twofive_dat[twofive_dat$diff_coef > 5e-5 & 
+                                      twofive_dat$stink_width > 0.04,]
+air_threesub_dat <- three_dat[three_dat$diff_coef > 5e-5 & 
+                                  three_dat$stink_width > 0.04,]
+```
+
+Plotting:
+```{r}
+# Water
+plot_parameter(water_threesub_dat, water_twofivesub_dat, "re", "total_conc")
+# Air
+plot_parameter(air_threesub_dat, air_twofivesub_dat, "re", "total_conc")
+```
