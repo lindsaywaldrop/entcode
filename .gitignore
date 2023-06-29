@@ -22,3 +22,7 @@ src/matlab/matlab-tytell/.hg/*
 results/ibamr*
 results/odor*
 results/visit*
+src/visit/*.txt
+documents/*.numbers
+README.html
+documents/*.nb.html

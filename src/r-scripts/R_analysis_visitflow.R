@@ -10,7 +10,7 @@
 source("./src/r-scripts/datahandling_functions.R")
 
 #### Parameters ####
-nohairs <- 3     # Total number of hairs in the array. 
+nohairs <- 25     # Total number of hairs in the array. 
 # Options: 3, 5, 7, 12, 18, 25
 n <- 2000		  # number of simulations to analyze
 
@@ -53,6 +53,11 @@ for (j in 1:n){		# Main loop over simulations
 
 #### Checking data sets for completeness and saving ####
 all_numbers <- cbind(shear_hair, flux, Umean, leakiness)
-all_numbers2 <- check_completeness_save(parameters, all_numbers, nohairs, "flowdata")
+dat <- data.frame("simulation_number" = seq(1, nrow(parameters)), parameters, all_numbers)
+dat <- na.omit(dat)
 
+out_check <- check_completeness(dat,parameters)
+if(nrow(out_check) == nrow(parameters) & is.data.frame(out_check)){
+  write.csv(out_check, file = paste0(mainDir1, "/", subDir1, "/flowdata_",Sys.Date(), ".csv"))
+}
 #################################################################################################################

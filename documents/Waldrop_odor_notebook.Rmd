@@ -13,17 +13,15 @@ fig_width: 8.5
 Loading data and shaping data frame:
 ```{r echo=TRUE, message=TRUE, warning=FALSE}
 library(ggplot2) # for ggplots
-library(tidyr)
 library(patchwork)
-library(cowplot) # for plot_grid()
 library(viridis) # for the viridis color palette
 
 # Sourcing data handling functions
 source("./src/r-scripts/datahandling_functions.R")
 
-three_dat <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2023-02-16_cleaned.csv", 
+three_dat <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2023-06-27_cleaned.csv", 
                       skip = 0, header = T, row.names = 1)
-twofive_dat <- read.csv("./results/r-csv-files/25hair_results/totalconc_25hairs_2023-02-20_cleaned.csv", 
+twofive_dat <- read.csv("./results/r-csv-files/25hair_results/totalconc_25hairs_2023-06-26_cleaned.csv", 
                         skip = 0, header = T, row.names = 1)
 
 

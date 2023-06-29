@@ -14,8 +14,8 @@ cores <- detectCores()
 cluster <- register_backend(cores, F)
 
 ####  Parameters  ####
-today_date <- "2023-06-26"
-hairno <- 25  # Total number of hairs in the array. 
+today_date <- "2023-06-27"
+hairno <- 3  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 startn <- 1
 n <- 	2000 		  # number of simulations to analyze

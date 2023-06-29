@@ -138,7 +138,7 @@ check_completeness <- function(dat, parameters){
     return(dat)
   } else {
     message("No duplicates found.")
-    invisible(NULL)
+    return(dat)
   }
 }
 
