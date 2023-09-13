@@ -1,0 +1,157 @@
+---
+title: "Three and twenty-five hair array paper"
+author: "L.D. Waldrop, S. Khatri, Y. He"
+date: "`r Sys.Date()`"
+output: 
+  bookdown::pdf_document2:
+    number_sections: true
+    toc: false
+bibliography: references.bib
+csl: oxford-university-press-scimed-author-date.csl
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+```{r data-input, include=FALSE}
+library(tidyr)
+library(ggplot2) # for ggplots
+library(patchwork)
+library(viridis) # for the viridis color palette
+
+# Sourcing data handling functions
+source("./src/r-scripts/datahandling_functions.R")
+
+#### Load data ####
+three_hair_flow <- read.csv("./results/r-csv-files/3hair_results/flowdata_2022-11-11.csv")
+twofive_hair_flow <- read.csv("./results/r-csv-files/25hair_results/flowdata_2023-06-28.csv", row.names = 1)
+
+three_hair_odor <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2023-06-27_cleaned.csv", 
+                      skip = 0, header = T, row.names = 1)
+three_hair_odor <- three_hair_odor[order(three_hair_odor$simulation_number),]
+twofive_hair_odor <- read.csv("./results/r-csv-files/25hair_results/totalconc_25hairs_2023-06-26_cleaned.csv", 
+                        skip = 0, header = T, row.names = 1)
+twofive_hair_odor <- twofive_hair_odor[order(twofive_hair_odor$simulation_number),]
+#### Combine data sets ####
+three_hair <- cbind(three_hair_odor[,1:9], # parameter list
+                    three_hair_flow[,9:18], # flow data
+                    three_hair_odor[,10:15])
+twofive_hair <- cbind(twofive_hair_odor[,1:9], # parameter list
+                      twofive_hair_flow[,10:89],
+                      twofive_hair_odor[,10:41])
+
+rm(three_hair_flow, three_hair_odor, twofive_hair_flow, twofive_hair_odor)
+
+#### Define plotting functions ####
+
+plot_parameter <- function(three_dat, twofive_dat, parameter, output){
+  # 3 hair
+  p3 <- ggplot(three_dat, aes(.data[[parameter]], .data[[output]])) + 
+    geom_point() +
+    ggtitle("3 hair") + theme_minimal()
+  # 25 hair
+  p25 <- ggplot(twofive_dat, aes(.data[[parameter]], .data[[output]])) + 
+    geom_point() + 
+    ggtitle("25 hair") + theme_minimal()
+  return(p3 + p25)
+}
+
+plot_values <- function(dat, variable, output, legend = TRUE){
+  col_list <- grep(output, colnames(dat))
+  col_list <- c(1:6, col_list)
+  dat_sub <- dat[,col_list]
+  dat_longer <- pivot_longer(dat_sub, cols = !c(1:6), names_prefix = 
+                               paste0(output,"_"))
+  dat_longer$name <- factor(dat_longer$name)
+  num <- nlevels(dat_longer$name)
+  dat_longer$name <- factor(dat_longer$name, ordered = T, levels = seq(1,num))
+  p1<- ggplot(dat_longer, aes(.data[[variable]], value, fill = name,  
+                              color = name)) + 
+    geom_point(pch = 21) + 
+    scale_fill_viridis(discrete = T, name = "") + 
+    scale_color_viridis(discrete = T, name = "") +
+    ylab(output) + theme_minimal()
+  if(!legend){
+    p1 <- p1 + theme(legend.position = "none")
+  }
+  return(p1)
+}
+```
+
+# Abstract
+
+
+# Introduction
+
+@Waldrop:entmodel
+
+# Methods
+
+
+# Results
+
+## Gap-to-diameter ratio is most important for leakiness 
+
+```{r gap-width, echo=FALSE, fig.cap="Gap width"}
+plot_values(three_hair, "gap", "leakiness_row", legend = F) +
+plot_values(twofive_hair, "gap", "leakiness_row")
+```
+
+This is true regardless of which row for the 25 hair array. Indicated by SI's. Fig. \@ref(fig:gap-width).
+
+Reynolds number doesn't have much of an effect (Fig. \@ref(fig:re)).
+
+```{r re, echo=FALSE, fig.cap= "Reynolds number"}
+plot_values(three_hair, "re", "leakiness_row", legend = F) +
+plot_values(twofive_hair, "re", "leakiness_row")
+```
+
+## Speeds around hairs is dependent on Re for most hairs, angle for some
+
+```{r speeds-re, echo=FALSE, fig.cap="speeds, Re"}
+plot_values(three_hair, "re", "Umean_hair") +
+plot_values(twofive_hair, "re", "Umean_hair")
+```
+
+```{r speeds-angle, echo=FALSE, fig.cap="angle, Re"}
+plot_values(three_hair, "angle", "Umean_hair") +
+plot_values(twofive_hair, "angle", "Umean_hair")
+```
+
+Re is important for almost all hairs in both arrays, but relatively more important  as the hairs are closer to oncoming flow (or on the outer edges of the array). As hairs are located more inside the array, angle of the array becomes more important for driving quicker flows around the hairs. Extreme case is hair 1 (center hair in row 1) at an angle of  90$^{\circ}$) where fluid is being forced between the array and the antenna.
+
+## 3-hair arrays capture more odor
+
+```{r total-conc-diff, echo = FALSE, fig.cap="Total concentration and gap width"}
+twofive_hair$total_conc_diff <- three_hair$total_conc/twofive_hair$total_conc
+ggplot(twofive_hair, aes(gap, total_conc_diff)) + geom_point() + 
+  geom_line(data = data.frame("x" = c(0,51), "y" = c(1,1)),mapping = aes(x,y), 
+            color = "blue") + 
+  ylab("Three-hair / twenty-five hair array ratio") + 
+  theme_minimal() +
+ggplot(twofive_hair, aes(angle, total_conc_diff)) + geom_point() + 
+  geom_line(data = data.frame("x" = c(0,181), "y" = c(1,1)),mapping = aes(x,y), 
+            color = "blue") + 
+  ylab("Three-hair / twenty-five hair array ratio") + 
+  theme_minimal()
+```
+
+
+I don't know if this is real or the result of the way the simulation was run. It's about a 55% difference, with the 3-hair array always outperforming the 25-hair array (except two simulations), which seems weird! See Fig. \@ref(fig:total-conc-diff). The difference is greatest at extreme angles and wide gap widths. 
+
+Gap width controls much more of total concentration capture than for the 3-hair array. This is likely due to the shading effect of multiple hairs?
+
+```{r total-conc-gap, echo = FALSE, fig.cap="Total concentration and gap width"}
+plot_parameter(three_hair, twofive_hair, "gap", "total_conc") 
+```
+
+
+# Discussion
+
+
+# Conclusions
+
+
+# References
+

@@ -1,24 +1,41 @@
 ---
 title: "Dr. Waldrop's Fluid-flow Notebook"
-output: html_notebook
+output:
+  pdf_document: default
+  html_notebook: default
 fig_width: 6
 ---
 
-# Some initial plotting of fluid flow
 
-Initial package loading and function definitions: 
+
+## Intro
+
+
 ```{r setup}
+
 library(tidyr)
 library(ggplot2) # for ggplots
 library(patchwork)
 library(viridis) # for the viridis color palette
 
 # Sourcing data handling functions
-source("../src/r-scripts/datahandling_functions.R")
+source("./src/r-scripts/datahandling_functions.R")
 ```
 
 
-```{r}
+The entcode master project is a computational fluid dynamic simulation of odor capture by a chemosensory hair array consisting of three hairs and a supporting, non-chemosensory antenna. The simulations are in two dimensions, representing a cross-section of the array, and represent arrays with either 3 or 25 hairs. The project consists of setup for 2,000 individual simulations, each representing a unique combination of the following parameters: 
+
+ * angle: Angle of array to oncoming flow: 0 to 180 degrees
+ * gap: Gap-to-hair-diameter ratio of the gaps between chemosensory hairs to their widths: 1 to 50
+ * ant: Antenna-to-hair-diameter ratio of the diameter of a chemosensory hair to the diameter of the supporting antenna: 1 to 50
+ * dist: Distance of the center hair from the antenna: 0.001 to 0.02 m
+ * re: Reynolds number: 0.1 to 10
+ * diff_coef: Odor diffusion coefficient: 1e-9 to 1e-4 m$^2$ s$^{-1}$
+ * stink_width: Width of the initial odor stripe: 0.5 to 5 % of the domain width
+ * init_conc: Initial odor concentration: 1e3 to 1e7 (no units)
+
+
+```{r include=FALSE}
 three_hair <- read.csv("./results/r-csv-files/3hair_results/flowdata_2022-11-11.csv")
 twofive_hair <- read.csv("./results/r-csv-files/25hair_results/flowdata_2023-06-28.csv", row.names=1)
 
@@ -52,32 +69,44 @@ plot_values <- function(dat, output, variable){
 
 ## Single parameter plots
 
-Plot leakiness row 1 for both arrays agains angle: 
+Rows are labeled as 1 for the three hair array and 1 (closest to antennule) to 5 (furthest from antennule).
+
+Plot leakiness row 1 for both arrays against angle: 
+
 ```{r echo=FALSE, warning=FALSE}
 plot_parameter(three_hair, twofive_hair, "angle", "leakiness_row_1")
 ```
 
 Plot leakiness row 1 for both arrays against Re: 
+
 ```{r echo=FALSE, warning=FALSE}
 plot_parameter(three_hair, twofive_hair, "re", "leakiness_row_1")
 ```
 Plot leakiness row 1 for both arrays against distance from antenna: 
+
 ```{r echo=FALSE, warning=FALSE}
 plot_parameter(three_hair, twofive_hair, "dist", "leakiness_row_1")
 ```
 
 Plot leakiness row 1 for both arrays against antenna width: 
+
 ```{r echo=FALSE, warning=FALSE}
 plot_parameter(three_hair, twofive_hair, "ant", "leakiness_row_1")
 ```
 
 Plot leakiness row 1 for both arrays against gap width: 
+
 ```{r echo=FALSE, warning=FALSE}
 plot_parameter(three_hair, twofive_hair, "gap", "leakiness_row_1")
 ```
 
+## Plots with individual hairs
+
+Individual hairs are numbered 1 through 3 for the 3-hair array and 1 through 25 for the 25-hair array. The higher the number indicates the further away the hair is from the antennule base. 
+
 Shear across hairs: 
-```{r}
+
+```{r message=FALSE, warning=FALSE}
 (plot_values(three_hair, "shear_hair", "re") + plot_values(twofive_hair, "shear_hair", "re") )/
   (plot_values(three_hair, "shear_hair", "angle") + plot_values(twofive_hair, "shear_hair", "angle") ) /
   (plot_values(three_hair, "shear_hair", "gap") + plot_values(twofive_hair, "shear_hair", "gap") ) + 
@@ -86,6 +115,7 @@ Shear across hairs:
 
 
 U mean around hairs: 
+
 ```{r}
 (plot_values(three_hair, "Umean_hair", "re") + plot_values(twofive_hair, "Umean_hair", "re") )/
   (plot_values(three_hair, "Umean_hair", "angle") + plot_values(twofive_hair, "Umean_hair", "angle") ) /
