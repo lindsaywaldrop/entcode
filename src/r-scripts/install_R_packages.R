@@ -1,7 +1,8 @@
 #### Installs required R packages ####
 
-packages <- c("pracma", "useful", "data.table", "ggplot2", "R.matlab", "doParallel","foreach",
-              "viridis", "stringr")
+packages <- c("pracma", "useful", "data.table", "ggplot2", "R.matlab", 
+              "doParallel","foreach", "tidyr", "patchwork",
+              "viridis", "stringr", "knitr", "markdown", "rmarkdown")
 
 package.check <- lapply(
   packages,
