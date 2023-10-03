@@ -15,9 +15,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 ```{r data-input, include=FALSE}
-library(tidyr)
+library(tidyr) # for various data cleaning operations
 library(ggplot2) # for ggplots
-library(patchwork)
+library(patchwork) # for creating panelled figures
 library(viridis) # for the viridis color palette
 
 # Sourcing data handling functions
