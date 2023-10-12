@@ -59,16 +59,20 @@ plot_parameter <- function(three_dat, twofive_dat, parameter, output){
 
 plot_values <- function(dat, variable, output, legend = TRUE){
   col_list <- grep(output, colnames(dat))
+  if (output == "row") {
+    not_col <- grep("leakiness", colnames(dat))
+    col_list <- col_list[-which(col_list == not_col)]
+  }
   col_list <- c(1:6, col_list)
   dat_sub <- dat[,col_list]
   dat_longer <- pivot_longer(dat_sub, cols = !c(1:6), names_prefix = 
-                               paste0(output,"_"))
+                               output)
   dat_longer$name <- factor(dat_longer$name)
   num <- nlevels(dat_longer$name)
   dat_longer$name <- factor(dat_longer$name, ordered = T, levels = seq(1,num))
   p1<- ggplot(dat_longer, aes(.data[[variable]], value, fill = name,  
                               color = name)) + 
-    geom_point(pch = 21) + 
+    geom_point(pch = 21, alpha = 0.5) + 
     scale_fill_viridis(discrete = T, name = "") + 
     scale_color_viridis(discrete = T, name = "") +
     ylab(output) + theme_minimal()
@@ -94,8 +98,8 @@ plot_values <- function(dat, variable, output, legend = TRUE){
 ## Gap-to-diameter ratio is most important for leakiness 
 
 ```{r gap-width, echo=FALSE, fig.cap="Gap width"}
-plot_values(three_hair, "gap", "leakiness_row", legend = F) +
-plot_values(twofive_hair, "gap", "leakiness_row")
+plot_values(three_hair, "gap", "leakiness_row_", legend = F) +
+plot_values(twofive_hair, "gap", "leakiness_row_")
 ```
 
 This is true regardless of which row for the 25 hair array. Indicated by SI's. Fig. \@ref(fig:gap-width).
@@ -103,20 +107,20 @@ This is true regardless of which row for the 25 hair array. Indicated by SI's. F
 Reynolds number doesn't have much of an effect (Fig. \@ref(fig:re)).
 
 ```{r re, echo=FALSE, fig.cap= "Reynolds number"}
-plot_values(three_hair, "re", "leakiness_row", legend = F) +
-plot_values(twofive_hair, "re", "leakiness_row")
+plot_values(three_hair, "re", "leakiness_row_", legend = F) +
+plot_values(twofive_hair, "re", "leakiness_row_")
 ```
 
 ## Speeds around hairs is dependent on Re for most hairs, angle for some
 
 ```{r speeds-re, echo=FALSE, fig.cap="speeds, Re"}
-plot_values(three_hair, "re", "Umean_hair") +
-plot_values(twofive_hair, "re", "Umean_hair")
+plot_values(three_hair, "re", "Umean_hair_") +
+plot_values(twofive_hair, "re", "Umean_hair_")
 ```
 
 ```{r speeds-angle, echo=FALSE, fig.cap="angle, Re"}
-plot_values(three_hair, "angle", "Umean_hair") +
-plot_values(twofive_hair, "angle", "Umean_hair")
+plot_values(three_hair, "angle", "Umean_hair_") +
+plot_values(twofive_hair, "angle", "Umean_hair_")
 ```
 
 Re is important for almost all hairs in both arrays, but relatively more important  as the hairs are closer to oncoming flow (or on the outer edges of the array). As hairs are located more inside the array, angle of the array becomes more important for driving quicker flows around the hairs. Extreme case is hair 1 (center hair in row 1) at an angle of  90$^{\circ}$) where fluid is being forced between the array and the antenna.
@@ -145,7 +149,44 @@ Gap width controls much more of total concentration capture than for the 3-hair 
 ```{r total-conc-gap, echo = FALSE, fig.cap="Total concentration and gap width"}
 plot_parameter(three_hair, twofive_hair, "gap", "total_conc") 
 ```
+```{r total-conc-gap, echo = FALSE, fig.cap="Total concentration and gap width"}
+plot_parameter(three_hair, twofive_hair, "gap", "norm_conc") 
+```
 
+It looks like lower gaps lead to less leakiness, which leads to greater odor capture. 
+
+
+```{r}
+p3 <- ggplot(three_hair, aes(.data[["gap"]], .data[["total_conc"]], 
+              color = .data[["leakiness_row_1"]])) + 
+    geom_point() +
+  scale_color_viridis_c()+
+    ggtitle("3 hair") + theme_minimal()
+
+p25 <- ggplot(twofive_hair, aes(.data[["gap"]], .data[["total_conc"]], 
+              color = .data[["leakiness_row_1"]])) + 
+    geom_point() +
+  scale_color_continuous(type = "viridis") +
+    ggtitle("25 hair") + theme_minimal()
+
+p3 / p25
+```
+
+```{r}
+p3 <- ggplot(three_hair, aes(.data[["gap"]], .data[["angle"]], 
+              color = .data[["norm_conc"]])) + 
+    geom_point() +
+  scale_color_viridis_c()+
+    ggtitle("3 hair") + theme_minimal()
+
+p25 <- ggplot(twofive_hair, aes(.data[["gap"]], .data[["angle"]], 
+              color = .data[["norm_conc"]])) + 
+    geom_point() +
+  scale_color_continuous(type = "viridis") +
+    ggtitle("25 hair") + theme_minimal()
+
+p3 / p25
+```
 
 # Discussion
 

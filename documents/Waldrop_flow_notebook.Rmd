@@ -18,8 +18,7 @@ library(ggplot2) # for ggplots
 library(patchwork)
 library(viridis) # for the viridis color palette
 
-# Sourcing data handling functions
-source("./src/r-scripts/datahandling_functions.R")
+
 ```
 
 
@@ -36,16 +35,20 @@ The entcode master project is a computational fluid dynamic simulation of odor c
 
 
 ```{r include=FALSE}
+# Sourcing data handling functions
+source("./src/r-scripts/datahandling_functions.R")
+
 three_hair <- read.csv("./results/r-csv-files/3hair_results/flowdata_2022-11-11.csv")
 twofive_hair <- read.csv("./results/r-csv-files/25hair_results/flowdata_2023-06-28.csv", row.names=1)
 
 plot_parameter <- function(three_dat, twofive_dat, parameter, output){
   # 3 hair
+  maxvalue <- max(c(three_dat[[output]], twofive_dat[[output]]))
   p3 <- ggplot(three_dat, aes_string(parameter, output)) + geom_point() +
-    ggtitle("3 hair") + theme_minimal()
+    ggtitle("3 hair") + ylim(0, maxvalue) + theme_minimal()
   # 25 hair
   p25 <- ggplot(twofive_dat, aes_string(parameter, output)) + geom_point() + 
-    ggtitle("25 hair") + theme_minimal()
+    ggtitle("25 hair") + ylim(0, maxvalue) +theme_minimal()
   return(p3 + p25)
 }
 
@@ -134,10 +137,9 @@ Flux around hairs:
 Leakiness: 
 
 ```{r}
-(plot_values(three_hair, "leakiness_row", "re") + plot_values(twofive_hair, "leakiness_row", "re") )/
-  (plot_values(three_hair, "leakiness_row", "angle") + plot_values(twofive_hair, "leakiness_row", "angle") ) /
-  (plot_values(three_hair, "leakiness_row", "ant") + plot_values(twofive_hair, "leakiness_row", "ant") ) /
-  (plot_values(three_hair, "leakiness_row", "dist") + plot_values(twofive_hair, "leakiness_row", "dist") ) /
-  (plot_values(three_hair, "leakiness_row", "gap") + plot_values(twofive_hair, "leakiness_row", "gap") ) + 
-  plot_layout(guides = "collect")
+plot_values(three_hair, "leakiness_row", "re") + plot_values(twofive_hair, "leakiness_row", "re")
+```
+
+```{r}
+plot_values(three_hair, "leakiness_row", "gap") + plot_values(twofive_hair, "leakiness_row", "gap")
 ```
