@@ -12,7 +12,7 @@ csl: oxford-university-press-scimed-author-date.csl
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 ```
 ```{r data-input, include=FALSE}
 library(tidyr) # for various data cleaning operations
@@ -58,11 +58,7 @@ plot_parameter <- function(three_dat, twofive_dat, parameter, output){
 }
 
 plot_values <- function(dat, variable, output, legend = TRUE){
-  col_list <- grep(output, colnames(dat))
-  if (output == "row") {
-    not_col <- grep("leakiness", colnames(dat))
-    col_list <- col_list[-which(col_list == not_col)]
-  }
+  col_list <- grep(paste0("^",output), colnames(dat))
   col_list <- c(1:6, col_list)
   dat_sub <- dat[,col_list]
   dat_longer <- pivot_longer(dat_sub, cols = !c(1:6), names_prefix = 
@@ -149,7 +145,7 @@ Gap width controls much more of total concentration capture than for the 3-hair 
 ```{r total-conc-gap, echo = FALSE, fig.cap="Total concentration and gap width"}
 plot_parameter(three_hair, twofive_hair, "gap", "total_conc") 
 ```
-```{r total-conc-gap, echo = FALSE, fig.cap="Total concentration and gap width"}
+```{r norm-conc-gap, echo = FALSE, fig.cap="Total concentration and gap width"}
 plot_parameter(three_hair, twofive_hair, "gap", "norm_conc") 
 ```
 
@@ -172,20 +168,30 @@ p25 <- ggplot(twofive_hair, aes(.data[["gap"]], .data[["total_conc"]],
 p3 / p25
 ```
 
-```{r}
-p3 <- ggplot(three_hair, aes(.data[["gap"]], .data[["angle"]], 
-              color = .data[["norm_conc"]])) + 
+```{r gap-angle-norm-conc-map, echo = FALSE, fig.height=5*1.5, fig.width=5}
+p3 <- ggplot(three_hair[order(three_hair$norm_conc),], aes(.data[["gap"]], .data[["angle"]], 
+              color = .data[["norm_conc"]], size = .data[["norm_conc"]])) + 
     geom_point() +
-  scale_color_viridis_c()+
-    ggtitle("3 hair") + theme_minimal()
+  scale_color_viridis_b("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), limits = c(0,0.15))+
+  scale_size_binned("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), range = c(0.5, 4), limits = c(0,0.15)) + 
+    ggtitle("3-hair array") + theme_minimal() +
+  guides(color= guide_legend(), size=guide_legend()) 
 
-p25 <- ggplot(twofive_hair, aes(.data[["gap"]], .data[["angle"]], 
-              color = .data[["norm_conc"]])) + 
+
+p25 <- ggplot(twofive_hair[order(twofive_hair$norm_conc),], aes(.data[["gap"]], .data[["angle"]], 
+              color = .data[["norm_conc"]], size = .data[["norm_conc"]])) + 
     geom_point() +
-  scale_color_continuous(type = "viridis") +
-    ggtitle("25 hair") + theme_minimal()
+  scale_color_viridis_b("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), limits = c(0,0.15))+
+  scale_size_binned("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), range = c(0.5, 4), limits = c(0,0.15)) + 
+    ggtitle("25-hair array") + theme_minimal() + 
+  guides(color= guide_legend(), size=guide_legend()) 
 
-p3 / p25
+(p3 / p25) + plot_layout(guides = "collect") & theme(legend.position = 'bottom')
+```
+
+```{r, echo=FALSE, fig.cap=" "}
+plot_values(three_hair, "angle", "hair") +
+plot_values(twofive_hair, "angle", "hair")
 ```
 
 # Discussion
