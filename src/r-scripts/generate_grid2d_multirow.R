@@ -14,10 +14,13 @@
 library(data.table)
 library(pracma)
 library(useful)
+
+source("./src/r-scripts/datahandling_functions.R")
+
 plotit <- 0
 # plot the hairs? yes = 1, no = 0
 startrun <- 1
-endrun <- 2000
+endrun <- 2
 nohairs <- 3  # 2 row: 7; 3 row: 12; 4 row: 18; 5 row: 25
 
 mainDir1 <- "./data/vertex-files"
@@ -29,30 +32,9 @@ dir.create(file.path(mainDir1, subDir1), showWarnings = FALSE)
 dir.create(file.path(mainDir2, subDir1), showWarnings = FALSE)
 
 #### Defines functions ####
-circle <- function(center, radius, L, dx){
-  x_grid <- seq(-(radius + 0.01), radius + 0.01, by = dx)
-  y_grid <- seq(-(radius + 0.01), radius + 0.01, by = dx)
-  whole_grid <- meshgrid(x_grid, y_grid)
-  
-  THETA <- c(seq(0, 2 * pi, length = 250), 0)
-  RHO <- array(1, length(THETA)) * radius
-  Z <- array(1, length(RHO)) * 0
-  nap <- matrix(c(THETA, RHO), nrow = length(THETA), ncol = 2)
-  points <- pol2cart(RHO, THETA)
-  points <- as.data.frame(points)
-  
-  In <- inpolygon(whole_grid$X, whole_grid$Y, points$x, points$y, boundary = FALSE)
-  Xin <- whole_grid$X[In]
-  Yin <- whole_grid$Y[In]
-  
-  X <- Xin + center[1]
-  Y <- Yin + center[2]
-  circ <- data.frame(X, Y)
-  return(circ)
-}
 
 plotahair <- function(domain, hairxCenterx, hairxCentery, hdia, L, dx, no, plotit){
-  h1 <- circle(c(hairxCenterx, hairxCentery), 0.5 * hdia, L, dx)
+  h1 <- circle(c(hairxCenterx, hairxCentery), 0.5 * hdia, dx)
   if(plotit == 1){
     points(h1$X, h1$Y, pch='.')
     #points(hairxCenterx, hairxCentery, pch = 19, cex = 2.5)
@@ -167,7 +149,7 @@ makehairs <- function(th, GtD, AtD, dist, number, nohairs, plotit = 0){
   #### Produces points within defined hairs ####
   
   # Antennule
-  ant <- circle(c(0, 0), 0.5 * adia, L, dx);  # Produces points that define antennule
+  ant <- circle(c(0, 0), 0.5 * adia, dx);  # Produces points that define antennule
   aN <- size(ant$X, 2)                   # Records number of points inside antennule
   if(plotit == 1){
     plot(ant$X, ant$Y, col = "blue", type = "p", 

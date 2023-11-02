@@ -142,8 +142,9 @@ check_completeness <- function(dat, parameters){
   }
 }
 
-convert_odorconc <- function(run_id, fluid, hairno) {
-  init.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
+convert_odorconc <- function(run_id, fluid, hairno, main_dir = NULL) {
+  if(is.null(main_dir)) main_dir <- "./results/odorcapture"
+  init.data <- R.matlab::readMat(paste(main_dir, "/", hairno, "hair_array/", 
                                        "initdata_", run_id, ".mat", sep = ""))
   ctotal <- init.data$ctotal
   cmax <- init.data$cmax
@@ -153,7 +154,7 @@ convert_odorconc <- function(run_id, fluid, hairno) {
   ylength <- init.data$ylength
   threshold <- init.data$ctotal*0.01
   print.time <- init.data$print.time
-  dat <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
+  dat <- R.matlab::readMat(paste(main_dir, "/", hairno, "hair_array/", 
                        "hairs_c_", run_id, ".mat", sep = ""))
   steps.number <- length(dat) - 2
   hairs.number <- length(dat$hairs.center[, 1])
@@ -409,6 +410,34 @@ plot.hairs <- function(nohairs){
                       rep("hair",(csv.data[1,2]*nohairs)))
   colnames(data)<-c("x","y","antorhair")
   return(data)
+}
+
+circle <- function(center, radius, dx, return_circ = TRUE){
+  require(pracma)
+  require(useful)
+  x_grid <- seq(-(radius + 0.01), radius + 0.01, by = dx)
+  y_grid <- seq(-(radius + 0.01), radius + 0.01, by = dx)
+  whole_grid <- meshgrid(x_grid, y_grid)
+  
+  THETA <- c(seq(0, 2 * pi, length = 250), 0)
+  RHO <- array(1, length(THETA)) * radius
+  Z <- array(1, length(RHO)) * 0
+  nap <- matrix(c(THETA, RHO), nrow = length(THETA), ncol = 2)
+  points <- pol2cart(RHO, THETA)
+  points <- as.data.frame(points)
+  
+  In <- inpolygon(whole_grid$X, whole_grid$Y, points$x, points$y, boundary = FALSE)
+  Xin <- whole_grid$X[In]
+  Yin <- whole_grid$Y[In]
+  
+  X <- Xin + center[1]
+  Y <- Yin + center[2]
+  circ <- data.frame(X, Y)
+  if(return_circ){
+    return(circ)
+  }else{
+    return(points)
+  }
 }
 
 

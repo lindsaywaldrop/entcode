@@ -17,11 +17,14 @@ knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 ```{r data-input, include=FALSE}
 library(tidyr) # for various data cleaning operations
 library(ggplot2) # for ggplots
-library(patchwork) # for creating panelled figures
+library(patchwork) # for creating paneled figures
 library(viridis) # for the viridis color palette
 
 # Sourcing data handling functions
 source("./src/r-scripts/datahandling_functions.R")
+
+#### Initial values ####
+hdia <- 0.002     # Diameter of hair
 
 #### Load data ####
 three_hair_flow <- read.csv("./results/r-csv-files/3hair_results/flowdata_2022-11-11.csv")
@@ -44,11 +47,101 @@ twofive_hair <- cbind(twofive_hair_odor[,1:9], # parameter list
 rm(three_hair_flow, three_hair_odor, twofive_hair_flow, twofive_hair_odor)
 
 row_nums_3 <- which(grepl("^hair",colnames(three_hair)))
-three_hair$raw_total_conc <- sum(three_hair[,row_nums_3])
+three_hair$raw_total_conc <- apply(three_hair[,row_nums_3],1,sum)
 row_nums_25 <- which(grepl("^hair",colnames(twofive_hair)))
-twofive_hair$raw_total_conc <- sum(twofive_hair[, row_nums_25])
+twofive_hair$raw_total_conc <- apply(twofive_hair[, row_nums_25], 1, sum)
 
 #### Define plotting functions ####
+
+plot_individual_hairs_fixed <- function(i, three_hair, twofive_hair){
+  three_hair_0 <- read.csv("./data/csv-files/3hair_files/hairs0.csv")
+  three_hair_0 <- data.frame(t(three_hair_0[,-1]))
+  colnames(three_hair_0) <- c("points", "x", "y")
+  twofive_hair_0 <- read.csv("./data/csv-files/25hair_files/hairs0.csv")
+  twofive_hair_0 <- data.frame(t(twofive_hair_0[,-1]))
+  colnames(twofive_hair_0) <- c("points", "x", "y")
+  ant <- circle(c(0,0), 0.007, 0.005, F)
+  
+  row_nums_3 <- which(grepl("^hair",colnames(three_hair)))
+  row_nums_25 <- which(grepl("^hair",colnames(twofive_hair)))
+  plot_col_3hairs <- data.frame(three_hair_0, 
+                               "value" = as.numeric(t(three_hair[i, row_nums_3])))
+  plot_col_3hairs$value <- plot_col_3hairs$value/max(plot_col_3hairs$value)
+  plot_col_25hairs <- data.frame(twofive_hair_0, 
+                               "value" = as.numeric(t(twofive_hair[i, row_nums_25])))
+  plot_col_25hairs$value <- plot_col_25hairs$value/max(plot_col_25hairs$value)
+  
+  p3<- ggplot(plot_col_3hairs, aes(x,y, color = value, size = value)) + 
+    geom_point() + 
+    scale_color_viridis_b("Relative\nconcentration", breaks = c(0.2, 0.4, 0.6, 0.8), 
+                        limits = c(0,1))+
+    scale_size_binned("Relative\nconcentration", breaks = c(0.2, 0.4, 0.6, 0.8), 
+                        limits = c(0,1), range = c(0.25, 5)) + 
+    xlim(min(ant$x), 0.02) + 
+    coord_fixed() +
+    theme_void() +
+    geom_polygon(data = ant, mapping = aes(x, y), 
+                 inherit.aes = FALSE, fill = "gray") +
+    guides(color= guide_legend(), size=guide_legend(), fill = NULL) 
+    
+  p25<- ggplot(plot_col_25hairs, aes(x,y, color = value, size = value)) + geom_point() + 
+    scale_color_viridis_b("Relative\nconcentration", breaks = c(0.2, 0.4, 0.6, 0.8), 
+                        limits = c(0,1))+
+    scale_size_binned("Relative\nconcentration",breaks = c(0.2, 0.4, 0.6, 0.8), 
+                        limits = c(0,1), range = c(0.25, 5)) + 
+    xlim(min(ant$x), 0.08) + 
+    coord_fixed() +
+    theme_void() +
+    geom_polygon(data = ant, mapping = aes(x, y), 
+                 inherit.aes = FALSE, fill = "gray") +
+    guides(color= guide_legend(), size=guide_legend(), fill = NULL) 
+  return(p3 + p25 + plot_layout(guides = "collect") & theme(legend.position = 'bottom'))
+}
+
+plot_individual_hairs <- function(i, three_hair, twofive_hair, hdia){
+  three_hair_0 <- read.csv(paste0("./data/csv-files/3hair_files/hairs",i,".csv"))
+  three_hair_0 <- data.frame(t(three_hair_0[,-1]))
+  colnames(three_hair_0) <- c("points", "x", "y")
+  twofive_hair_0 <- read.csv(paste0("./data/csv-files/25hair_files/hairs",i,".csv"))
+  twofive_hair_0 <- data.frame(t(twofive_hair_0[,-1]))
+  colnames(twofive_hair_0) <- c("points", "x", "y")
+  ant <- circle(c(0,0), 0.5*hdia*twofive_hair$ant[i], 0.005, F)
+  
+  row_nums_3 <- which(grepl("^hair",colnames(three_hair)))
+  row_nums_25 <- which(grepl("^hair",colnames(twofive_hair)))
+  plot_col_3hairs <- data.frame(three_hair_0, 
+                               "value" = as.numeric(t(three_hair[i, row_nums_3])))
+  plot_col_3hairs$value <- plot_col_3hairs$value/max(plot_col_3hairs$value)
+  plot_col_25hairs <- data.frame(twofive_hair_0, 
+                               "value" = as.numeric(t(twofive_hair[i, row_nums_25])))
+  plot_col_25hairs$value <- plot_col_25hairs$value/max(plot_col_25hairs$value)
+  
+  p3<- ggplot(plot_col_3hairs, aes(x,y, color = value, size = value)) + 
+    geom_point() + 
+    scale_color_viridis_b("Relative\nconcentration", breaks = c(0.2, 0.4, 0.6, 0.8), 
+                        limits = c(0,1))+
+    scale_size_binned("Relative\nconcentration", breaks = c(0.2, 0.4, 0.6, 0.8), 
+                        limits = c(0,1), range = c(0.25, 5)) + 
+   # xlim(min(ant$x), 0.02) + 
+    coord_fixed() +
+    theme_void() +
+    geom_polygon(data = ant, mapping = aes(x, y), 
+                 inherit.aes = FALSE, fill = "gray") +
+    guides(color= guide_legend(), size=guide_legend(), fill = NULL) 
+    
+  p25<- ggplot(plot_col_25hairs, aes(x,y, color = value, size = value)) + geom_point() + 
+    scale_color_viridis_b("Relative\nconcentration", breaks = c(0.2, 0.4, 0.6, 0.8), 
+                        limits = c(0,1))+
+    scale_size_binned("Relative\nconcentration",breaks = c(0.2, 0.4, 0.6, 0.8), 
+                        limits = c(0,1), range = c(0.25, 5)) + 
+   # xlim(min(ant$x), 0.08) + 
+    coord_fixed() +
+    theme_void() +
+    geom_polygon(data = ant, mapping = aes(x, y), 
+                 inherit.aes = FALSE, fill = "gray") +
+    guides(color= guide_legend(), size=guide_legend(), fill = NULL) 
+  return(p3 + p25 + plot_layout(guides = "collect") & theme(legend.position = 'bottom'))
+}
 
 plot_parameter <- function(three_dat, twofive_dat, parameter, output){
   # 3 hair
@@ -149,6 +242,7 @@ Gap width controls much more of total concentration capture than for the 3-hair 
 
 ```{r total-conc-gap, echo = FALSE, fig.cap="Total concentration and gap width"}
 plot_parameter(three_hair, twofive_hair, "gap", "total_conc") 
+plot_parameter(three_hair, twofive_hair, "gap", "raw_total_conc") 
 ```
 ```{r norm-conc-gap, echo = FALSE, fig.cap="Total concentration and gap width"}
 plot_parameter(three_hair, twofive_hair, "gap", "norm_conc") 
