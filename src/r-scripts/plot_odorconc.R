@@ -4,8 +4,8 @@ library(RColorBrewer)
 
 source("./src/R-scripts/datahandling_functions.R")
 
-run_id <- "0024"
-hairno <- 25
+run_id <- "0012"
+hairno <- 3
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
 all.data <- convert_ibamr(run_id, fluid, 1, hairno)
 max_fill <- max(all.data$c)
@@ -35,7 +35,4 @@ all.ctotals <- rep(NA, length(conc.timedata))
    geom_point(data = hair.points, mapping = aes(x = x, y = y),
               pch = 19, size = 1, col = "white", fill = "white")+
    theme_minimal()
-
-
-
 

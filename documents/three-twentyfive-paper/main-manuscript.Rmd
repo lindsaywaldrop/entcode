@@ -43,6 +43,11 @@ twofive_hair <- cbind(twofive_hair_odor[,1:9], # parameter list
 
 rm(three_hair_flow, three_hair_odor, twofive_hair_flow, twofive_hair_odor)
 
+row_nums_3 <- which(grepl("^hair",colnames(three_hair)))
+three_hair$raw_total_conc <- sum(three_hair[,row_nums_3])
+row_nums_25 <- which(grepl("^hair",colnames(twofive_hair)))
+twofive_hair$raw_total_conc <- sum(twofive_hair[, row_nums_25])
+
 #### Define plotting functions ####
 
 plot_parameter <- function(three_dat, twofive_dat, parameter, output){
@@ -103,15 +108,15 @@ This is true regardless of which row for the 25 hair array. Indicated by SI's. F
 Reynolds number doesn't have much of an effect (Fig. \@ref(fig:re)).
 
 ```{r re, echo=FALSE, fig.cap= "Reynolds number"}
-plot_values(three_hair, "re", "leakiness_row_", legend = F) +
-plot_values(twofive_hair, "re", "leakiness_row_")
+plot_values(three_hair, "angle", "leakiness_row_", legend = F) +
+plot_values(twofive_hair, "angle", "leakiness_row_")
 ```
 
 ## Speeds around hairs is dependent on Re for most hairs, angle for some
 
 ```{r speeds-re, echo=FALSE, fig.cap="speeds, Re"}
-plot_values(three_hair, "re", "Umean_hair_") +
-plot_values(twofive_hair, "re", "Umean_hair_")
+plot_values(three_hair, "gap", "flux_hair_") +
+plot_values(twofive_hair, "gap", "flux_hair_")
 ```
 
 ```{r speeds-angle, echo=FALSE, fig.cap="angle, Re"}
@@ -156,43 +161,134 @@ It looks like lower gaps lead to less leakiness, which leads to greater odor cap
 p3 <- ggplot(three_hair, aes(.data[["gap"]], .data[["total_conc"]], 
               color = .data[["leakiness_row_1"]])) + 
     geom_point() +
-  scale_color_viridis_c()+
+    scale_color_viridis_c()+
     ggtitle("3 hair") + theme_minimal()
 
 p25 <- ggplot(twofive_hair, aes(.data[["gap"]], .data[["total_conc"]], 
               color = .data[["leakiness_row_1"]])) + 
     geom_point() +
-  scale_color_continuous(type = "viridis") +
+    scale_color_continuous(type = "viridis") +
     ggtitle("25 hair") + theme_minimal()
 
 p3 / p25
 ```
 
+
+
 ```{r gap-angle-norm-conc-map, echo = FALSE, fig.height=5*1.5, fig.width=5}
 p3 <- ggplot(three_hair[order(three_hair$norm_conc),], aes(.data[["gap"]], .data[["angle"]], 
               color = .data[["norm_conc"]], size = .data[["norm_conc"]])) + 
-    geom_point() +
-  scale_color_viridis_b("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), limits = c(0,0.15))+
-  scale_size_binned("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), range = c(0.5, 4), limits = c(0,0.15)) + 
-    ggtitle("3-hair array") + theme_minimal() +
+  geom_point() +
+  scale_color_viridis_b("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), 
+                        limits = c(0,0.15))+
+  scale_size_binned("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), 
+                    range = c(0.5, 4), limits = c(0,0.15)) + 
+  ggtitle("3-hair array") + theme_minimal() +
   guides(color= guide_legend(), size=guide_legend()) 
 
 
 p25 <- ggplot(twofive_hair[order(twofive_hair$norm_conc),], aes(.data[["gap"]], .data[["angle"]], 
               color = .data[["norm_conc"]], size = .data[["norm_conc"]])) + 
-    geom_point() +
-  scale_color_viridis_b("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), limits = c(0,0.15))+
-  scale_size_binned("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), range = c(0.5, 4), limits = c(0,0.15)) + 
-    ggtitle("25-hair array") + theme_minimal() + 
+  geom_point() +
+  scale_color_viridis_b("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), 
+                        limits = c(0,0.15))+
+  scale_size_binned("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), 
+                    range = c(0.5, 4), limits = c(0,0.15)) + 
+  ggtitle("25-hair array") + theme_minimal() + 
   guides(color= guide_legend(), size=guide_legend()) 
 
 (p3 / p25) + plot_layout(guides = "collect") & theme(legend.position = 'bottom')
 ```
 
 ```{r, echo=FALSE, fig.cap=" "}
-plot_values(three_hair, "angle", "hair") +
+
 plot_values(twofive_hair, "angle", "hair")
 ```
+
+```{r}
+p3 <- ggplot(three_hair, aes(.data[["leakiness_row_1"]], .data[["total_conc"]], 
+              color = .data[["angle"]])) + 
+    geom_point() +
+    scale_color_viridis_c()+
+    ggtitle("3 hair") + theme_minimal()
+
+p25 <- ggplot(twofive_hair, aes(.data[["leakiness_row_5"]], .data[["total_conc"]], 
+              color = .data[["angle"]])) + 
+    geom_point() +
+    scale_color_continuous(type = "viridis") +
+    ggtitle("25 hair") + theme_minimal()
+
+p3 / p25
+```
+
+```{r}
+var1 <- "angle"
+x_range <- c(0, max(twofive_hair$leakiness_row_1))
+y_range <- c(0, max(twofive_hair$row5))
+
+p25 <- ggplot(twofive_hair, aes(.data[["leakiness_row_1"]], .data[["row1"]],
+                                color = .data[[var1]])) + 
+    geom_point() +
+    ylim(y_range) + xlim(x_range) + 
+    scale_color_continuous(type = "viridis") +
+    ggtitle("25 hair") + theme_minimal()
+
+p25_2 <- ggplot(twofive_hair, aes(.data[["leakiness_row_2"]], .data[["row2"]],
+                                  color = .data[[var1]])) + 
+    geom_point() +
+    ylim(y_range) + xlim(x_range) + 
+    scale_color_continuous(type = "viridis") +
+    ggtitle("25 hair") + theme_minimal()
+
+p25_3 <- ggplot(twofive_hair, aes(.data[["leakiness_row_3"]], .data[["row3"]],
+                                  color = .data[[var1]])) + 
+    geom_point() +
+    ylim(y_range) + xlim(x_range) + 
+    scale_color_continuous(type = "viridis") +
+    ggtitle("25 hair") + theme_minimal()
+
+p25_4 <- ggplot(twofive_hair, aes(.data[["leakiness_row_4"]], .data[["row4"]],
+                                  color = .data[[var1]])) + 
+    geom_point() +
+    ylim(y_range) + xlim(x_range) + 
+    scale_color_continuous(type = "viridis") +
+    ggtitle("25 hair") + theme_minimal()
+
+p25_5 <- ggplot(twofive_hair, aes(.data[["leakiness_row_5"]], .data[["row5"]],
+                                  color = .data[[var1]])) + 
+    geom_point() +
+    ylim(y_range) + xlim(x_range) + 
+    scale_color_continuous(type = "viridis") +
+    ggtitle("25 hair") + theme_minimal()
+p25 /p25_2 /p25_3 / p25_4 / p25_5
+```
+
+```{r}
+var1 <- "angle"
+x_range <- c(0, max(twofive_hair$leakiness_row_1))
+y_range <- c(0, max(twofive_hair$row5))
+
+
+p25 <- ggplot(three_hair, aes(.data[["leakiness_row_1"]], .data[["row1"]],
+                                color = .data[[var1]])) + 
+    geom_point() +
+    ylim(y_range) + xlim(x_range) + 
+    scale_color_continuous(type = "viridis") +
+    ggtitle("25 hair") + theme_minimal()
+
+p25_2 <- ggplot(twofive_hair, aes(.data[["leakiness_row_2"]], .data[["row2"]],
+                                  color = .data[[var1]])) + 
+    geom_point() +
+    ylim(y_range) + xlim(x_range) + 
+    scale_color_continuous(type = "viridis") +
+    ggtitle("25 hair") + theme_minimal()
+```
+
+
+```{r}
+
+```
+
 
 # Discussion
 
