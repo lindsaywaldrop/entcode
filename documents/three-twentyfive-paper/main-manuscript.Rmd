@@ -19,6 +19,7 @@ library(tidyr) # for various data cleaning operations
 library(ggplot2) # for ggplots
 library(patchwork) # for creating paneled figures
 library(viridis) # for the viridis color palette
+library(colorspace) # for scale_color_binned_divergingx
 
 # Sourcing data handling functions
 source("./src/r-scripts/datahandling_functions.R")
@@ -30,26 +31,39 @@ hdia <- 0.002     # Diameter of hair
 three_hair_flow <- read.csv("./results/r-csv-files/3hair_results/flowdata_2022-11-11.csv")
 twofive_hair_flow <- read.csv("./results/r-csv-files/25hair_results/flowdata_2023-06-28.csv", row.names = 1)
 
-three_hair_odor <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2023-06-27_cleaned.csv", 
+three_hair_odor <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2023-11-02_cleaned.csv", 
                       skip = 0, header = T, row.names = 1)
 three_hair_odor <- three_hair_odor[order(three_hair_odor$simulation_number),]
-twofive_hair_odor <- read.csv("./results/r-csv-files/25hair_results/totalconc_25hairs_2023-06-26_cleaned.csv", 
+twofive_hair_odor <- read.csv("./results/r-csv-files/25hair_results/totalconc_25hairs_2023-11-02_cleaned.csv", 
                         skip = 0, header = T, row.names = 1)
 twofive_hair_odor <- twofive_hair_odor[order(twofive_hair_odor$simulation_number),]
 #### Combine data sets ####
-three_hair <- cbind(three_hair_odor[,1:9], # parameter list
+three_hair <- cbind(three_hair_odor[,1:14], # parameter list
                     three_hair_flow[,9:18], # flow data
-                    three_hair_odor[,10:15])
-twofive_hair <- cbind(twofive_hair_odor[,1:9], # parameter list
+                    three_hair_odor[,15:ncol(three_hair_odor)])
+twofive_hair <- cbind(twofive_hair_odor[,1:14], # parameter list
                       twofive_hair_flow[,10:89],
-                      twofive_hair_odor[,10:41])
+                      twofive_hair_odor[,15:ncol(twofive_hair_odor)])
 
 rm(three_hair_flow, three_hair_odor, twofive_hair_flow, twofive_hair_odor)
 
-row_nums_3 <- which(grepl("^hair",colnames(three_hair)))
-three_hair$raw_total_conc <- apply(three_hair[,row_nums_3],1,sum)
-row_nums_25 <- which(grepl("^hair",colnames(twofive_hair)))
-twofive_hair$raw_total_conc <- apply(twofive_hair[, row_nums_25], 1, sum)
+three_hair$total_conc <- three_hair$raw_total_conc * (three_hair$hair_dxdy * 
+                                                        three_hair$hair_dots)
+twofive_hair$total_conc <- twofive_hair$raw_total_conc * (twofive_hair$hair_dxdy * 
+                                                            twofive_hair$hair_dots)
+three_hair$norm_conc <- three_hair$total_conc / (three_hair$ctotal * three_hair$domain_area)
+twofive_hair$norm_conc <- twofive_hair$total_conc / (twofive_hair$ctotal * 
+                                                       twofive_hair$domain_area)
+
+twofive_hair$total_conc_ratio <- twofive_hair$total_conc/three_hair$total_conc
+twofive_hair$total_conc_ratio[which(is.infinite(twofive_hair$total_conc_ratio))] <- NA
+twofive_hair$norm_conc_ratio <- twofive_hair$norm_conc/three_hair$norm_conc
+twofive_hair$norm_conc_ratio[which(is.infinite(twofive_hair$norm_conc_ratio))] <- NA
+
+#row_nums_3 <- which(grepl("^hair",colnames(three_hair)))
+#three_hair$raw_total_conc <- apply(three_hair[,row_nums_3],1,sum)
+#row_nums_25 <- which(grepl("^hair",colnames(twofive_hair)))
+#twofive_hair$raw_total_conc <- apply(twofive_hair[, row_nums_25], 1, sum)
 
 #### Define plotting functions ####
 
@@ -62,8 +76,8 @@ plot_individual_hairs_fixed <- function(i, three_hair, twofive_hair){
   colnames(twofive_hair_0) <- c("points", "x", "y")
   ant <- circle(c(0,0), 0.007, 0.005, F)
   
-  row_nums_3 <- which(grepl("^hair",colnames(three_hair)))
-  row_nums_25 <- which(grepl("^hair",colnames(twofive_hair)))
+  row_nums_3 <- which(grepl("^hair[0-9]",colnames(three_hair)))
+  row_nums_25 <- which(grepl("^hair[0-9]",colnames(twofive_hair)))
   plot_col_3hairs <- data.frame(three_hair_0, 
                                "value" = as.numeric(t(three_hair[i, row_nums_3])))
   plot_col_3hairs$value <- plot_col_3hairs$value/max(plot_col_3hairs$value)
@@ -107,8 +121,8 @@ plot_individual_hairs <- function(i, three_hair, twofive_hair, hdia){
   colnames(twofive_hair_0) <- c("points", "x", "y")
   ant <- circle(c(0,0), 0.5*hdia*twofive_hair$ant[i], 0.005, F)
   
-  row_nums_3 <- which(grepl("^hair",colnames(three_hair)))
-  row_nums_25 <- which(grepl("^hair",colnames(twofive_hair)))
+  row_nums_3 <- which(grepl("^hair[0-9]",colnames(three_hair)))
+  row_nums_25 <- which(grepl("^hair[0-9]",colnames(twofive_hair)))
   plot_col_3hairs <- data.frame(three_hair_0, 
                                "value" = as.numeric(t(three_hair[i, row_nums_3])))
   plot_col_3hairs$value <- plot_col_3hairs$value/max(plot_col_3hairs$value)
@@ -143,15 +157,26 @@ plot_individual_hairs <- function(i, three_hair, twofive_hair, hdia){
   return(p3 + p25 + plot_layout(guides = "collect") & theme(legend.position = 'bottom'))
 }
 
-plot_parameter <- function(three_dat, twofive_dat, parameter, output){
-  # 3 hair
-  p3 <- ggplot(three_dat, aes(.data[[parameter]], .data[[output]])) + 
-    geom_point() +
+plot_parameter <- function(three_dat, twofive_dat, parameter, output, col_opt=NULL){
+  if(is.null(col_opt)){
+    p3 <- ggplot(three_dat, aes(.data[[parameter]], .data[[output]])) + 
+      geom_point() +
     ggtitle("3 hair") + theme_minimal()
-  # 25 hair
-  p25 <- ggplot(twofive_dat, aes(.data[[parameter]], .data[[output]])) + 
-    geom_point() + 
+    p25 <- ggplot(twofive_dat, aes(.data[[parameter]], .data[[output]])) + 
+      geom_point() + 
     ggtitle("25 hair") + theme_minimal()
+  }else{
+    p3 <- ggplot(three_dat, aes(.data[[parameter]], .data[[output]], 
+                              color = .data[[col_opt]])) + 
+    geom_point() +
+    scale_color_viridis(discrete = F) +
+    ggtitle("3 hair") + theme_minimal()
+    p25 <- ggplot(twofive_dat, aes(.data[[parameter]], .data[[output]], 
+                              color = .data[[col_opt]])) + 
+    geom_point() +
+    scale_color_viridis(discrete = F) +
+    ggtitle("25 hair") + theme_minimal()
+  }
   return(p3 + p25)
 }
 
@@ -191,7 +216,7 @@ plot_values <- function(dat, variable, output, legend = TRUE){
 
 ## Gap-to-diameter ratio is most important for leakiness 
 
-```{r gap-width, echo=FALSE, fig.cap="Gap width"}
+```{r gap-width-leakiness, echo=FALSE, fig.cap="Gap width"}
 plot_values(three_hair, "gap", "leakiness_row_", legend = F) +
 plot_values(twofive_hair, "gap", "leakiness_row_")
 ```
@@ -201,122 +226,168 @@ This is true regardless of which row for the 25 hair array. Indicated by SI's. F
 Reynolds number doesn't have much of an effect (Fig. \@ref(fig:re)).
 
 ```{r re, echo=FALSE, fig.cap= "Reynolds number"}
+plot_values(three_hair, "re", "leakiness_row_", legend = F) +
+plot_values(twofive_hair, "re", "leakiness_row_")
+```
+
+### Moderate angles force more fluid through the first row than whould be there otherwise
+
+```{r angle, echo=FALSE, fig.cap= " "}
 plot_values(three_hair, "angle", "leakiness_row_", legend = F) +
 plot_values(twofive_hair, "angle", "leakiness_row_")
 ```
 
-## Speeds around hairs is dependent on Re for most hairs, angle for some
 
-```{r speeds-re, echo=FALSE, fig.cap="speeds, Re"}
-plot_values(three_hair, "gap", "flux_hair_") +
-plot_values(twofive_hair, "gap", "flux_hair_")
+## Speeds around hairs is dependent on angle for most hairs, Re for some
+
+```{r speeds-angle, echo=FALSE, fig.cap=" "}
+plot_values(three_hair, "angle", "Umean_hair_") +
+     plot_values(twofive_hair, "angle", "Umean_hair_")
 ```
 
 ```{r speeds-angle, echo=FALSE, fig.cap="angle, Re"}
-plot_values(three_hair, "angle", "Umean_hair_") +
-plot_values(twofive_hair, "angle", "Umean_hair_")
+plot_values(three_hair, "re", "Umean_hair_") +
+plot_values(twofive_hair, "re", "Umean_hair_")
 ```
 
-Re is important for almost all hairs in both arrays, but relatively more important  as the hairs are closer to oncoming flow (or on the outer edges of the array). As hairs are located more inside the array, angle of the array becomes more important for driving quicker flows around the hairs. Extreme case is hair 1 (center hair in row 1) at an angle of  90$^{\circ}$) where fluid is being forced between the array and the antenna.
+Re is important for almost all hairs in both arrays, but relatively more important as the hairs are closer to oncoming flow (or on the outer edges of the array). As hairs are located more inside the array, angle of the array becomes more important for driving quicker flows around the hairs. Extreme case is hair 1 (center hair in row 1) at an angle of  90$^{\circ}$) where fluid is being forced between the array and the antenna.
 
-## 3-hair arrays capture more odor
-
-```{r total-conc-diff, echo = FALSE, fig.cap="Total concentration and gap width"}
-twofive_hair$total_conc_diff <- three_hair$total_conc/twofive_hair$total_conc
-ggplot(twofive_hair, aes(gap, total_conc_diff)) + geom_point() + 
-  geom_line(data = data.frame("x" = c(0,51), "y" = c(1,1)),mapping = aes(x,y), 
-            color = "blue") + 
-  ylab("Three-hair / twenty-five hair array ratio") + 
-  theme_minimal() +
-ggplot(twofive_hair, aes(angle, total_conc_diff)) + geom_point() + 
-  geom_line(data = data.frame("x" = c(0,181), "y" = c(1,1)),mapping = aes(x,y), 
-            color = "blue") + 
-  ylab("Three-hair / twenty-five hair array ratio") + 
-  theme_minimal()
-```
+## Concentration capture 
 
 
-I don't know if this is real or the result of the way the simulation was run. It's about a 55% difference, with the 3-hair array always outperforming the 25-hair array (except two simulations), which seems weird! See Fig. \@ref(fig:total-conc-diff). The difference is greatest at extreme angles and wide gap widths. 
+### 25-hair arrays capture more odor
 
-Gap width controls much more of total concentration capture than for the 3-hair array. This is likely due to the shading effect of multiple hairs?
+
+Capture by both arrays depends on gap width. The effect is weaker for the 3-hair array on total concentration and the effect is much stronger for normalized odor capture. 
 
 ```{r total-conc-gap, echo = FALSE, fig.cap="Total concentration and gap width"}
-plot_parameter(three_hair, twofive_hair, "gap", "total_conc") 
-plot_parameter(three_hair, twofive_hair, "gap", "raw_total_conc") 
+  plot_parameter(three_hair, twofive_hair, "gap", "total_conc", "re") /
+  plot_parameter(three_hair, twofive_hair, "gap", "norm_conc", "re") + plot_layout(guides = "collect")
 ```
+Angle is the second most important feature to capture, controlling total odor capture for the 3-hair array and strongly influencing normalized capture. It is less important for the 25 hair array. 
+
+```{r total-conc-angle, echo = FALSE, fig.cap="Total concentration and gap width"}
+  plot_parameter(three_hair, twofive_hair, "angle", "total_conc") /
+  plot_parameter(three_hair, twofive_hair, "angle", "norm_conc")
+```
+
+On average, the 25-hair array captures 2 times more total odor than the 3-hair array. The highest capture rates are at low gap widths, where 25 hairs capture up to 6.8 times more odorant concentration. 
+
+There are some configurations in which 3-hair arrays outperform 25-hair arrays, particularly at extreme array angles and large gap widths. For total concentration captured, 3-hair arrays capture more for large gap widths ($>30$) at angles near 0 or 180 degrees. For normalized capture, the largest differences are around 90 degrees at gap widths over 25. 
+
+```{r concentration-ratios, warning=FALSE}
+ptotal.ratio <- ggplot(twofive_hair[order(twofive_hair$total_conc_ratio),], 
+                       aes(x = .data[["gap"]], y = .data[["angle"]], 
+                                     color = .data[["total_conc_ratio"]], 
+                                     size = .data[["total_conc_ratio"]])) + 
+  geom_point()+
+  scale_color_binned_divergingx(name = "Ratio", 
+                                palette = "PuOr",
+                                l1 = 30, l3 = 30,
+                              mid = 1.0, breaks = c(0.5, 1, 2, 3),
+                              n_interp = 4)+
+  #scale_color_viridis_b("Normalized\nconcentration", breaks = seq(0, 0.0125, length.out = 5), 
+  #                      limits = c(0,0.0125))+
+  scale_size_binned("Ratio", breaks = c(0.5, 1, 2, 3), 
+                    range = c(0.5, 4), limits = c(0.1, 6)) + 
+  ggtitle("Total concentration 25/3 ratio") + theme_minimal() + 
+  guides(color= guide_legend(), size=guide_legend()) 
+
+pnorm.ratio <- ggplot(twofive_hair[order(twofive_hair$norm_conc_ratio),], aes(x = .data[["gap"]], 
+                                                                          y = .data[["angle"]], 
+                                     color = .data[["norm_conc_ratio"]], 
+                                     size = .data[["norm_conc_ratio"]])) + 
+  geom_point()+
+  scale_color_binned_divergingx(name = "Ratio", 
+                                palette = "PuOr",
+                                l1 = 30, l3 = 30,
+                              mid = 1.0, breaks = c(0.5, 1, 2, 3),
+                              n_interp = 4)+
+  #scale_color_viridis_b("Normalized\nconcentration", breaks = seq(0, 0.0125, length.out = 5), 
+  #                      limits = c(0,0.0125))+
+  scale_size_binned("Ratio", breaks = c(0.5, 1, 2, 3), 
+                    range = c(0.5, 4), limits = c(0.1, 6)) + 
+  ggtitle("Normalized concentration 25/3 ratio") + theme_minimal() + 
+  guides(color= guide_legend(), size=guide_legend()) 
+
+ptotal.ratio / pnorm.ratio + plot_layout(guides = "collect")
+```
+
+Other parameters including the relative antennule width, distance of the array from the antennule, the initial width of the odor filament had little effect on the amount of odor captured by either array. 
+
+
 ```{r norm-conc-gap, echo = FALSE, fig.cap="Total concentration and gap width"}
-plot_parameter(three_hair, twofive_hair, "gap", "norm_conc") 
+plot_parameter(three_hair, twofive_hair, "diff_coef", "norm_conc") 
 ```
 
 It looks like lower gaps lead to less leakiness, which leads to greater odor capture. 
 
-
-```{r}
-p3 <- ggplot(three_hair, aes(.data[["gap"]], .data[["total_conc"]], 
-              color = .data[["leakiness_row_1"]])) + 
-    geom_point() +
-    scale_color_viridis_c()+
-    ggtitle("3 hair") + theme_minimal()
-
-p25 <- ggplot(twofive_hair, aes(.data[["gap"]], .data[["total_conc"]], 
-              color = .data[["leakiness_row_1"]])) + 
-    geom_point() +
-    scale_color_continuous(type = "viridis") +
-    ggtitle("25 hair") + theme_minimal()
-
-p3 / p25
-```
-
-
-
-```{r gap-angle-norm-conc-map, echo = FALSE, fig.height=5*1.5, fig.width=5}
-p3 <- ggplot(three_hair[order(three_hair$norm_conc),], aes(.data[["gap"]], .data[["angle"]], 
-              color = .data[["norm_conc"]], size = .data[["norm_conc"]])) + 
+```{r gap-angle-total-conc-map, echo = FALSE, fig.height=5*1.5, fig.width=5}
+p3 <- ggplot(three_hair[order(three_hair$total_conc),], 
+             aes(.data[["gap"]], .data[["angle"]], 
+                 color = .data[["total_conc"]], size = .data[["total_conc"]])) + 
   geom_point() +
-  scale_color_viridis_b("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), 
-                        limits = c(0,0.15))+
-  scale_size_binned("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), 
-                    range = c(0.5, 4), limits = c(0,0.15)) + 
+  scale_color_viridis_b("Total\nconcentration", breaks = seq(0, 4e7, length.out = 5), 
+                        limits = c(0, 4e7)) +
+  scale_size_binned("Total\nconcentration", breaks = seq(0, 4e7, length.out = 5), 
+                    range = c(0.5, 4), limits = c(0, 4e7)) + 
+  
   ggtitle("3-hair array") + theme_minimal() +
   guides(color= guide_legend(), size=guide_legend()) 
 
 
-p25 <- ggplot(twofive_hair[order(twofive_hair$norm_conc),], aes(.data[["gap"]], .data[["angle"]], 
-              color = .data[["norm_conc"]], size = .data[["norm_conc"]])) + 
+p25 <- ggplot(twofive_hair[order(twofive_hair$total_conc),], aes(.data[["gap"]], .data[["angle"]], 
+              color = .data[["total_conc"]], size = .data[["total_conc"]])) + 
   geom_point() +
-  scale_color_viridis_b("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), 
-                        limits = c(0,0.15))+
-  scale_size_binned("Normalized\nconcentration", breaks = seq(0,0.15, by = 0.025), 
-                    range = c(0.5, 4), limits = c(0,0.15)) + 
+  scale_color_viridis_b("Total\nconcentration", breaks = seq(0, 2e8, length.out = 5), 
+                        limits = c(0, 2e8)) +
+  scale_size_binned("Total\nconcentration", breaks = seq(0, 2e8, length.out = 5), 
+                    range = c(0.5, 4), limits = c(0, 2e8)) + 
   ggtitle("25-hair array") + theme_minimal() + 
   guides(color= guide_legend(), size=guide_legend()) 
 
-(p3 / p25) + plot_layout(guides = "collect") & theme(legend.position = 'bottom')
+(p3 / p25) + plot_layout(guides = "collect")
 ```
+
+
+```{r gap-angle-norm-conc-map, echo = FALSE, fig.height=5*1.5, fig.width=5}
+p3 <- ggplot(three_hair, 
+             aes(.data[["gap"]], .data[["angle"]], 
+                 color = .data[["norm_conc"]], size = .data[["norm_conc"]])) + 
+  geom_point() +
+  scale_color_viridis_b("Normalized\nconcentration", breaks = seq(0, 0.0025, length.out = 5), 
+                        limits = c(0, 0.0025)) +
+  scale_size_binned("Normalized\nconcentration", breaks = seq(0, 0.0025, length.out = 5), 
+                    range = c(0.5, 4), limits = c(0, 0.0025)) + 
+  
+  ggtitle("3-hair array") + theme_minimal() +
+  guides(color= guide_legend(), size=guide_legend()) 
+
+
+p25 <- ggplot(twofive_hair, aes(.data[["gap"]], .data[["angle"]], 
+              color = .data[["norm_conc"]], size = .data[["norm_conc"]])) + 
+  geom_point() +
+  scale_color_viridis_b("Normalized\nconcentration", breaks = seq(0, 0.0125, length.out = 5), 
+                        limits = c(0,0.0125))+
+  scale_size_binned("Normalized\nconcentration", breaks = seq(0, 0.0125, length.out = 5), 
+                    range = c(0.5, 4), limits = c(0,0.0125)) + 
+  ggtitle("25-hair array") + theme_minimal() + 
+  guides(color= guide_legend(), size=guide_legend()) 
+
+(p3 / p25) + plot_layout(guides = "collect")
+```
+
+
+
 
 ```{r, echo=FALSE, fig.cap=" "}
 
 plot_values(twofive_hair, "angle", "hair")
 ```
 
-```{r}
-p3 <- ggplot(three_hair, aes(.data[["leakiness_row_1"]], .data[["total_conc"]], 
-              color = .data[["angle"]])) + 
-    geom_point() +
-    scale_color_viridis_c()+
-    ggtitle("3 hair") + theme_minimal()
-
-p25 <- ggplot(twofive_hair, aes(.data[["leakiness_row_5"]], .data[["total_conc"]], 
-              color = .data[["angle"]])) + 
-    geom_point() +
-    scale_color_continuous(type = "viridis") +
-    ggtitle("25 hair") + theme_minimal()
-
-p3 / p25
-```
 
 ```{r}
-var1 <- "angle"
+var1 <- "re"
 x_range <- c(0, max(twofive_hair$leakiness_row_1))
 y_range <- c(0, max(twofive_hair$row5))
 
@@ -357,25 +428,19 @@ p25_5 <- ggplot(twofive_hair, aes(.data[["leakiness_row_5"]], .data[["row5"]],
 p25 /p25_2 /p25_3 / p25_4 / p25_5
 ```
 
-```{r}
-var1 <- "angle"
-x_range <- c(0, max(twofive_hair$leakiness_row_1))
-y_range <- c(0, max(twofive_hair$row5))
+```{r max-25-array, echo=FALSE, fig.cap=" "}
+#Total
+plot_individual_hairs(1300, three_hair, twofive_hair, hdia) /
+  # Normalized
+  plot_individual_hairs(876, three_hair, twofive_hair, hdia)
+```
 
-
-p25 <- ggplot(three_hair, aes(.data[["leakiness_row_1"]], .data[["row1"]],
-                                color = .data[[var1]])) + 
-    geom_point() +
-    ylim(y_range) + xlim(x_range) + 
-    scale_color_continuous(type = "viridis") +
-    ggtitle("25 hair") + theme_minimal()
-
-p25_2 <- ggplot(twofive_hair, aes(.data[["leakiness_row_2"]], .data[["row2"]],
-                                  color = .data[[var1]])) + 
-    geom_point() +
-    ylim(y_range) + xlim(x_range) + 
-    scale_color_continuous(type = "viridis") +
-    ggtitle("25 hair") + theme_minimal()
+```{r max-3-array, echo=FALSE, fig.cap=" "}
+#Total: 
+plot_individual_hairs(645, three_hair, twofive_hair, hdia) /
+  #Normalized:
+  plot_individual_hairs(1061, three_hair, twofive_hair, hdia) + 
+  plot_layout(guides = "collect")
 ```
 
 

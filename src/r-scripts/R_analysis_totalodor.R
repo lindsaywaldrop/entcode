@@ -3,13 +3,22 @@
 ###
 ### Total odorant captured calculation
 ###
+### Run this script once for each hair array model (3 or 25).
+### Change the hairno to the number of hairs in the array.
+### Change the today_date to the date the analysis starts.
+### Change mainDir2 if your data is not in a standard organization.
+### You can start and stop this analysis. It doesn't need to run all simulations
+###     in the same instance.
 #################################################################################################################
+# Adding required libraries
 library(parallel)
 library(doParallel)
 library(foreach)
 
+# Adding custom functions
 source("./src/r-scripts/datahandling_functions.R")
 
+# Registering backend for parallel for loop
 cores <- detectCores()
 cluster <- register_backend(cores, F)
 
@@ -18,7 +27,7 @@ today_date <- "2023-11-02"
 hairno <- 25  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 startn <- 1
-n <- 	2 		  # number of simulations to analyze
+n <- 	2000 		  # number of simulations to analyze
 fluid <- "water"  # fluid of simulation, options: air, water
 
 # Loading parameter file
