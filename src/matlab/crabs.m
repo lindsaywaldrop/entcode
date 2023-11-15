@@ -90,6 +90,9 @@ while(simulation.t < parameters.t_final_flick)
     save_data(paths, parameters, simulation, 0);     
     simulation.list_print_times(simulation.pcount) = simulation.t; 
     fprintf('printing %g %g \n',simulation.t, simulation.pcount)
+    if(parameters.plot == 1) 
+        save_data_c(paths, parameters, simulation, 0);
+    end
   end
 
 end
@@ -100,5 +103,8 @@ simulation.pcount = simulation.pcount+1;
 save_data(paths, parameters, simulation, 0);     
 simulation.list_print_times(simulation.pcount) = simulation.t; 
 fprintf('printing %g %g \n', simulation.t, simulation.pcount)
+if(parameters.plot == 1) 
+        save_data_c(paths, parameters, simulation, 0);
+end
 save_printdata(paths, parameters, simulation); 
  
