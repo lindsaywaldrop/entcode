@@ -30,7 +30,7 @@ The results to this project was produced on the following platforms:
 
 For specific instructions, please see the project pipeline PDF in the documents folder: (https://github.com/lindsaywaldrop/entcode/blob/master/documents/entcode-Pipeline.pdf)
  
- ## Contacts 
+## Contacts 
  
  For questions, comments, or concerns, please use Github issues or contact [waldrop@chapman.edu](mailto:waldrop@chapman.edu).
  

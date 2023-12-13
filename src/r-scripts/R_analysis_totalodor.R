@@ -23,7 +23,7 @@ cores <- detectCores()
 cluster <- register_backend(cores, F)
 
 ####  Parameters  ####
-today_date <- "2023-11-02"
+today_date <- "2023-12-12"
 hairno <- 25  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 startn <- 1
@@ -102,30 +102,42 @@ foreach(i = startn:n) %dopar% {
       raw_total_conc[i] <- sum(hair_conc[["conc.data"]][last_timestep, ])
       hair_dots[i] <- sum(hair_conc$hairdots)
       hair_dxdy[i] <- hair_conc$dx * hair_conc$dy
-      total_conc[i] <- raw_total_conc[i] / (hair_dxdy[i] * hair_dots[i])
-      norm_conc[i] <- total_conc[i] / hair_conc$cmax
-      
+      total_conc[i] <- raw_total_conc[i] * (hair_dxdy[i] * hair_dots[i])
       cmax[i] <- hair_conc$cmax
       ctotal[i] <- hair_conc$ctotal
       domain_area[i] <- hair_conc$xlength * hair_conc$ylength
+      norm_conc[i] <- total_conc[i] / (ctotal[i] * domain_area[i])
       for(j in 1:hairno){
-        # Calculating totals for each hair:
-        totals_hairs[i, j] <- hair_conc[["conc.data"]][last_timestep, j]
+        # Calculating ratio of total capture for each hair:
+        totals_hairs[i, j] <- hair_conc[["conc.data"]][last_timestep, j] /
+                                raw_total_conc[i]
         # Calculating totals for each row:
         if(hairno == 5){
-          totals_rows[i, 1] <- sum(hair_conc[["conc.data"]][last_timestep, 1:5])
+          totals_rows[i, 1] <- (sum(hair_conc[["conc.data"]][last_timestep, 1:5]) *
+                                  (hair_dxdy[i] * sum(hair_conc$hairdots[1:5]))) /
+                                  (ctotal[i] * domain_area[i])
         }else {
           if(j >= 1 && j < 4) {
-            totals_rows[i, 1] <- sum(hair_conc[["conc.data"]][last_timestep, 1:3])
+            totals_rows[i, 1] <- (sum(hair_conc[["conc.data"]][last_timestep, 1:3]) *
+                                    (hair_dxdy[i] * sum(hair_conc$hairdots[1:3]))) /
+                                    (ctotal[i] * domain_area[i])
             
           }else if(j >= 4 && j < 8) {
-            totals_rows[i, 2] <- sum(hair_conc[["conc.data"]][last_timestep, 4:7])
+            totals_rows[i, 2] <- (sum(hair_conc[["conc.data"]][last_timestep, 4:7]) *
+                                    (hair_dxdy[i] * sum(hair_conc$hairdots[4:7]))) /
+                                    (ctotal[i] * domain_area[i])
           }else if(j >= 8 && j < 13){
-            totals_rows[i, 3] <- sum(hair_conc[["conc.data"]][last_timestep, 8:12])
+            totals_rows[i, 3] <- (sum(hair_conc[["conc.data"]][last_timestep, 8:12]) *
+                                    (hair_dxdy[i] * sum(hair_conc$hairdots[8:12]))) /
+                                    (ctotal[i] * domain_area[i])
           }else if(j >= 13 && j < 19){
-            totals_rows[i, 4] <- sum(hair_conc[["conc.data"]][last_timestep, 13:18])
+            totals_rows[i, 4] <- (sum(hair_conc[["conc.data"]][last_timestep, 13:18]) *
+                                    (hair_dxdy[i] * sum(hair_conc$hairdots[13:18]))) /
+                                    (ctotal[i] * domain_area[i])
           }else if(j >= 19 && j <= 25){
-            totals_rows[i, 5] <- sum(hair_conc[["conc.data"]][last_timestep, 19:25])
+            totals_rows[i, 5] <- (sum(hair_conc[["conc.data"]][last_timestep, 19:25]) *
+                                    (hair_dxdy[i] * sum(hair_conc$hairdots[19:25]))) /
+                                    (ctotal[i] * domain_area[i])
           } else {
             message("?? Unknown hair number")
           }
