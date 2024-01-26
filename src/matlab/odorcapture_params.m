@@ -2,7 +2,7 @@
 
 
 %Nx - set grid only for x direction and it will define dx=dy and Ny 
-parameters.Nx = 512;
+parameters.Nx = 1024;
 
 %for piv data as velocity field
 %only used in read_in_velocity_data_p1.m 

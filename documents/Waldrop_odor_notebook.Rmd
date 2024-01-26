@@ -10,6 +10,10 @@ fig_width: 8.25
 
 ## Intro 
 
+* redo simulation: 768, 1954, 699, 563, 235, 1
+* half or double (preferred if possible)  (1024) for as long as possible
+* 
+
 
 ```{r echo=FALSE, message=TRUE, warning=FALSE}
 library(ggplot2) # for ggplots

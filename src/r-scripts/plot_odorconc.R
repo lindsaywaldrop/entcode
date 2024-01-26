@@ -6,7 +6,7 @@ library(patchwork)
 
 source("./src/R-scripts/datahandling_functions.R")
 
-run_id <- "0468"
+run_id <- "5235"
 hairno <- 3
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
 all.data <- convert_ibamr(run_id, fluid, 1, hairno)
@@ -30,10 +30,10 @@ colnames(hair_totals) <- c("time", as.character(hair.points$name))
 hair_totals_long <- tidyr::pivot_longer(hair_totals, cols = !time)
 hair_totals_long$name <- factor(hair_totals_long$name, ordered = T, 
                                 levels = as.character(hair.points$name))
-for(i in seq(1,length(conc.timedata), by = 10)){
+#for(i in seq(1,length(conc.timedata), by = 10)){
 #for (i in 1:length(conc.timedata)){
 #for (i in 1:50){
-#  i=1
+  i=length(conc.timedata)
    all.data$c <- as.vector(conc.timedata[[i]])
    all.ctotals[i]<-sum(all.data$c)
    p1 <- ggplot(all.data, aes(x = x, y = y, fill = c)) + 
@@ -59,7 +59,7 @@ for(i in seq(1,length(conc.timedata), by = 10)){
      theme_minimal()
    p1 / p2   + plot_layout(heights = c(2,1))
    ggsave(paste0("documents/viz/",hairno,"hair-","run",run_id,"/conc_",run_id,"_",i,".png"),last_plot())
-}
+#}
 
 
 # Plot velocity field
