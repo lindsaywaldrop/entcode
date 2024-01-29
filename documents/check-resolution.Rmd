@@ -16,18 +16,18 @@ library(dplyr)
 
 ## Rerun simulations at higher grid 
 
-These simulations were rerun at 1024 grid size: 
+These simulations were rerun at 256 and 1024 grid size: 
 
- * 0001
- * 0235
- * 0468
- * 0906
+ * 0001 (mostly done at 1024)
+ * 0235 (done at 1024 and 256)
+ * 0468 
+ * 0906 (started at 256)
  
-The results were renamed with a 5 as the first digit of the run id. 
+The results were renamed with a 5 (for 1024) and 8 (for 256) as the first digit of the run id. 
 
 ## Plotting results as a comparison
 
-```{r}
+```{r define-fxns}
 source("./src/R-scripts/datahandling_functions.R")
 
 plot_results <- function(hairno, run_id){
@@ -38,14 +38,15 @@ plot_results <- function(hairno, run_id){
                                        "initdata_", run_id, ".mat", 
                                        sep = ""))
   hair_values <- apply(hair_conc$conc.data, 1, sum, na.rm = T)
-  total_conc <- (hair_values * sum(hair_conc$hairdots)) * hair_dxdy
+  total_conc <- (hair_values * sum(hair_conc$hairdots)) * as.vector(hair_dxdy)
   hair_totals <- as.data.frame(total_conc)
   cmax <- hair_conc$cmax
   ctotal <- hair_conc$ctotal
   domain_area <- hair_conc$xlength * hair_conc$ylength
   norm_conc <- total_conc / as.vector(ctotal * domain_area)
   if(is.null(init_data$list.print.times)){
-    print_times <- seq(0,by=init_data$dt,length.out = length(total_conc))
+    print_times <- seq(0, by = as.vector(init_data$dt)*as.vector(init_data$print.time), 
+                       length.out = length(total_conc))
   }else{
     print_times <- as.numeric(init_data$list.print.times)
   }
@@ -74,44 +75,94 @@ plot_results <- function(hairno, run_id){
   dat <- list("hair_totals" = hair_totals, "p_total_conc" = p1, "p_norm_conc" = p2)
   return(dat)
 }
+```
 
+```{r read-in-sim-data}
+#Simulation 0001
+sim0001 <- plot_results(3, "0001")
+sim0001$hair_totals$simulation <- "0001"
+sim0001$hair_totals$resolution <- "512"
+sim5001 <- plot_results(3, "5001")
+sim5001$hair_totals$simulation <- "5001"
+sim5001$hair_totals$resolution <- "1024"
+sim_1_all <- rbind(sim0001$hair_totals, sim5001$hair_totals)
+sim_1_all$simulation <- factor(sim_1_all$simulation)
+sim_1_all$resolution <- factor(sim_1_all$resolution, ordered = T, 
+                               levels = c("256", "512", "1024"))
+
+# Simulation 0235
 sim0235 <- plot_results(3, "0235")
 sim0235$hair_totals$simulation <- "0235"
+sim0235$hair_totals$resolution <- "512"
 sim5235 <- plot_results(3, "5235")
 sim5235$hair_totals$simulation <- "5235"
-sim0001 <- plot_results(3, "6001")
-sim5001 <- plot_results(3, "5001")
+sim5235$hair_totals$resolution <- "1024"
+sim8235 <- plot_results(3, "8235")
+sim8235$hair_totals$simulation <- "8235"
+sim8235$hair_totals$resolution <- "256"
+sim_235_all <- rbind(sim0235$hair_totals, sim5235$hair_totals, sim8235$hair_totals)
+sim_235_all$simulation <- factor(sim_235_all$simulation)
+sim_235_all$resolution <- factor(sim_235_all$resolution, ordered = T, 
+                                 levels = c("256", "512", "1024"))
+
+# Simulation 0468
+# sim0468 <- plot_results(3, "0468")
+# sim0468$hair_totals$simulation <- "0468"
+# sim0468$hair_totals$resolution <- "512"
+# sim5468 <- plot_results(3, "5468")
+# sim5468$hair_totals$simulation <- "5468"
+# sim5468$hair_totals$resolution <- "1024"
+# sim8468 <- plot_results(3, "8468")
+# sim8468$hair_totals$simulation <- "8468"
+# sim8468$hair_totals$resolution <- "256"
+# sim_468_all <- rbind(sim0468$hair_totals, sim5468$hair_totals, sim8468$hair_totals)
+# sim_468_all$simulation <- factor(sim_468_all$simulation)
+# sim_468_all$resolution <- factor(sim_468_all$resolution, ordered = T, 
+#                                  levels = c("256", "512", "1024"))
+
+# Simulation 0906
+# sim0906 <- plot_results(3, "0906")
+# sim0906$hair_totals$simulation <- "0906"
+# sim0906$hair_totals$resolution <- "512"
+# sim5906 <- plot_results(3, "5906")
+# sim5906$hair_totals$simulation <- "5906"
+# sim5906$hair_totals$resolution <- "1024"
+# sim8906 <- plot_results(3, "8906")
+# sim8906$hair_totals$simulation <- "8906"
+# sim8906$hair_totals$resolution <- "256"
+# sim_906_all <- rbind(sim0906$hair_totals, sim5906$hair_totals, sim8906$hair_totals)
+# sim_906_all$simulation <- factor(sim_906_all$simulation)
+# sim_906_all$resolution <- factor(sim_906_all$resolution, ordered = T, 
+#                                  levels = c("256", "512", "1024"))
+
+
 ```
+
 
 ```{r}
-sim0235$p_total_conc + sim5235$p_total_conc
+p0001 <- ggplot(sim_1_all, aes(time, norm_conc, color = resolution)) + geom_point() +
+  scale_color_viridis(discrete = T, drop = F) +
+  ggtitle("Simulation 0001") + 
+  theme_bw()  
 
-ggplot(sim_235_all, aes(time, total_conc, color = simulation)) + geom_point()
-```
-```{r}
-sim0235$p_norm_conc + sim5235$p_norm_conc
+p0235 <- ggplot(sim_235_all, aes(time, norm_conc, color = resolution)) + geom_point() +
+  scale_color_viridis(discrete = T, drop = F) +
+  ggtitle("Simulation 0235") + 
+  theme_bw() 
 
-sim_235_all <- rbind(sim0235$hair_totals, sim5235$hair_totals)
+# p0468 <- ggplot(sim_468_all, aes(time, norm_conc, color = resolution)) + geom_point() +
+#   scale_color_viridis(discrete = T, drop = F) +
+#   ggtitle("Simulation 0468") + 
+#   theme_bw() 
+# 
+# p0906 <- ggplot(sim_906_all, aes(time, norm_conc, color = resolution)) + geom_point() +
+#   scale_color_viridis(discrete = T, drop = F) +
+#   ggtitle("Simulation 0906") + 
+#   theme_bw() 
 
-ggplot(sim_235_all, aes(time, norm_conc, color = simulation)) + geom_point()
 
-```
-
-```{r}
-sim0001$p_norm_conc + sim5001$p_norm_conc
-```
-
-```{r}
-sim0235$hair_totals$simulation <- 0235
-sim0235$hair_totals$grid <- 512
-sim5235$hair_totals$simulation <- 5235
-sim5235$hair_totals$grid <- 1024
-
-hair_totals <- rbind(sim0235$hair_totals, sim5235$hair_totals)
-
-ggplot(hair_totals, aes(x = time, y = norm_conc, color = factor(grid))) + geom_point()
+(p0001 + p0235)  + 
+  plot_layout(guides = "collect")
 ```
 
-```{r}
 
-```

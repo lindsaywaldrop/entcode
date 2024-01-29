@@ -2,7 +2,7 @@
 
 
 %Nx - set grid only for x direction and it will define dx=dy and Ny 
-parameters.Nx = 1024;
+parameters.Nx = 256;
 
 %for piv data as velocity field
 %only used in read_in_velocity_data_p1.m 
@@ -59,7 +59,7 @@ parameters.t_final_flick = 15; %0.1 s -> 200 s
 simulation.t_final_flick = parameters.t_final_flick;
 parameters.stinkthreshold = 0.01; 
 parameters.timethreshold_min = 1000;
-parameters.plot = 1;
+parameters.plot = 0;
 %t_final_factor_flick = 20000;
 
 disp(['Running in ',parameters.fluid,' with D=', num2str(parameters.D), ...
