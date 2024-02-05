@@ -6,7 +6,7 @@ library(patchwork)
 
 source("./src/R-scripts/datahandling_functions.R")
 
-run_id <- "5235"
+run_id <- "8235"
 hairno <- 3
 hair.conc <- convert_odorconc(run_id, fluid, hairno)
 all.data <- convert_ibamr(run_id, fluid, 1, hairno)
@@ -33,7 +33,7 @@ hair_totals_long$name <- factor(hair_totals_long$name, ordered = T,
 #for(i in seq(1,length(conc.timedata), by = 10)){
 #for (i in 1:length(conc.timedata)){
 #for (i in 1:50){
-  i=length(conc.timedata)
+  i=1
    all.data$c <- as.vector(conc.timedata[[i]])
    all.ctotals[i]<-sum(all.data$c)
    p1 <- ggplot(all.data, aes(x = x, y = y, fill = c)) + 
