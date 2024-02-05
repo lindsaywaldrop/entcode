@@ -14,6 +14,7 @@
 library(parallel)
 library(doParallel)
 library(foreach)
+library(R.matlab)
 
 # Adding custom functions
 source("./src/r-scripts/datahandling_functions.R")
@@ -23,8 +24,8 @@ cores <- detectCores()
 cluster <- register_backend(cores, F)
 
 ####  Parameters  ####
-today_date <- "2023-12-12"
-hairno <- 25  # Total number of hairs in the array. 
+today_date <- "2024-02-05"
+hairno <- 3  # Total number of hairs in the array. 
 # Options: "3", "5", "7", "12", "18", "25"
 startn <- 1
 n <- 	2000 		  # number of simulations to analyze
@@ -49,6 +50,7 @@ total_conc <- rep(NA, length = nrow(parameters))
 norm_conc <- rep(NA, length = nrow(parameters))
 totals_hairs <- matrix(data = NA, nrow = nrow(parameters), ncol = hairno)
 totals_rows <- matrix(data = NA, nrow = nrow(parameters), ncol = rowno)
+c_init_pts <- matrix(data = NA, nrow = nrow(parameters), ncol = rowno)
 cmax <- rep(NA, length = nrow(parameters))
 ctotal <- rep(NA, length = nrow(parameters))
 domain_area <- rep(NA, length = nrow(parameters))
@@ -93,20 +95,27 @@ foreach(i = startn:n) %dopar% {
   }else{
     print(paste("Simulation",run_id))
     hair_conc <- convert_odorconc(run_id, fluid, hairno, mainDir2)
+    
     if(run_id == "0531" | run_id == "0866") hair_conc$threshold <- TRUE
     if(!hair_conc$threshold){
       print(paste("Simulation", run_id, "did not finish."))
     } else{
+      c_data <- readMat(paste0(mainDir2, "/",
+                               hairno, "hair_array/", 
+                               "c_", run_id, ".mat"))
+      c_init_pts[i] <- sum(c_data$c.1 > 0) 
+      rm(c_data)
       last_timestep <- length(hair_conc[["conc.data"]][ , 1])
       # Calculating total concentration captured by the array:
       raw_total_conc[i] <- sum(hair_conc[["conc.data"]][last_timestep, ])
       hair_dots[i] <- sum(hair_conc$hairdots)
       hair_dxdy[i] <- hair_conc$dx * hair_conc$dy
-      total_conc[i] <- raw_total_conc[i] * (hair_dxdy[i] * hair_dots[i])
       cmax[i] <- hair_conc$cmax
       ctotal[i] <- hair_conc$ctotal
       domain_area[i] <- hair_conc$xlength * hair_conc$ylength
-      norm_conc[i] <- total_conc[i] / (ctotal[i] * domain_area[i])
+      total_conc[i] <- (raw_total_conc[i] * as.vector(hair_dxdy[i] * c_init_pts[i])) / 
+        as.vector(ctotal[i])
+      norm_conc[i] <- total_conc[i] / cmax[i]
       for(j in 1:hairno){
         # Calculating ratio of total capture for each hair:
         totals_hairs[i, j] <- hair_conc[["conc.data"]][last_timestep, j] /

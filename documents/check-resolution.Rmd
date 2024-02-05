@@ -107,8 +107,6 @@ assemble_conv_plots <- function(sim_dat){
 ```
 
 ```{r read-in-sim-data}
-three_hair <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2023-12-12_cleaned.csv", 
-                      skip = 0, header = T, row.names = 1)
 
 #Simulation 0001
 # sim0001 <- load_results(3, "0001")
@@ -183,4 +181,71 @@ p0235 / p0468 / p0906 +
   plot_layout(guides = "collect")
 ```
 
+Loading old results (old_three_hair) and revised results (three_hair), plotting each output against each parameter.
+```{r}
+three_hair <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2024-02-05.csv", 
+                      skip = 1, header = T, row.names = 1)
+old_three_hair <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2023-12-12_cleaned.csv", 
+                      skip = 0, header = T, row.names = 1)
+
+plot_hairs <- function(three_hair, old_three_hair, var){
+p1 <- ( ggplot(three_hair, aes(.data[[var]], raw_total_conc)) + geom_point() +
+  ggplot(three_hair, aes(.data[[var]], total_conc)) + geom_point() + 
+  ggplot(three_hair, aes(.data[[var]], norm_conc)) + geom_point() ) /
+
+( ggplot(old_three_hair, aes(.data[[var]], raw_total_conc)) + geom_point() + 
+    ggplot(old_three_hair, aes(.data[[var]], total_conc)) + geom_point() + 
+  ggplot(old_three_hair, aes(.data[[var]], norm_conc)) + geom_point() )
+return(p1)
+}
+```
+
+Reynolds number:
+
+```{r}
+plot_hairs(three_hair, old_three_hair, "re")
+```
+
+Gap width: 
+
+```{r}
+plot_hairs(three_hair, old_three_hair, "gap")
+```
+
+Angle to oncoming flow: 
+
+```{r}
+plot_hairs(three_hair, old_three_hair, "angle")
+```
+
+Antennule-to-hair ratio: 
+
+```{r}
+plot_hairs(three_hair, old_three_hair, "ant")
+```
+
+Distance of array to antennule to hair ratio: 
+
+```{r}
+plot_hairs(three_hair, old_three_hair, "dist")
+```
+
+Diffusion coefficient: 
+
+```{r}
+plot_hairs(three_hair, old_three_hair, "diff_coef")
+```
+
+Initial concentration stripe width:
+
+```{r}
+plot_hairs(three_hair, old_three_hair, "stink_width")
+```
+
+Initial concentration: 
+
+
+```{r}
+plot_hairs(three_hair, old_three_hair, "init_conc")
+```
 
