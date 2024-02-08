@@ -142,13 +142,13 @@ sim_235_all$resolution <- factor(sim_235_all$resolution, ordered = T,
 sim0468 <- load_results(3, "0468")
 sim0468$hair_totals$simulation <- "0468"
 sim0468$hair_totals$resolution <- "512"
-# sim5468 <- load_results(3, "5468")
-# sim5468$hair_totals$simulation <- "5468"
-# sim5468$hair_totals$resolution <- "1024"
+sim5468 <- load_results(3, "5468")
+sim5468$hair_totals$simulation <- "5468"
+sim5468$hair_totals$resolution <- "1024"
 sim8468 <- load_results(3, "8468")
 sim8468$hair_totals$simulation <- "8468"
 sim8468$hair_totals$resolution <- "256"
-sim_468_all <- rbind(sim0468$hair_totals, sim8468$hair_totals)
+sim_468_all <- rbind(sim0468$hair_totals, sim8468$hair_totals, sim5468$hair_totals)
 sim_468_all$simulation <- factor(sim_468_all$simulation)
 sim_468_all$resolution <- factor(sim_468_all$resolution, ordered = T,
                                  levels = c("256", "512", "1024"))
@@ -157,13 +157,13 @@ sim_468_all$resolution <- factor(sim_468_all$resolution, ordered = T,
 sim0906 <- load_results(3, "0906")
 sim0906$hair_totals$simulation <- "0906"
 sim0906$hair_totals$resolution <- "512"
-# sim5906 <- load_results(3, "5906")
-# sim5906$hair_totals$simulation <- "5906"
-# sim5906$hair_totals$resolution <- "1024"
+sim5906 <- load_results(3, "5906")
+sim5906$hair_totals$simulation <- "5906"
+sim5906$hair_totals$resolution <- "1024"
 sim8906 <- load_results(3, "8906")
 sim8906$hair_totals$simulation <- "8906"
 sim8906$hair_totals$resolution <- "256"
-sim_906_all <- rbind(sim0906$hair_totals, sim8906$hair_totals)
+sim_906_all <- rbind(sim0906$hair_totals, sim8906$hair_totals, sim5906$hair_totals)
 sim_906_all$simulation <- factor(sim_906_all$simulation)
 sim_906_all$resolution <- factor(sim_906_all$resolution, ordered = T,
                                  levels = c("256", "512", "1024"))
@@ -183,7 +183,7 @@ p0235 / p0468 / p0906 +
 
 Loading old results (old_three_hair) and revised results (three_hair), plotting each output against each parameter.
 ```{r}
-three_hair <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2024-02-05.csv", 
+three_hair <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2024-02-05_cleaned.csv", 
                       skip = 1, header = T, row.names = 1)
 old_three_hair <- read.csv("./results/r-csv-files/3hair_results/totalconc_3hairs_2023-12-12_cleaned.csv", 
                       skip = 0, header = T, row.names = 1)
