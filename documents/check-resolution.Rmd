@@ -27,6 +27,8 @@ The results were renamed with a 5 (for 1024) and 8 (for 256) as the first digit 
 
 ## Plotting results as a comparison
 
+Plot old and new versions of calculations together
+
 ```{r define-fxns}
 source("./src/R-scripts/datahandling_functions.R")
 
@@ -41,11 +43,14 @@ load_results <- function(hairno, run_id){
                                        "c_", run_id, ".mat"))
   c_init_pts <- sum(c_data$c.1 > 0) 
   hair_values <- apply(hair_conc$conc.data, 1, sum, na.rm = T) 
+  hair_dots <- sum(hair_conc$hairdots)
   cmax <- hair_conc$cmax
   ctotal <- hair_conc$ctotal 
   domain_area <- hair_conc$xlength * hair_conc$ylength
-  total_conc <- (hair_values * as.vector(hair_dxdy * c_init_pts)) / as.vector(ctotal)
-  norm_conc <- total_conc / as.vector(cmax)
+  total_conc_old <- hair_values * as.vector(hair_dxdy * hair_dots)
+  total_conc_new <- (hair_values * as.vector(hair_dxdy * c_init_pts)) / as.vector(ctotal)
+  norm_conc_old <- total_conc_old / as.vector(ctotal * domain_area)
+  norm_conc_new <- total_conc_new / as.vector(cmax)
   if(is.null(init_data$list.print.times)){
     print_times <- seq(0, by = as.vector(init_data$dt)*as.vector(init_data$print.time), 
                        length.out = length(total_conc))
@@ -54,29 +59,12 @@ load_results <- function(hairno, run_id){
   }
   hair_totals <- data.frame("time" = print_times, 
                             "raw_conc" = hair_values,
-                        "total_conc" = total_conc,
-                       "norm_conc" = norm_conc)
+                        "total_conc_old" = total_conc_old,
+                       "norm_conc_old" = norm_conc_old,
+                       "total_conc_new" = total_conc_new,
+                       "norm_conc_new" = norm_conc_new)
     
-  #for(i in seq(1,length(conc.timedata), by = 10)){
-  #for (i in 1:length(conc.timedata)){
-  #for (i in 1:50){
-  p1 <- ggplot(hair_totals, 
-                aes(time, total_conc)) + 
-     geom_point(pch = 19, size = 1) + 
-     scale_color_viridis(discrete = T, guide = "none") +
-     ylab("Total concentration") + xlab("Simulation time (s)") +
-     xlim(0, max(hair_totals$time)) + 
-     ylim(0, max(hair_totals$total_conc)) + 
-     theme_minimal()
-   p2 <- ggplot(hair_totals, 
-                aes(time, norm_conc)) + 
-     geom_point(pch = 19, size = 1) + 
-     ylab("Normalized concentration") + xlab("Simulation time (s)") +
-     xlim(0, max(hair_totals$time)) + 
-     ylim(0, max(hair_totals$norm_conc)) + 
-     theme_minimal()
-  dat <- list("hair_totals" = hair_totals, "init_data" = init_data,
-              "p_total_conc" = p1, "p_norm_conc" = p2)
+  dat <- list("hair_totals" = hair_totals, "init_data" = init_data)
   return(dat)
 }
 
@@ -89,19 +77,30 @@ assemble_conv_plots <- function(sim_dat){
   ggtitle(paste("Simulation", sim_dat$simulation[1])) +
   theme_bw()
   
-  p_total <- ggplot(sim_dat, aes(time, total_conc, color = resolution)) + geom_point() +
+  p_total_old <- ggplot(sim_dat, aes(time, total_conc_old, color = resolution)) + geom_point() +
   scale_color_viridis(discrete = T, drop = F, name = "Grid\nresolution") +
   #annotate("text", x=0.1, y=5.5e-4, label = "D = 4.99e-5\ngap = 10.4") +
   ggtitle(paste("Simulation", sim_dat$simulation[1])) +
   theme_bw()
   
-  p_norm <- ggplot(sim_dat, aes(time, norm_conc, color = resolution)) + geom_point() +
+  p_norm_old <- ggplot(sim_dat, aes(time, norm_conc_old, color = resolution)) + geom_point() +
   scale_color_viridis(discrete = T, drop = F, name = "Grid\nresolution") +
   #annotate("text", x=0.1, y=5.5e-4, label = "D = 4.99e-5\ngap = 10.4") +
   ggtitle(paste("Simulation", sim_dat$simulation[1])) +
   theme_bw()
   
-  return(p_raw + p_total + p_norm)
+  p_total_new <- ggplot(sim_dat, aes(time, total_conc_new, color = resolution)) + geom_point() +
+  scale_color_viridis(discrete = T, drop = F, name = "Grid\nresolution") +
+  #annotate("text", x=0.1, y=5.5e-4, label = "D = 4.99e-5\ngap = 10.4") +
+  ggtitle(paste("Simulation", sim_dat$simulation[1])) +
+  theme_bw()
+  
+  p_norm_new <- ggplot(sim_dat, aes(time, norm_conc_new, color = resolution)) + geom_point() +
+  scale_color_viridis(discrete = T, drop = F, name = "Grid\nresolution") +
+  #annotate("text", x=0.1, y=5.5e-4, label = "D = 4.99e-5\ngap = 10.4") +
+  ggtitle(paste("Simulation", sim_dat$simulation[1])) +
+  theme_bw()
+  return((p_raw + p_total_old + p_norm_old)/(plot_spacer() + p_total_new + p_norm_new) + plot_layout(guides="collect"))
 }
 
 ```
@@ -175,10 +174,11 @@ sim_906_all$resolution <- factor(sim_906_all$resolution, ordered = T,
 ```{r normalized-concentration}
 
 p0235 <- assemble_conv_plots(sim_235_all)
-p0468 <- assemble_conv_plots(sim_468_all)
-p0906 <- assemble_conv_plots(sim_906_all)
-p0235 / p0468 / p0906 +
-  plot_layout(guides = "collect")
+p0235
+# p0468 <- assemble_conv_plots(sim_468_all)
+# p0906 <- assemble_conv_plots(sim_906_all)
+# p0235 / p0468 / p0906 +
+#   plot_layout(guides = "collect")
 ```
 
 Loading old results (old_three_hair) and revised results (three_hair), plotting each output against each parameter.
