@@ -198,7 +198,7 @@ convert_odorconc <- function(run_id, fluid, hairno, main_dir = NULL) {
   return(extracted)
 }
 
-checkruns<-function(hairno, run_id){
+checkruns <- function(hairno, run_id){
   require(viridis)
   require(ggplot2)
   init.data <- R.matlab::readMat(paste("./results/odorcapture/", hairno, "hair_array/", 
@@ -400,16 +400,18 @@ stitch.rows <- function(data, list.hairs){
   return(alldata.row)
 }
 
-plot.hairs <- function(nohairs){
-  data <- read.table(file = paste("../data/vertex-files/",
-                                  nohairs, "hair_files/hairs0.vertex", sep = ""),
+plot.hairs <- function(nohairs, sim_number){
+  dat <- read.table(file = paste("./data/vertex-files/",
+                                  nohairs, "hair_files/hairs",sim_number, 
+                                  ".vertex", sep = ""),
                      skip = 1, header = FALSE)
-  csv.data <- read.csv(file = paste("../data/csv-files/", 
-                                    nohairs, "hair_files/hairs0.csv", sep = ""))
-  data$antorhair <- c(rep("ant",csv.data[1,1]),
-                      rep("hair",(csv.data[1,2]*nohairs)))
-  colnames(data)<-c("x","y","antorhair")
-  return(data)
+  csv.dat <- read.csv(file = paste("./data/csv-files/", 
+                                    nohairs, "hair_files/hairs",sim_number, 
+                                    ".csv", sep = ""))
+  dat$antorhair <- c(rep("ant",csv.dat[1,1]),
+                      rep("hair",(csv.dat[1,2]*nohairs)))
+  colnames(dat)<-c("x","y","antorhair")
+  return(dat)
 }
 
 circle <- function(center, radius, dx, return_circ = TRUE){

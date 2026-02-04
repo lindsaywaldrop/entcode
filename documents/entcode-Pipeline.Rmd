@@ -13,25 +13,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-The entcode master project is a computational fluid dynamic simulation of odor capture by a chemosensory hair array consisting of three hairs and a supporting, non-chemosensory antenna. The simulations are in two dimensions, representing a cross-section of the array, and represent arrays with either 3 or 25 hairs. The project consists of setup for 2,000 individual simulations, each representing a unique combination of the following parameters: 
+The entcode master project is a computational fluid dynamic simulation of fluid movement through a chemosensory hair array consisting of three hairs and a supporting, non-chemosensory antenna. The simulations are in two dimensions, representing a cross-section of the array, and represent arrays with either 3 or 25 hairs. The project consists of setup for 2,000 individual simulations, each representing a unique combination of the following parameters: 
 
  * Angle of array to oncoming flow: 0 to 180 degrees
  * Gap-to-hair-diameter ratio of the gaps between chemosensory hairs to their widths: 1 to 50
  * Antenna-to-hair-diameter ratio of the diameter of a chemosensory hair to the diameter of the supporting antenna: 1 to 50
  * Distance of the center hair from the antenna: 0.001 to 0.02 m
  * Reynolds number: 0.1 to 10
- * Odor diffusion coefficient: 1e-9 to 1e-4 m$^2$ s$^{-1}$
- * Width of the initial odor stripe: 0.5 to 5 % of the domain width
- * Initial odor concentration: 1e3 to 1e7 (no units)
  
-This simulation and data analysis pipeline for the entcode master project. It includes all the steps necessary to generate results through each step of the pipeline from cloning the project on Github to figures for publication. 
+This simulation and data analysis pipeline for the entcode master project. It includes all the steps necessary to generate results through each step of the pipeline.
 
 ## Overview of the Pipeline
 
 This pipeline takes the following inputs: 
 
  * IBAMR source code for rigid-body constraint method. 
- * MATLAB
  * Deep neural network simulation set with 2,000 number of simulations establishing parameter values listed in the Intro section. 
 
 This pipeline produces the following outputs: 
@@ -39,7 +35,6 @@ This pipeline produces the following outputs:
  * IBAMR flow data
  * Calculated shear around hairs
  * Calculated leakiness through each row of the array
- * Odor capture for the hair array.
 
 The pipeline has the following components:
 
@@ -47,9 +42,7 @@ The pipeline has the following components:
  2. The generation of input files necessary for IBAMR (vertex files, input2d files) and data analysis in VisIt (csv files, lineout files) for the gPC simulation set.
  3. The execution of IBAMR simulations for the gPC simulation set. 
  4. The execution of VisIt data analysis to extract fluid speed information from each IBAMR simulation. 
- 5. The execution of Matlab code for advection-diffusion model.
- 6. The generation of figures for publication from analyzed data.
-
+ 
 ## 1. Cloning from Github, establishing directories, and compiling IBAMR code
 
 To start this project, clone the project from Github using the following in command-line bash:
@@ -183,49 +176,7 @@ or in the command line:
 
 Final values will be saved in csv files in `results/r-script-csv/3hair_results/` if the run set is complete. 
 
-## 5. The execution of Matlab code for advection-diffusion model
-
-As a part of the full model, there is a set of scripts and functions that run a advection-diffusion model of odor capture in Matlab. These scripts are straightforward to run on an HPC resource, included here are instructions for running these on Bridges. 
-
-### Checking for IBAMR simulation set completeness and correct file structure
-
-If you have not already done so, check for the presence of all IBAMR viz_IB2d zip files by running the following script located in `src/visit`:
-
-`$ sh checkruns.sh "$WD" 3 2000 1`
-
-Put the number of hairs in the array after the working directory. Any missing simulations should be rerun and placed in the correct directories. You can also use option `0` in place of `1` to check for zip files. 
-
-Matlab will rely on a standard file structure in order to create and save data. This should be in the format: `$WD/results/odorcapture/3hair_array/`. If this directory doesn't exist, create it before running the Matlab code. 
-
-### Running Matlab simulations in parallel
-
-Matlab simulations are run individually on the cpu-long.q partition in the Keck cluster due to memory and wall-time constraints. The regular nodes have 144 CPUs with 192043 MB (192 GB) or 257574 MB (275.5 GB) per node. They are run individually, although the code does support using Matlab's `parloop` parallelization for running multiple simulations on a single job. The code is set up to execute 1 simulation for each jobs on the Keck Cluster. 
-
-In order to set these up, you will need to change the run job file. Navigate to the `src/bridges` folder and enter the `runent-sniff.job` file and change the following lines: 
- - Line 14: array should equal the number of hairs in your array
-
-To submit a job, use the following: 
-
-`$ sh setrunent.sh $WD 1 165`
-
-Jobs will be submitted to the cluster with their own job IDs. 
-
-
-### Checking for Matlab simulation files results completeness
-
-To check that Matlab simulations provided a complete data set for R to do final calculations, run the following script in the src/bridges directory: 
-
-`$ sh checkmatlab.sh "$WD" 3 2000`
-
-where the first argument is the top working directory and the second is the number of hairs in the array, and third is the number of simulations to check. This script will provide a list of Matlab data files with the prefixes `c_`, `hairs_c_`, `initdata_`, and `velocity_` are missing so you can check individual simulations and rerun as necessary. 
-
-### Running final R code to calculate values
-
-The R script in `src/r-scripts` can be run either on your own machine (after downloading the resulting mat files in the form `hairs_c_*.mat`) or on Bridges. To do so, simply open R and source the script: 
-
-`> source('src/r-scripts/R_analysis_totalodor.R')`
-
-A csv file will all results will be deposited in `results/r-csv-files/`. 
+ 
 
 
 
