@@ -20,7 +20,7 @@ The results to this project was produced on the following platforms:
  * Python 3.8.3 
  * VisIt 3.0.2
 
-For specific instructions, please see the project pipeline PDF in the documents folder: (https://github.com/lindsaywaldrop/entcode/blob/master/documents/entcode-Pipeline.pdf)
+For specific instructions, please see the project pipeline PDF in the documents folder: (https://github.com/lindsaywaldrop/entcode/blob/flow_only/documents/entcode-Pipeline.pdf)
  
 ## Contacts 
  
